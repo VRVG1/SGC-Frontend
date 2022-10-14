@@ -1,0 +1,162 @@
+$blanco: #F3F3F3;
+$color-text: #111111;
+$select-color: #a7a7a7;
+.containerUserSettings {
+    background-color: $blanco;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 60%;
+    margin-left: 20%;
+    margin-top: 5%; 
+    border-radius: 15px 15px 15px 15px;
+    -webkit-box-shadow: 12px 12px 11px 3px rgba(0,0,0,0.61); 
+    box-shadow: 12px 12px 11px 3px rgba(0,0,0,0.61);
+    position: relative;
+    
+    form{
+        margin-top: 1em;
+    }
+    input[type="text"].inputUsuarioSettings,
+    input[type="password"].inputUsuarioSettings,
+    input[type="email"].inputUsuarioSettings {
+      font-size: 1rem;
+      background-color: #3797ce00;
+      padding: 10px 10px 10px 5px;
+      display: inline-block;
+      width: 30vw;
+      border: none;
+      border-bottom: 1px solid $blanco;
+      text-decoration: none;
+      color: #111111;
+      position: relative;
+      left: 0%;
+    }
+
+    input[type="text"].inputUsuarioSettings:focus,
+    input[type="password"].inputUsuarioSettings:focus,
+    input[type="email"].inputUsuarioSettings:focus {
+      outline:none;
+    }
+    
+    input.inputUsuarioSettings:focus ~ .bar:before,  input.inputUsuarioSettings:focus ~ .bar:after {
+      width:50%;
+    }
+
+    label.UsuarioSettings {
+        color:#111111; 
+        font-size:1rem;
+        font-weight:normal;
+        position:absolute;
+        pointer-events:none;
+        left: 0%;
+        top: 45%;
+        transition:0.2s ease all; 
+        -moz-transition:0.2s ease all; 
+        -webkit-transition:0.2s ease all;
+      }
+
+    input[type="text"].inputUsuarioSettings:focus ~ label.UsuarioSettings, 
+    input[type="text"].inputUsuarioSettings:valid ~ label.UsuarioSettings,
+    input[type="password"].inputUsuarioSettings:focus ~ label.UsuarioSettings,
+    input[type="password"].inputUsuarioSettings:valid ~ label.UsuarioSettings,
+    input[type="email"].inputUsuarioSettings:focus ~ label.UsuarioSettings,
+    input[type="email"].inputUsuarioSettings:valid ~ label.UsuarioSettings 		{
+        top:-25%;
+        font-size:0.85rem;
+        color:#111111;
+  }
+
+  .bottomBar.UsuarioSettings 	{ 
+    background: #111111;
+    position:absolute; 
+    display:block; 
+    height: 2px;
+    width:30vw;
+    left: 0%; 
+  }
+
+  .bottomBar.UsuarioSettings-main 	{ 
+    background: #111111;
+    position:absolute; 
+    display:block; 
+    height: 2px;
+    width:30vw;
+    left: 0%; 
+    
+  }
+
+  .bottomBar.inputUsuarioSettings 	{ 
+    background: #111111;
+    position:absolute; 
+    display:block; 
+    height: 2px;
+    width:73%;
+    left: 10%; 
+  }
+
+  .bottomBar.UsuarioSettings:before, .bottomBar.UsuarioSettings:after 	{
+    content:'';
+    height:2px; 
+    width:0;
+    bottom: 0%; 
+    position:absolute;
+    background:#E00005; 
+    transition:0.2s ease all; 
+    -moz-transition:0.2s ease all; 
+    -webkit-transition:0.2s ease all;
+  }
+
+  .bottomBar.inputUsuarioSettings:before, .bottomBar.inputUsuarioSettings:after 	{
+    content:'';
+    height:2px; 
+    width:0;
+    bottom: 0%; 
+    position:absolute;
+    background:#111111; 
+    transition:0.2s ease all; 
+    -moz-transition:0.2s ease all; 
+    -webkit-transition:0.2s ease all;
+  }
+
+  .bottomBar.UsuarioSettings:before {
+    left:50%;
+  }
+  .bottomBar.UsuarioSettings:after {
+    right:50%; 
+  }
+  
+  .bottomBar.inputUsuarioSettings:before {
+    left:50%;
+  }
+  .bottomBar.inputUsuarioSettings:after {
+    right:50%; 
+  }
+
+  input.inputUsuarioSettings:focus ~ .bottomBar.UsuarioSettings:before,  input.inputUsuarioSettings:focus ~ .bottomBar.UsuarioSettings:after {
+    width:50%;
+  }
+  
+  .highlight.Usuarios {
+    position:absolute;
+    height:60%; 
+    width:100px; 
+    top:25%; 
+    left:0;
+    pointer-events:none;
+    opacity:0.5;
+  }
+
+  .highlight.inputUsuarioSettings {
+    position:absolute;
+    height:60%; 
+    width:100px; 
+    top:25%; 
+    left:0;
+    pointer-events:none;
+    opacity:0.5;
+  }
+    
+}

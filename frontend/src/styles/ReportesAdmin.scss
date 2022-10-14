@@ -1,0 +1,600 @@
+.containerReportes {
+    background-color: #F3F3F3;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 60%;
+    margin: 5% 2% 0% 20%;
+    border-radius: 15px 15px 15px 15px;
+    -webkit-box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+    box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+    position: relative;
+}
+
+.ModalReportes {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    width: 35em;
+}
+
+.tabla.Usuarios-rep {
+    width: 90%;
+}
+
+.LabelModalReportesAdmin {
+    color: #111111;
+    font-size: 1rem;
+    font-weight: normal;
+    position: unset;
+    pointer-events: none;
+    left: 0;
+    top: 0;
+    transition: none;
+    -moz-transition: none;
+    -webkit-transition: none;
+    //margin: 0% 5% 2% 0%;
+    width: 100%;
+    text-align: center;
+}
+
+.textareaModalReportesAdmin {
+    width: 90%;
+    height: 20vh;
+    font-size: 1rem;
+    resize: none;
+    border: none;
+    padding: 10px 10px 10px 5px;
+    margin-bottom: 2%;
+}
+
+
+.Modal-Reportes-Admin-Radios {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 2%;
+}
+
+.Modal-Reportes-Admin-p {
+    margin-right: 5%;
+}
+
+.Modal-Reportes-Admin-Select {
+    width: 100%;
+    margin-top: 1%;
+    font-size: 1rem;
+    border: none;
+    padding: 10px 10px 10px 5px;
+    margin-bottom: 2%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    .Label-ReportesAdmin {
+        font-size: 1.2em;
+        color: #111111;
+        font-weight: bolder;
+        margin-bottom: 3%;
+    }
+
+    .seleccionMasters {
+        width: 100%;
+        font-size: 1rem;
+        border: none;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        flex-direction: row;
+        margin-bottom: 2%;
+
+        .tabla {
+            width: 50%;
+
+            th {
+                font-size: 1.2rem;
+                font-weight: bolder;
+            }
+
+            th:nth-child(2) {
+                width: 20%;
+            }
+        }
+
+        .inputMaterias-search {
+            width: 20vw;
+        }
+
+        .highlight.Materias {
+            width: 20vw;
+        }
+
+        .bottomBar.Materias-main {
+            width: 20vw;
+        }
+
+        .prediction {
+            color: #111111;
+            list-style-type: none;
+            text-align: left;
+            margin: 2px 0 0 0;
+            padding: 0px;
+            position: absolute;
+            width: 20vw;
+            z-index: 1;
+
+            li {
+                background-color: #DDD;
+
+                &:hover {
+                    background-color: #84b9d8;
+                }
+            }
+
+            li:nth-child(even) {
+                background-color: #f3f3f3;
+
+                &:hover {
+                    background-color: #84b9d8;
+                }
+            }
+        }
+    }
+}
+
+.Modal-Reportes-Admin-Select-1 {
+    padding: 0;
+    left: 0;
+    margin-bottom: 2%;
+    margin-top: 2%
+}
+
+.Modal-Reportes-Admin-Select-hidden {
+    padding: 0;
+    left: 0;
+    margin-bottom: 1%;
+    visibility: collapse;
+    width: 0;
+    height: 0;
+
+    .Label-ReportesAdmin {
+        font-size: 1.2em;
+        color: #111111;
+        font-weight: bolder;
+        margin-bottom: 3%;
+    }
+
+    .seleccionMasters {
+        width: 100%;
+        font-size: 1rem;
+        border: none;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        flex-direction: row;
+        margin-bottom: 2%;
+
+        .tabla {
+            width: 50%;
+        }
+
+        .inputMaterias-search {
+            width: 20vw;
+        }
+
+        .highlight.Materias {
+            width: 20vw;
+        }
+
+        .bottomBar.Materias-main {
+            width: 20vw;
+        }
+
+        .prediction {
+            color: #111111;
+            list-style-type: none;
+            text-align: left;
+            margin: 0px;
+            padding: 0px;
+            position: absolute;
+            width: 20vw;
+            z-index: 1;
+
+            li {
+                background-color: #DDD;
+
+            }
+
+            li:nth-child(even) {
+                background-color: #f3f3f3;
+            }
+        }
+    }
+}
+
+.form-reportesAdmin-modal {
+    width: 100%;
+
+    .Reportes-Admin-mensajes-radios {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        .Reportes-Admin-mensajes-radios-label {
+            color: #111111;
+            font-size: 1rem;
+            font-weight: normal;
+            position: relative;
+            pointer-events: none;
+            left: 0%;
+            top: 0%;
+            transition: 0.2s ease all;
+            -moz-transition: 0.2s ease all;
+            -webkit-transition: 0.2s ease all;
+        }
+    }
+}
+
+.Reportes-Admin-mensajes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 2%;
+    width: 90%;
+}
+
+
+
+.Label-ReportesAdmin {
+    color: #111111;
+    font-size: 1rem;
+    font-weight: normal;
+    position: unset;
+    pointer-events: none;
+    left: 0;
+    top: 0;
+    transition: none;
+    -moz-transition: none;
+    -webkit-transition: none;
+    margin: 0% 40% 2% 38%;
+}
+
+.LabelModalReportesAdmin-detalles {
+    color: #111111;
+    font-size: 1rem;
+    font-weight: normal;
+    position: unset;
+    pointer-events: none;
+    left: 0;
+    top: 0;
+    transition: none;
+    -moz-transition: none;
+    -webkit-transition: none;
+    //margin: 0% 5% 2% 0%;
+    width: 100%;
+    text-align: center;
+}
+
+input[type="submit"].btn-eliminar-reportes-admin {
+    background-color: #b8000f;
+}
+
+.separado {
+    margin-top: 2%;
+}
+
+.Modal-Reportes-Admin-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+    grid-auto-rows: minmax(100px, auto);
+
+}
+
+.Modal-Reportes-Admin-grid-item1 {
+    grid-column: 1 / span 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-items: center;
+    //justify-content: space-between;
+
+}
+
+.Modal-Reportes-Admin-grid-item2 {
+    grid-column: 2 / span 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-items: center;
+    //justify-content: space-between;
+}
+
+.Modal-Reportes-Admin-Date {
+    border: none;
+    background-color: #ffffff;
+    width: 50%;
+    position: relative;
+    left: 30%;
+}
+
+input[type="checkbox"] {
+    width: 50%;
+    height: 50%;
+    margin: auto;
+}
+
+div.sinIdeas {
+    width: 100%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+
+}
+
+/*Grid God*/
+.container-rep-admin {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 0.5fr 2fr 1fr 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "inputs inputs inputs inputs"
+        "TextArea TextArea TextArea TextArea"
+        "OtrosInputs OtrosInputs OtrosInputs OtrosInputs"
+        "botones botones botones botones";
+
+    .inputs-rep-admin {
+        grid-area: inputs;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .form.group.modal.Materia {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-bottom: 2%;
+
+            input[type=text] {
+                margin: auto;
+                font-size: 1rem;
+                background-color: #3797ce00;
+                padding: 10px 10px 10px 5px;
+                display: inline-block;
+                width: 80%;
+                border: none;
+                border-bottom: 1px solid #ffffff;
+                text-decoration: none;
+                color: #111111;
+
+                &:focus {
+                    outline: none;
+                }
+            }
+
+            .highlightReportesAdmin {
+                position: absolute;
+                height: 60%;
+                width: 100px;
+                top: 25%;
+                left: 0;
+                pointer-events: none;
+                opacity: 0.5;
+            }
+
+            .bottomBarReportesAdmin {
+                background: #111111;
+                position: relative;
+                display: block;
+                height: 2px;
+                width: 80%;
+                margin: auto;
+
+                &:before {
+                    left: 50%;
+                }
+
+                &:after {
+                    right: 50%;
+                }
+            }
+
+            .bottomBarReportesAdmin:before,
+            .bottomBarReportesAdmin:after {
+                content: '';
+                height: 2px;
+                width: 0;
+                bottom: 0%;
+                position: absolute;
+                background: #E00005;
+                transition: 0.2s ease all;
+                -moz-transition: 0.2s ease all;
+                -webkit-transition: 0.2s ease all;
+            }
+
+            input.inputModalReportesAdmin:focus~.bottomBarReportesAdmin:before,
+            input.inputModalReportesAdmin:focus~.bottomBarReportesAdmin:after {
+                width: 50%;
+            }
+        }
+    }
+
+    .TextArea-rep-admin {
+        grid-area: TextArea;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+
+        label.labelDescripcion {
+            font-size: 1.2rem;
+            font-weight: normal;
+            color: #111111;
+            pointer-events: none;
+            position: relative;
+            top: -5%;
+            bottom: unset;
+            left: unset;
+        }
+
+        .textareaModalReportesAdmin-details {
+            width: 100%;
+            height: 85%;
+            resize: none;
+            border: none;
+            background-color: #ffffff;
+            padding: 10px 10px 10px 5px;
+            font-size: 1.2rem;
+        }
+    }
+
+    .OtrosInputs-rep-admin {
+        grid-area: OtrosInputs;
+        display: flex;
+        flex-direction: row;
+
+        form {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+
+            .modalL {
+                height: 10vh;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                .LabelModalReportesAdmin {
+                    margin: auto;
+                    font-size: 1rem;
+                    font-weight: normal;
+                    position: unset;
+                    pointer-events: none;
+                    left: 0;
+                    top: 0;
+                    transition: none;
+                    -moz-transition: none;
+                    -webkit-transition: none;
+                    //margin: 0% 5% 2% 0%;
+                    width: 100%;
+                    text-align: center;
+                }
+
+                .Modal-Reportes-Admin-Date {
+                    border: none;
+                    background-color: #ffffff;
+                    width: 50%;
+                    position: relative;
+                    left: 0%;
+                }
+            }
+
+            .modalR {
+                height: 10vh;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                .LabelModalReportesAdmin {
+                    margin: auto;
+                    font-size: 1rem;
+                    font-weight: normal;
+                    position: unset;
+                    pointer-events: none;
+                    left: 0;
+                    top: 0;
+                    transition: none;
+                    -moz-transition: none;
+                    -webkit-transition: none;
+                    //margin: 0% 5% 2% 0%;
+                    width: 100%;
+                    text-align: center;
+                }
+
+                input[type="checkbox"].checkboxDetails {
+                    height: 2em;
+                    width: 2em;
+                    margin: 0;
+                }
+            }
+
+        }
+
+    }
+
+    .botones-rep-admin {
+        grid-area: botones;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        height: fit-content;
+
+        .Eliminar {
+            background-color: #E00005;
+            border: none;
+
+            &:hover {
+                background-color: #ff0004;
+                border: none;
+            }
+        }
+    }
+}
+
+button {
+    border: none;
+}
+
+.button.ReportesAdmin-button {
+    max-width: 5em;
+    width: 5em;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+    margin: auto;
+    margin-top: 2%;
+}
+
+.modalReportes {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+
+    .botones-rep-admin {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        flex-direction: row;
+        margin-top: 2%;
+
+        .Eliminar {
+            background-color: #E00005;
+            border: none;
+
+            &:hover {
+                background-color: #ff0004;
+                border: none;
+            }
+        }
+    }
+
+}

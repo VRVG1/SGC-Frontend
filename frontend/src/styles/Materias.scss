@@ -1,0 +1,443 @@
+$blanco: #F3F3F3;
+$color-text: #111111;
+$select-color: #a7a7a7;
+.containerMaterias {
+    background-color: $blanco;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 60%;
+    margin-left: 20%;
+    margin-top: 5%; 
+    border-radius: 15px 15px 15px 15px;
+    -webkit-box-shadow: 12px 12px 11px 3px rgba(0,0,0,0.61); 
+    box-shadow: 12px 12px 11px 3px rgba(0,0,0,0.61);
+    position: relative;
+   
+}
+
+/* Entrada de datos */
+
+.group.Materias	  { 
+    position: relative; 
+    margin-bottom: 5%;
+  }
+
+select-hidden {
+  display: none;
+  visibility: hidden;
+}
+
+select {
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1rem;
+  padding: 10px 10px 10px 5px;
+  width: 27vw;
+  border: none;
+  border-bottom: 1px solid $blanco;
+  text-decoration: none;
+  color: $color-text;
+  background-color: $blanco;
+  transition: 0.2s ease all;
+  position: relative;
+  left: -5%;
+  
+  &:focus {
+    outline:none;
+  }
+
+  &:focus ~ .bar:before, &:focus ~ .bar:after {
+    width: 50%;
+  }
+
+  &:focus ~ label.Materias, &:valid ~ label.Materias {
+    top:-25%;
+    font-size:0.85rem;
+    color:#111111;
+  }
+}
+
+  
+  
+  input[type="text"].inputMaterias,
+  input[type="password"].inputMaterias,
+  input[type="email"].inputMaterias {
+    font-size: 1rem;
+    background-color: #3797ce00;
+    padding: 10px 10px 10px 5px;
+    display: inline-block;
+    width: 27vw;
+    border: none;
+    border-bottom: 1px solid $blanco;
+    text-decoration: none;
+    color: #111111;
+    position: relative;
+    left: -4%;
+  }
+
+   
+  input[type="text"].inputMaterias-search,
+  input[type="password"].inputMaterias-search,
+  input[type="email"].inputMaterias-search {
+    font-size: 1rem;
+    background-color: #3797ce00;
+    padding: 10px 10px 10px 5px;
+    display: inline-block;
+    width: 30vw;
+    border: none;
+    border-bottom: 1px solid $blanco;
+    text-decoration: none;
+    color: #111111;
+  }
+
+  
+  input[type="text"].inputMaterias:focus,
+  input[type="password"].inputMaterias:focus,
+  input[type="email"].inputMaterias:focus {
+    outline:none;
+  }
+  
+  input.inputMaterias:focus ~ .bar:before,  input.inputMaterias:focus ~ .bar:after {
+    width:50%;
+  }
+  
+  label.Materias {
+    color:#111111; 
+    font-size:1rem;
+    font-weight:normal;
+    position:absolute;
+    pointer-events:none;
+    left: 10%;
+    top: 45%;
+    transition:0.2s ease all; 
+    -moz-transition:0.2s ease all; 
+    -webkit-transition:0.2s ease all;
+  }
+
+  label.Materias-search {
+    color:#111111; 
+    font-size:1rem;
+    font-weight:normal;
+    position:absolute;
+    pointer-events:none;
+    left: 0%;
+    top: 45%;
+    transition:0.2s ease all; 
+    -moz-transition:0.2s ease all; 
+    -webkit-transition:0.2s ease all;
+  }
+  
+  input[type="text"].inputMaterias:focus ~ label.Materias, 
+  input[type="text"].inputMaterias:valid ~ label.Materias,
+  input[type="password"].inputMaterias:focus ~ label.Materias,
+  input[type="password"].inputMaterias:valid ~ label.Materias,
+  input[type="email"].inputMaterias:focus ~ label.Materias,
+  input[type="email"].inputMaterias:valid ~ label.Materias 		{
+    top:-25%;
+    font-size:0.85rem;
+    color:#111111;
+  }
+  
+/* Invalid email style */
+  input[type="email"].inputMaterias:invalid {
+    color: #E00005;
+  }
+
+  input[type="email"].inputMaterias:invalid ~ label.Materias		{
+    top:-25%;
+    font-size:0.85rem;
+    color: #E00005;
+  }
+
+input[type="email"].inputMaterias:invalid ~ .bottomBar.Materias:before, .bottomBar.Materias:after 	{
+  content:'';
+  height:2px; 
+  width:0;
+  bottom: 0%; 
+  position:absolute;
+  background:#E00005; 
+  transition:0.2s ease all; 
+  -moz-transition:0.2s ease all; 
+  -webkit-transition:0.2s ease all;
+  }
+  input[type="email"].inputMaterias:invalid ~ .bottomBar.Materias:before {
+    left:50%;
+  }
+  input[type="email"].inputMaterias:invalid ~ .bottomBar.Materias:after {
+    right:50%; 
+  }
+
+  input[type="email"].inputMaterias:invalid ~ .bottomBar.Materias:before, input[type="email"]:invalid ~  .bottomBar:after {
+    width:50%;
+  }
+
+  input[type="email"].inputMaterias:invalid ~ .highlight.Materias {
+    position:relative;
+    height:60%; 
+    width:100px; 
+    top:25%; 
+    left:10%;
+    pointer-events:none;
+    opacity:0.5;
+  }
+/* end of Invalid email style */
+
+
+  .bottomBar.Materias 	{ 
+    background: #111111;
+    position:absolute; 
+    display:block; 
+    height: 2px;
+    width:73%;
+    left: 10%; 
+  }
+
+  .bottomBar.Materias-main 	{ 
+    background: #111111;
+    position:absolute; 
+    display:block; 
+    height: 2px;
+    width:30vw;
+    left: 0%; 
+    
+  }
+  .bottomBar.Materias:before, .bottomBar.Materias:after 	{
+    content:'';
+    height:2px; 
+    width:0;
+    bottom: 0%; 
+    position:absolute;
+    background:#E00005; 
+    transition:0.2s ease all; 
+    -moz-transition:0.2s ease all; 
+    -webkit-transition:0.2s ease all;
+  }
+  .bottomBar.Materias:before {
+    left:50%;
+  }
+  .bottomBar.Materias:after {
+    right:50%; 
+  }
+  
+  input.inputMaterias:focus ~ .bottomBar.Materias:before,  input.inputMaterias:focus ~ .bottomBar.Materias:after {
+    width:50%;
+  }
+  
+  .highlight.Materias {
+    position:absolute;
+    height:60%; 
+    width:100px; 
+    top:25%; 
+    left:0;
+    pointer-events:none;
+    opacity:0.5;
+  }
+/* Tabla */
+  .tabla {
+    width: 65%;
+    overflow-y: auto;
+    height: 30vh;
+    margin-bottom: 3%;
+    margin: auto;
+  }
+
+  table {
+    border-spacing: 0;
+    width:100%;
+  }
+
+  tr:nth-child(even) {
+    background-color: #DDD;
+  }
+
+  th {
+    background-color: #005B8E;
+  }
+
+  th, td {
+    padding: 5px;
+    text-align: center;
+    transition: .5s ease all;
+    cursor: default;
+  }
+
+  td:hover{
+    background-color: rgb(167, 167, 167);
+  }
+
+
+  /*botones */
+input[type="button"].button.Materias,
+input[type="submit"].button.Materias,
+input[type="reset"].button.Materias {
+  background-color: #005b8e;
+  border: none;
+  color: white;
+  padding: 15px 10px;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 1rem;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+  margin: 5px 20px 10px 20px;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+input[type="button"].button.Materias:hover,
+input[type="submit"].button.Materias:hover,
+input[type="reset"].button.Materias:hover {
+  background-color: #003655;
+  
+}
+
+input[type="button"].button.Materias:active,
+input[type="submit"].button.Materias:active,
+input[type="reset"].button.Materias:active {
+  -moz-transform: scale(0.95);
+  -webkit-transform: scale(0.95);
+  -o-transform: scale(0.95);
+  -ms-transform: scale(0.95);
+  transform: scale(0.95);
+}
+
+/*Botones eliminar
+button Materias delete
+*/
+
+input[type="button"].button.Materias.delete,
+input[type="submit"].button.Materias.delete,
+input[type="reset"].button.Materias.delete {
+  background-color: #b8000f;
+  border: none;
+  color: white;
+  padding: 15px 10px;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 1rem;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+  margin: 5px 20px 10px 20px;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+input[type="button"].button.Materias.delete:hover,
+input[type="submit"].button.Materias.delete:hover,
+input[type="reset"].button.Materias.delete:hover {
+  background-color: #9c000d;
+}
+
+input[type="button"].button.Materias.delete:active,
+input[type="submit"].button.Materias.delete:active,
+input[type="reset"].button.Materias.delete:active {
+  -moz-transform: scale(0.95);
+  -webkit-transform: scale(0.95);
+  -o-transform: scale(0.95);
+  -ms-transform: scale(0.95);
+  transform: scale(0.95);
+}
+
+/* Modal detalles buttons div */
+
+.modal-detalles-usuario {
+  display: flex-root;
+}
+/* Modal detalles labels */
+
+.Materias-Detalles.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 0.6em;
+  grid-auto-rows: minmax(5em, auto);
+  margin-bottom: 3%;
+}
+
+.Materias-Detalles.one {
+  grid-column: 1;
+  grid-row: 1;
+  background-color: #00365500;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.Materias-Detalles.two {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: #6cd13200;
+}
+
+.Materias-Detalles.three {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: #3709a100;
+}
+
+.Materias-Detalles.four {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: #97101000;
+}
+
+
+.bottomBar.Materias-Detalles {
+  background: #111111;
+  position: relative;
+  height: 2px;
+  left: -6%;
+  right: 0%;
+  width: 25vh;
+  text-align: left;
+}
+
+p.Materias-Detalles {
+  position: relative;
+  left: -10%;
+  right: 0;
+  width: 20vh;
+  text-align: left;
+}
+
+label.Materias-Detalles {
+  color: gray;
+  font-size: 1rem;
+  font-weight: bold;
+  position: relative;
+  left: -12%;
+  top: 0%;
+  width: 20vh;
+  text-align: left;
+}
+
+.Materias-Detalles.buttons {
+  display: inline31;
+}
+
+h2.Resaltado {
+  font-style: oblique;
+}

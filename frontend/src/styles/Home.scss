@@ -1,0 +1,19 @@
+$blanco: #F3F3F3;
+$color-text: #111111;
+$select-color: #a7a7a7;
+.admin-container {
+    background-color: $blanco;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 80%;
+    margin-top: 2%;
+    margin-left: 12%;
+    margin-bottom: 2%; 
+    border-radius: 15px 15px 15px 15px;
+    -webkit-box-shadow: 12px 12px 11px 3px rgba(0,0,0,0.61); 
+    box-shadow: 12px 12px 11px 3px rgba(0,0,0,0.61);
+    position: relative;  
+}
