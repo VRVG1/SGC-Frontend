@@ -14,7 +14,8 @@ const postAsigna = async (dataPost, token, user_id) => {
         })
     };
     post = AuthPostBasics(token, post);
-    const res = await fetch('http://localhost:8000/materia/asign_materia', post);
+    const jsonData = require('../../../variables.json');
+    const res = await fetch(jsonData.host + 'materia/asign_materia', post);
     const result = res.statusText;
     return result;
 }

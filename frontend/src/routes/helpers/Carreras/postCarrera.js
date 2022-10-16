@@ -15,7 +15,8 @@ const postCarrera = async (dataPost, token) => {
         })
     };
     post = AuthPostBasics(token, post);
-    const url = "http://localhost:8000/materia/create_carrera";
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "materia/create_carrera";
     const res = await fetch(url, post);
     const result = res.statusText;
     return result;

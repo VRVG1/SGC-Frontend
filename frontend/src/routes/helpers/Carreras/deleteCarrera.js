@@ -7,7 +7,8 @@ const deleteCarrera = async (id, token) => {
         }
     };
     deleteC = AuthPostBasics(token, deleteC);
-    const url = "http://localhost:8000/materia/delete-carrera/" + id;
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "materia/delete-carrera/" + id;
     const res = await fetch(url, deleteC);
     const result = res.statusText;
     return result;

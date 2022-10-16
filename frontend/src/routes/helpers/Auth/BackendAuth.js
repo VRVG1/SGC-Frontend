@@ -10,8 +10,8 @@ export const BackendAuthProvider = {
         password: formData.get("password")
       })
     };
-
-    fetch('http://localhost:8000/verificacion/token-auth/', post)
+    const jsonData = require('../../../variables.json');
+    fetch(jsonData.host + 'verificacion/token-auth/', post)
       .then(response => {
         responseStatus = response.status;
         return response.json();

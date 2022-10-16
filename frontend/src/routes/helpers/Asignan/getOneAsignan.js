@@ -7,7 +7,8 @@ const getOneAsignan = async (token, id) =>{
         }
     };
     get = AuthPostBasics(token, get);
-    const url = "http://localhost:8000/materia/get-asignan/"+id;
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "materia/get-asignan/"+id;
     const res = await fetch(url, get);
     const result = await res.json();
     return result;
