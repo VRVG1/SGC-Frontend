@@ -21,7 +21,8 @@ const getDataSheet = (token) => {
   }
 
   get = addHeaderAuth(token, get);
-  const url = "http://localhost:8000/exportar/make-datasheet";
+  const jsonData = require('../../../variables.json'); 
+  const url = jsonData.host + "exportar/make-datasheet";
   fetch(url, get)
     .then(async response => ({
       filename: getFilenameFromHeader(response.headers.get('Content-Disposition')),

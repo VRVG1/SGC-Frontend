@@ -22,7 +22,8 @@ const putDocente = async (dataUser, token) => {
 
     }
     post = AuthPostBasic(token, post);
-    const url = "http://localhost:8000/usuario/update-Ownuser/" + dataUser.PK;
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "usuario/update-Ownuser/" + dataUser.PK;
     const res = await fetch(url, post);
     const result = res.statusText;
     console.log("dasd",result)

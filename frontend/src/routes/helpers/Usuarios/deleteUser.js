@@ -7,7 +7,8 @@ const deleteUser = async (id, token) =>{
         }
     };
     post = AuthPostBasics(token, post);
-    const url = "http://localhost:8000/usuario/delete-user/" + id;
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "usuario/delete-user/" + id;
     const res = await fetch(url, post);
     const result = res.statusText;
     console.log("res", res);

@@ -13,7 +13,8 @@ const getGeneran = async (token) => {
     };
 
     get = AuthPostBasics(token, get);
-    const url = "http://localhost:8000/reporte/generaciones";
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "reporte/generaciones";
     const res = await fetch(url, get);
     const data =  res.json();
     return data;

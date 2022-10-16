@@ -7,7 +7,8 @@ const getInfoUser = async (token) =>{
         }
     };
     post = AuthPostBasics(token, post);
-    const url = "http://localhost:8000/usuario/getInfo";
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "usuario/getInfo";
     const res = await fetch(url, post);
     const data =  res.json();
     return data;

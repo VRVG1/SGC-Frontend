@@ -35,7 +35,8 @@ const getBackup = (token) => {
   }
 
   get = addHeaderAuth(token, get);
-  const url = "http://localhost:8000/respaldo/make-backup";
+  const jsonData = require('../../../variables.json'); 
+  const url = jsonData.host + "respaldo/make-backup";
   fetch(url, get)
     .then(async response => ({
       filename: getFilenameFromHeader(response.headers.get('Content-Disposition')),

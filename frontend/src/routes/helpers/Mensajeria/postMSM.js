@@ -14,7 +14,8 @@ const postMSM = async (token, mensajeTXT, pk) =>{
         })
     }
     post = AuthPostBasics(token, post);
-    const res = await fetch('http://127.0.0.1:8000/reporte/admin-mail', post);
+    const jsonData = require('../../../variables.json'); 
+    const res = await fetch(jsonData.host+'reporte/admin-mail', post);
     const result = res.statusText;
     return result;
 

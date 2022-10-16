@@ -9,7 +9,8 @@ const makeRestore = (token, formData, callback) => {
   };
 
   post = addHeaderAuth(token, post);
-  const url = "http://localhost:8000/respaldo/upload-restore";
+  const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "respaldo/upload-restore";
   fetch(url, post)
     .then(async response => ({
       isOperationSuccess: response.ok,

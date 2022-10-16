@@ -7,7 +7,8 @@ const getOneRepirte = async (token, id) =>{
         }
     };
     get = AuthPostBasics(token, get);
-    const url = "http://localhost:8000/reporte/get-reporte/"+id;
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "reporte/get-reporte/"+id;
     const res = await fetch(url, get);
     const result = await res.json();
     return result;

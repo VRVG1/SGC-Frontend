@@ -8,7 +8,8 @@ const putGeneran = async (token, ID_Generacion) => {
         },
     }
     put = AuthPostBasics(token, put);
-    const url = 'http://localhost:8000/reporte/create-gen/' + ID_Generacion;
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "reporte/create-gen/' + ID_Generacion;
     const res = await fetch(url, put);
     const result = res.statusText;
     return result;

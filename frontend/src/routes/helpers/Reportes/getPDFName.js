@@ -10,7 +10,8 @@ const getPDFName = async (PK, token) => {
         headers: { 'Content-Type': 'application/json' },
     };
     get = AuthPostBasics(token, get);
-    const url = "http://localhost:8000/reporte/get-alojanFrom/" + PK;
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "reporte/get-alojanFrom/" + PK;
     const res = await fetch(url, get);
     const result = res.statusText;
     const data = await res.json();

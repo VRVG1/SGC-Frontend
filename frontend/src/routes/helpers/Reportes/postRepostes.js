@@ -12,7 +12,8 @@ const postAsigna = async (dataPost, token) => {
         })
     };
     post = AuthPostBasics(token, post);
-    const res = await fetch('http://localhost:8000/reporte/save-reporte', post);
+    const jsonData = require('../../../variables.json'); 
+    const res = await fetch(jsonData.host + 'reporte/save-reporte', post);
     const result = res.statusText;
     return result;
 }

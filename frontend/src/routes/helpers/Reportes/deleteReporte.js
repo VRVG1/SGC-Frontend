@@ -14,7 +14,8 @@ const deleteMateria = async (token, id) => {
     };
 
     deletes = AuthPostBasics(token, deletes);
-    const url = "http://localhost:8000/reporte/delete-reporte/" + id;
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "reporte/delete-reporte/" + id;
     const res = await fetch(url, deletes);
     const result = res.statusText;
     return result;

@@ -6,7 +6,8 @@ const sendAsigna = async (token, id) => {
         headers: { 'Content-Type': 'application/json' },
     };
     post = AuthPostBasics(token, post);
-    const res = await fetch('http://localhost:8000/reporte/send-genera/' + id, post);
+    const jsonData = require('../../../variables.json'); 
+    const res = await fetch(jsonData.host + 'reporte/send-genera/' + id, post);
     const result = res.statusText;
     console.log(res)
     return result;

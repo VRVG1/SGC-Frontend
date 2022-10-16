@@ -10,7 +10,8 @@
          },
      }
      post = AuthPostBasics(token, post);
-     const res = await fetch('http://127.0.0.1:8000/reporte/startNew', post);
+     const jsonData = require('../../../variables.json'); 
+     const res = await fetch(jsonData.host+'reporte/startNew', post);
      const result = res.statusText;
      console.log(result);
      return result;

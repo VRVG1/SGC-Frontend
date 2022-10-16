@@ -12,7 +12,8 @@ const putReportes = async (token, id, dataPost) => {
         })
     };
     put = AuthPostBasis(token, put);
-    const res = await fetch("http://localhost:8000/reporte/update-reporte/" + id, put);
+    const jsonData = require('../../../variables.json'); 
+    const res = await fetch(jsonData.host + "reporte/update-reporte/" + id, put);
     const result = res.statusText;
     return result;
 }

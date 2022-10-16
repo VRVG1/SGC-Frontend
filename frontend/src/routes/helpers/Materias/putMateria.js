@@ -17,7 +17,8 @@ const putMateria = async (dataPost, id, token) => {
         })
     };
     post = AuthPostBasics(token, post);
-    const res = await fetch('http://localhost:8000/materia/update-materia/' + id, post);
+    const jsonData = require('../../../variables.json'); 
+    const res = await fetch(jsonData.host+'materia/update-materia/' + id, post);
     const result = res.statusText;
     return result;
 }

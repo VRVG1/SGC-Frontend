@@ -28,7 +28,8 @@ const putUsuarios = async (dataUser, id, token) => {
         })
     }
     post = AuthPostBasic(token, post);
-    const url = "http://localhost:8000/usuario/update-user/" + id;
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "usuario/update-user/" + id;
     const res = await fetch(url, post);
     const result = res.statusText;
     return result;

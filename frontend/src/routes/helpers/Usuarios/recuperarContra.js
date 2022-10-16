@@ -15,7 +15,8 @@ const recuperarContra = async (dataInput) => {
         })
     };
 
-    const url = "http://localhost:8000/usuario/forgotPass";
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "usuario/forgotPass";
     const res = await fetch(url, get);
     const result =  res.statusText;
     return result;

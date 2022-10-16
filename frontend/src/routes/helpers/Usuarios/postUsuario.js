@@ -22,7 +22,8 @@ const postUsuario = async (dataPost, token) => {
     };
     post = AuthPostBasics(token, post);
     //console.log(post.body)
-    const url = "http://localhost:8000/usuario/create_user"
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "usuario/create_user"
     const res = await fetch(url, post);
     const result = res.statusText;
     return result

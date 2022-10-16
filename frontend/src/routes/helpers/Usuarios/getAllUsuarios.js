@@ -13,7 +13,8 @@ const getAllUsuarios = async (token) => {
     };
 
     get = AuthPostBasics(token, get);
-    const url = "http://localhost:8000/usuario/users";
+    const jsonData = require('../../../variables.json'); 
+    const url = jsonData.host + "usuario/users";
     const res = await fetch(url, get);
     const data =  res.json();
     return data;
