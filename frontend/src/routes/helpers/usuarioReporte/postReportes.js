@@ -8,7 +8,7 @@ const postReportes = async (token, formData) =>{
     }
     post = AuthPostBasics(token, post);
     const jsonData = require('../../../variables.json'); 
-    const url = jsonData.host + "reporte/create-alojan', post);
+    const res = await fetch(jsonData.host + 'reporte/create-alojan', post);
     const result = res.statusText;
     return result;
 
