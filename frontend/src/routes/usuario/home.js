@@ -29,10 +29,16 @@ export const Home2 = () => {
     materia_ID: '',
     grupo: '',
     semestre: '',
+    dia: '',
+    hora: '',
+    aula: ''
   });
   const [dataTable, setDataTable] = useState([]);
   let date = new Date();
   let hour = date.getHours();
+  const [regex, setRegex] = useState({
+    aula: /^[a-z]{0,1}[0-9]{0,2}$/,
+  });
 
   /**
    * Hacer el llamado al los helper para obtener las carreras y materias
@@ -84,6 +90,9 @@ export const Home2 = () => {
             materia_ID: data.ID_Materia,
             grupo: data.Grupo,
             semestre: data.Grado.toString(),
+            dia: data.dia,
+            aula: data.aula,
+            hora: data.hora
           }
         ];
         setDataTable(oldArray => [...oldArray, ...data2]);
@@ -99,46 +108,48 @@ export const Home2 = () => {
         await getAllAsignanUser(auth.user.token, infoUser.PK).then((data) => {
           setAsignanMaterias(data);
         }
-      
-      ).catch((err) => {
-        //console.log(err);
+
+        ).catch((err) => {
+          //console.log(err);
+        }
+        );
       }
-      );
-    }
-  },
+    },
     [infoUser],
   )
   /**
    * Funcion para obtener los datos del usuario
    */
-  const getInforUser = useCallback( 
+  const getInforUser = useCallback(
     async () => {
-    await getInfoUser(auth.user.token).then((data) => {
-      setInfoUser(data);
-    }
-    ).catch((err) => {
-      //console.log(err);
-    }
-    );
-  }, [])
-  
+      await getInfoUser(auth.user.token).then((data) => {
+        setInfoUser(data);
+      }
+      ).catch((err) => {
+        //console.log(err);
+      }
+      );
+    }, [])
+
   const deleteAsignan = async (PK) => {
     await deleteAsignacion(auth.user.token, PK).then((data) => {
       console.log("Se elimino correctamente");
     }).catch((err) => {
       console.log(err);
     });
-  } 
+  }
 
   /**
    * Metodo para obtener los datos que se selecciones de los inputs
    * @param {*} e 
    */
   const handleChange = (e) => {
-    setSelectedData({
-      ...selectedData,
-      [e.target.name]: e.target.value,
-    });
+    if (e.target.value.match(regex[e.target.name]) != null) {
+      setSelectedData({
+        ...selectedData,
+        [e.target.name]: e.target.value,
+      });
+    }
   };
 
   /**
@@ -148,13 +159,13 @@ export const Home2 = () => {
    */
   const agregarTabla = () => {
     let yaEsta = false;
-    if (selectedData.carrera_ID === '' || selectedData.materia_ID === '' || selectedData.grupo === '' || selectedData.semestre === '') {
+    if (selectedData.carrera_ID === '' || selectedData.materia_ID === '' || selectedData.grupo === '' || selectedData.semestre === '' || selectedData.aula === '' || selectedData.dia === '' || selectedData.hora === '') {
       setShowModalAlert(true);
       setMensajeAlerta('Todos los campos son obligatorios');
       return;
     }
     dataTable.map((data) => {
-      if (data.carrera_ID === selectedData.carrera_ID && data.materia_ID === selectedData.materia_ID && data.grupo === selectedData.grupo && data.semestre === selectedData.semestre) {
+      if (data.carrera_ID === selectedData.carrera_ID && data.materia_ID === selectedData.materia_ID && data.grupo === selectedData.grupo && data.semestre === selectedData.semestre && data.aula === selectedData.aula && data.hora === selectedData.hora && data.dia === selectedData.dia) {
         yaEsta = true;
         setShowModalAlert(true);
         setMensajeAlerta('Ya se a asignaron esos datos');
@@ -185,7 +196,7 @@ export const Home2 = () => {
     let aux = aBorrar;
     dataTable.map(async (data) => {
       aux.map(auxiliar => {
-        if (auxiliar.carrera_ID === data.carrera_ID && auxiliar.materia_ID === data.materia_ID && auxiliar.grupo === data.grupo && auxiliar.semestre === data.semestre) {
+        if (auxiliar.carrera_ID === data.carrera_ID && auxiliar.materia_ID === data.materia_ID && auxiliar.grupo === data.grupo && auxiliar.semestre === data.semestre && auxiliar.dia === data.dia && auxiliar.aula === data.aula && auxiliar.hora === data.hora) {
           aux.splice(aux.indexOf(auxiliar), 1);
         }
       })
@@ -200,7 +211,7 @@ export const Home2 = () => {
       aBorrar.map(async (data) => {
         let a;
         try {
-          a = asignanMaterias.filter(datos => datos.ID_Carrera === data.carrera_ID && datos.ID_Materia === data.materia_ID && datos.Grupo === data.grupo && datos.Grado.toString() === data.semestre)[0].ID_Asignan;
+          a = asignanMaterias.filter(datos => datos.ID_Carrera === data.carrera_ID && datos.ID_Materia === data.materia_ID && datos.Grupo === data.grupo && datos.Grado.toString() === data.semestre && data.aula === datos.aula && data.hora === datos.hora && data.dia === datos.dia)[0].ID_Asignan;
           deleteAsignan(a);
         } catch (error) {
           console.log(error);
@@ -209,11 +220,11 @@ export const Home2 = () => {
     }
   }
   useEffect(() => {
-    if(aBorrar.length > 0 && send){
+    if (aBorrar.length > 0 && send) {
       borrar()
     }
     setContinuacion(Math.random());
-  }, [aBorrar,boraccion]);
+  }, [aBorrar, boraccion]);
 
   useEffect(() => {
     console.log(dataTable, aBorrar, asignanMaterias);
@@ -223,14 +234,14 @@ export const Home2 = () => {
         dataTable.map(async (data) => {
           aguardar = false;
           asignanMaterias.map(async (data2) => {
-            if (data.carrera_ID === data2.ID_Carrera && data.materia_ID === data2.ID_Materia && data.grupo === data2.Grupo && data.semestre === data2.Grado.toString()) {
+            if (data.carrera_ID === data2.ID_Carrera && data.materia_ID === data2.ID_Materia && data.grupo === data2.Grupo && data.semestre === data2.Grado.toString() && data.dia === data2.dia && data.aula === data2.aula && data.hora === data2.hora) {
               console.log('No hacer nada porque ya esta asignado');
               aguardar = false;
             } else {
               aguardar = true;
               console.log("mandar a guardar")
             }
-            
+
           });
           if (aguardar) {
             await postAsigna(data, auth.user.token, infoUser.PK);
@@ -286,14 +297,14 @@ export const Home2 = () => {
     }
     return saludo;
   }
-  
+
 
 
   return (
     <div className='usuario-container-parent'>
       <div className='usuario-container'>
-       
-        <Saludo/>
+
+        <Saludo />
         <h1>Bienvenido al Sistema Gestor del Curso</h1>
       </div>
       {
@@ -311,6 +322,9 @@ export const Home2 = () => {
                           <th>Materia</th>
                           <th>Grupo</th>
                           <th>Semestre</th>
+                          <th>Hora</th>
+                          <th>Dia</th>
+                          <th>Aula</th>
                           <th>Eliminar</th>
                         </tr>
                       </thead>
@@ -321,9 +335,12 @@ export const Home2 = () => {
                             <td>{materias.filter(materia => materia.ID_Materia === data.materia_ID)[0].Nombre_Materia}</td>
                             <td>{data.grupo}</td>
                             <td>{data.semestre}</td>
+                            <td>{data.hora}</td>
+                            <td>{data.dia}</td>
+                            <td>{data.aula}</td>
                             <td> <button onClick={() => {
                               if (aBorrar.filter(data2 => data2.carrera_ID === data.carrera_ID && data2.materia_ID === data.materia_ID && data2.grupo === data.grupo && data2.semestre === data.semestre).length === 0) {
-                                
+
                                 setABorrar([...aBorrar, data]);
                               }
                               //setABorrar(oldArray => [...oldArray, data]);
@@ -407,6 +424,55 @@ export const Home2 = () => {
                     <span className="bottomBar Usuarios-usr"></span>
                     <label className="Usuarios-usr">Semestre</label>
                   </div>
+
+                  <div className="form group modal Usuario usr">
+                    <select name='hora' value={selectedData.hora} onChange={handleChange} className='usuarios-grid-Opcion'>
+                      <option value={""}></option>
+                      <option value={"07:00 - 08:00"}>07:00 - 08:00</option>
+                      <option value={"08:00 - 09:00"}>08:00 - 09:00</option>
+                      <option value={"10:00 - 11:00"}>10:00 - 11:00</option>
+                      <option value={"11:00 - 12:00"}>11:00 - 12:00</option>
+                      <option value={"12:00 - 13:00"}>12:00 - 13:00</option>
+                      <option value={"13:00 - 14:00"}>13:00 - 14:00</option>
+                      <option value={"14:00 - 15:00"}>14:00 - 15:00</option>
+                      <option value={"7:00 - 9:00"}>7:00 - 9:00</option>
+                      <option value={"9:00 - 11:00"}>9:00 - 11:00</option>
+                      <option value={"11:00 - 13:00"}>11:00 - 13:00</option>
+                      <option value={"13:00 - 15:00"}>13:00 - 15:00</option>
+                    </select>
+                    <span className="highlight Usuarios-usr"></span>
+                    <span className="bottomBar Usuarios-usr"></span>
+                    <label className="Usuarios-usr">Hora</label>
+                  </div>
+
+                  <div className="form group modal Usuario usr">
+                    <select name='dia' value={selectedData.dia} onChange={handleChange} className='usuarios-grid-Opcion'>
+                      <option value={""}></option>
+                      <option value={"Lunes"}>Lunes</option>
+                      <option value={"Martes"}>Martes</option>
+                      <option value={"Miercoles"}>Miercoles</option>
+                      <option value={"Jueves"}>Jueves</option>
+                      <option value={"Viernes"}>Viernes</option>
+                    </select>
+                    <span className="highlight Usuarios-usr"></span>
+                    <span className="bottomBar Usuarios-usr"></span>
+                    <label className="Usuarios-usr">Dia</label>
+                  </div>
+
+                  <div className="form group Usuario usr">
+                    <input
+                      type="text"
+                      id="aula"
+                      name="aula"
+                      className="inputMaterias"
+                      value={selectedData.aula}
+                      onChange={handleChange}
+                      required
+                    />
+                    <span className="highlight Usuarios-usr"></span>
+                    <span className="bottomBar Usuarios-usr"></span>
+                    <label className="Usuarios-usr">Aula</label>
+                  </div>
                   <button onClick={agregarTabla}>Agregar</button>
                 </div>
               </div>
@@ -424,6 +490,9 @@ export const Home2 = () => {
                         <th>Materia</th>
                         <th>Grupo</th>
                         <th>Semestre</th>
+                        <th>Hora</th>
+                        <th>Dia</th>
+                        <th>Aula</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -433,6 +502,9 @@ export const Home2 = () => {
                           <td>{materias.filter(materia => materia.ID_Materia === data.materia_ID)[0].Nombre_Materia}</td>
                           <td>{data.grupo}</td>
                           <td>{data.semestre}</td>
+                          <td>{data.hora}</td>
+                          <td>{data.dia}</td>
+                          <td>{data.aula}</td>
                         </tr>
                       ))}
                     </tbody>

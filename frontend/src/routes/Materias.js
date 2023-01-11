@@ -25,38 +25,48 @@ const Materias = props => {
     const [showModalModify, setShowModalModify] = useState(false);
     const [showModalConfirm, setShowModalConfirm] = useState(false);
     const [showModalDelete, setShowModalDelete] = useState(false);
-    //const [showModalNoCarreras, setShowModalNoCarreras] = useState(false);
+    const [showModalNoCarreras, setShowModalNoCarreras] = useState(false);
     const [materiaData, setMateriaData] = useState([]);
     const [filtrados, setFiltrados] = useState({})
-    //const [carreraData, setCareraData] = useState({});
+    const [carreraData, setCareraData] = useState({});
     const [addData, setAddData] = useState({
         Materia_name: '',
-        //materia_carrera: '',
-        Materia_semestre: '',
-        Materia_grupo: '',
-        Materia_ID: '',
+        Materia_reticula: '',
+        Materia_horas_teoricas: '',
+        Materia_horas_practicas: '',
+        Materia_creditos: '',
+        Materia_unidades: '',
         //Nombre_Carrera: ''
     });
     const [regex, setRegex] = useState({
         Materia_name: /^[A-Za-z\sÀ-ÿ]{0,200}$/,
+        Materia_reticula: /^[A-Z]{0,3}-{0,1}[0-9]{0,4}$/,
+        Materia_horas_teoricas: /^[0-9]{0,2}$/,
+        Materia_horas_practicas: /^[0-9]{0,2}$/,
+        Materia_creditos: /^[0-9]{0,2}$/,
+        Materia_unidades: /^[0-9]{0,2}$/,
         //materia_carrera: '',
-        Materia_semestre: /^\d{0,2}$/,
-        Materia_grupo: /^[A-Z]{0,1}$/,
-        Materia_ID: /^[A-Z]{0,3}-{0,1}[0-9]{0,4}$/
     });
-    //const [actualizarCarrera, setActualizarCarrera] = useState(0);
+    const [actualizarCarrera, setActualizarCarrera] = useState(0);
     const [actualizarMateria, setActualizarMateria] = useState(0);
     const [loading, setLoading] = useState(false);
     const [addMaterias, setAddMaterias] = useState('');
     const [statusContenido, setStatusContenido] = useState('');
 
-    const [ID_Materia, setID_Materia] = useState('');
-    const [Grado, setGrado] = useState("");
-    const [Grupo, setGrupo] = useState('');
+    const [Clave_reticula, setClave_reticula] = useState('');
     const [Nombre_Materia, setNombre_Materia] = useState("");
+    const [modificaciones, setModificaciones] = useState({
+        Materia_name: '',
+        Materia_reticula: '',
+        Materia_horas_teoricas: '',
+        Materia_horas_practicas: '',
+        Materia_creditos: '',
+        Materia_unidades: '',
+        Materia_carrera: '',
+        Materia_nombre_carrera: ''
+    })
+
     const [resultadoTitulo, setResultadoTitulo] = useState("");
-    //const [ID_Carrera, setID_Carrera] = useState('');
-    //const [Nombre_Carrera, setNombre_Carrera] = useState('')
 
     const [ptio, setPtio] = useState({})
     /**
@@ -73,20 +83,20 @@ const Materias = props => {
      * Metodo para obtener todos los datos de la 
      * carrera desde la base de datos
      */
-    // const obtenerCarrera = async () => {
-    //     await getAllCarrera(auth.user.token).then((data) => {
-    //         if (data.length > 0) {
-    //             setCareraData(data)
-    //         }
-    //     });
-    // }
+    const obtenerCarrera = async () => {
+        await getAllCarrera(auth.user.token).then((data) => {
+            if (data.length > 0) {
+                setCareraData(data)
+            }
+        });
+    }
 
     /**
      * useEffect para obtener los datos de carrera cada que se actualizen
      */
-    // useEffect(() => {
-    //     obtenerCarrera();
-    // }, [actualizarCarrera])
+    useEffect(() => {
+        obtenerCarrera();
+    }, [actualizarCarrera])
     /**
      * hook useEffect para la recoleccion de datos generales de materias
      */
@@ -99,7 +109,7 @@ const Materias = props => {
      */
     const deleteMaterias = async () => {
         setLoading(true);
-        setAddMaterias(await deleteMateria(ID_Materia, auth.user.token));
+        setAddMaterias(await deleteMateria(Clave_reticula, auth.user.token));
         setResultadoTitulo("Eliminación")
         setStatusContenido("Eliminación exitosa")
     }
@@ -113,9 +123,7 @@ const Materias = props => {
             ...addData,
             Materia_name: Nombre_Materia,
             //materia_carrera: ID_Carrera,
-            Materia_semestre: Grado,
-            Materia_grupo: Grupo,
-            Materia_ID: ID_Materia,
+            Materia_reticula: Clave_reticula,
             //Nombre_Carrera: Nombre_Carrera
         });
         setShowModalConfirm(false);
@@ -127,7 +135,7 @@ const Materias = props => {
      */
     const confirmModificar = async () => {
         setLoading(true);
-        setAddMaterias(await putMateria(addData, ID_Materia, auth.user.token));
+        setAddMaterias(await putMateria(addData, Clave_reticula, auth.user.token));
         setStatusContenido("Se ha modificado la materia de manera exitosa");
         setResultadoTitulo("Modificación fue exitosa")
     };
@@ -137,11 +145,20 @@ const Materias = props => {
      * @param {int} id  ID de la materia
      */
     function details(id) {
-        const materia = materiaData.find(elemento => elemento.ID_Materia === id);
-        //const carrera = carreraData.find(element => element.ID_Carrera === materia.Carrera);
-        setGrado(materia.Grado);
-        setGrupo(materia.Grupo);
-        setID_Materia(materia.ID_Materia);
+        const materia = materiaData.find(elemento => elemento.Clave_reticula === id);
+        const carrera = carreraData.find(element => element.ID_Carrera === materia.Carrera);
+        setModificaciones({
+            ...modificaciones,
+            Materia_name: materia.Nombre_Materia,
+            Materia_carrera: carrera.ID_Carrera,
+            Materia_reticula: id,
+            Materia_nombre_carrera: carrera.Nombre_Carrera,
+            Materia_horas_teoricas: materia.horas_Teoricas,
+            Materia_horas_practicas: materia.horas_Practicas,
+            Materia_creditos: materia.creditos,
+            Materia_unidades: materia.unidades,
+        })
+        setClave_reticula(materia.Clave_reticula);
         setNombre_Materia(materia.Nombre_Materia);
         //setID_Carrera(carrera.ID_Carrera);
         //setNombre_Carrera(carrera.Nombre_Carrera);
@@ -150,11 +167,13 @@ const Materias = props => {
         setAddData({
             ...addData,
             Materia_name: materia.Nombre_Materia,
-            //materia_carrera: carrera.ID_Carrera,
-            Materia_semestre: materia.Grado,
-            Materia_grupo: materia.Grupo,
-            Materia_ID: id,
-            //Nombre_Carrera: carrera.Nombre_Carrera
+            materia_carrera: carrera.ID_Carrera,
+            Materia_reticula: id,
+            Nombre_Carrera: carrera.Nombre_Carrera,
+            Materia_horas_teoricas: materia.horas_Teoricas,
+            Materia_horas_practicas: materia.horas_Practicas,
+            Materia_creditos: materia.creditos,
+            Materia_unidades: materia.unidades,
         });
         setShowModalConfirm(false);
     }
@@ -171,7 +190,7 @@ const Materias = props => {
         //         //materia_carrera: carreraData[0].ID_Carrera,
         //         Materia_semestre: '',
         //         Materia_grupo: '',
-        //         Materia_ID: '',
+        //         Materia_reticula: '',
         //         //Nombre_Carrera: carreraData[0].Nombre_Carrera
         //     });
         //     setAddMaterias('');
@@ -183,11 +202,14 @@ const Materias = props => {
         setAddData({
             ...addData,
             Materia_name: '',
-            //materia_carrera: carreraData[0].ID_Carrera,
-            Materia_semestre: '',
-            Materia_grupo: '',
-            Materia_ID: '',
-            //Nombre_Carrera: carreraData[0].Nombre_Carrera
+            Materia_reticula: '',
+            Materia_horas_teoricas: '',
+            Materia_horas_practicas: '',
+            Materia_creditos: '',
+            Materia_unidades: '',
+            //Nombre_Carrera: ''
+            materia_carrera: carreraData[0].ID_Carrera,
+            Nombre_Carrera: carreraData[0].Nombre_Carrera
         });
         setAddMaterias('');
         //setActualizarCarrera(Math.random())
@@ -206,7 +228,8 @@ const Materias = props => {
                 setPtio({
                     ...ptio,
                     [event.target.name]: event.target.value,
-                    //materia_carrera: carreraData.find(element => element.Nombre_Carrera === event.target.value).ID_Carrera
+                    materia_carrera: carreraData.find(element => element.Nombre_Carrera === event.target.value).ID_Carrera
+
                 })
                 // setAddData({
                 //     ...addData,
@@ -311,8 +334,8 @@ const Materias = props => {
                                 <tbody>
                                     {filtrados.map((materia) => {
                                         return (
-                                            <tr key={materia.ID_Materia}>
-                                                <td onClick={() => details(materia.ID_Materia)}>
+                                            <tr key={materia.Clave_reticula}>
+                                                <td onClick={() => details(materia.Clave_reticula)}>
                                                     {materia.Nombre_Materia}
                                                 </td>
                                             </tr>
@@ -340,21 +363,32 @@ const Materias = props => {
                         onClick={add}
                     >Agregar</button>
                     {/* Detalles */}
-                    <Modal show={showModalDetails} setShow={setShowModalDetails} title={Nombre_Materia}>
+                    <Modal show={showModalDetails} setShow={setShowModalDetails} title={modificaciones.Materia_name}>
                         <form>
                             <div className="form group modal Materia">
                                 <input
                                     type="text"
                                     id="Materia-name"
-                                    name="Materia_ID"
+                                    name="Materia_reticula"
                                     className="inputMaterias"
-                                    value={addData.Materia_ID}
+                                    value={addData.Materia_reticula}
                                     onChange={handleSelectOnChange}
                                     required
                                 />
                                 <span className="highlight Materias"></span>
                                 <span className="bottomBar Materias"></span>
-                                <label className="Materias">ID de Materia</label>
+                                <label className="Materias">Reticula de la Materia</label>
+                            </div>
+
+                            <div className="form group modal Materia">
+                                <select name="Nombre_Carrera" value={addData.Nombre_Carrera} onChange={handleSelectOnChange} >
+                                    {Object.keys(carreraData).length !== 0 ? (carreraData.map((carrera) =>
+                                        <option key={carrera.ID_Carrera} value={carrera.Nombre_Carrera}>{carrera.Nombre_Carrera}</option>
+                                    )) : (<></>)}
+                                </select>
+                                <span className="highlight Materias"></span>
+                                <span className="bottomBar Materias"></span>
+                                <label className="Materias">Carrera de la Materia</label>
                             </div>
 
                             <div className="form group modal Materia">
@@ -372,16 +406,66 @@ const Materias = props => {
                                 <label className="Materias">Nombre de Materia</label>
                             </div>
 
-                            {/* <div className="form group modal Materia">
-                                <select name="Nombre_Carrera" value={addData.Nombre_Carrera} onChange={handleSelectOnChange} >
-                                    {Object.keys(carreraData).length !== 0 ? (carreraData.map((carrera) =>
-                                        <option key={carrera.ID_Carrera} value={carrera.Nombre_Carrera}>{carrera.Nombre_Carrera}</option>
-                                    )) : (<></>)}
-                                </select>
+                            <div className="form group modal Materia">
+                                <input
+                                    type="text"
+                                    id="Materia-horas-teoricas"
+                                    name="Materia_horas_teoricas"
+                                    className="inputMaterias"
+                                    value={addData.Materia_horas_teoricas}
+                                    onChange={handleSelectOnChange}
+                                    required
+                                />
                                 <span className="highlight Materias"></span>
                                 <span className="bottomBar Materias"></span>
-                                <label className="Materias">Carrera de la Materia</label>
-                            </div> */}
+                                <label className="Materias">Horas Teoricas</label>
+                            </div>
+
+                            <div className="form group modal Materia">
+                                <input
+                                    type="text"
+                                    id="Materia-horas-practicas"
+                                    name="Materia_horas_practicas"
+                                    className="inputMaterias"
+                                    value={addData.Materia_horas_practicas}
+                                    onChange={handleSelectOnChange}
+                                    required
+                                />
+                                <span className="highlight Materias"></span>
+                                <span className="bottomBar Materias"></span>
+                                <label className="Materias">Horas Practicas</label>
+                            </div>
+
+                            <div className="form group modal Materia">
+                                <input
+                                    type="text"
+                                    id="Materia-creditos"
+                                    name="Materia_creditos"
+                                    className="inputMaterias"
+                                    value={addData.Materia_creditos}
+                                    onChange={handleSelectOnChange}
+                                    required
+                                />
+                                <span className="highlight Materias"></span>
+                                <span className="bottomBar Materias"></span>
+                                <label className="Materias">Creditos</label>
+                            </div>
+
+                            <div className="form group modal Materia">
+                                <input
+                                    type="text"
+                                    id="Materia-unidades"
+                                    name="Materia_unidades"
+                                    className="inputMaterias"
+                                    value={addData.Materia_unidades}
+                                    onChange={handleSelectOnChange}
+                                    required
+                                />
+                                <span className="highlight Materias"></span>
+                                <span className="bottomBar Materias"></span>
+                                <label className="Materias">Unidades</label>
+                            </div>
+
                         </form>
                         <div className="Materias-Detalles buttons">
                             <input
@@ -405,15 +489,26 @@ const Materias = props => {
                                 <input
                                     type="text"
                                     id="Materia-name"
-                                    name="Materia_ID"
+                                    name="Materia_reticula"
                                     className="inputMaterias"
-                                    value={addData.Materia_ID}
+                                    value={addData.Materia_reticula}
                                     onChange={handleSelectOnChange}
                                     required
                                 />
                                 <span className="highlight Materias"></span>
                                 <span className="bottomBar Materias"></span>
-                                <label className="Materias">ID de Materia</label>
+                                <label className="Materias">Reticula de la Materia</label>
+                            </div>
+
+                            <div className="form group modal Materia">
+                                <select name="Nombre_Carrera" value={addData.Nombre_Carrera} onChange={handleSelectOnChange} >
+                                    {Object.keys(carreraData).length !== 0 ? (carreraData.map((carrera) =>
+                                        <option key={carrera.ID_Carrera} value={carrera.Nombre_Carrera}>{carrera.Nombre_Carrera}</option>
+                                    )) : (<></>)}
+                                </select>
+                                <span className="highlight Materias"></span>
+                                <span className="bottomBar Materias"></span>
+                                <label className="Materias">Carrera de la Materia</label>
                             </div>
 
                             <div className="form group modal Materia">
@@ -431,16 +526,66 @@ const Materias = props => {
                                 <label className="Materias">Nombre de Materia</label>
                             </div>
 
-                            {/* <div className="form group modal Materia">
-                                <select name="Nombre_Carrera" value={addData.Nombre_Carrera} onChange={handleSelectOnChange} >
-                                    {Object.keys(carreraData).length !== 0 ? (carreraData.map((carrera) =>
-                                        <option key={carrera.ID_Carrera} value={carrera.Nombre_Carrera}>{carrera.Nombre_Carrera}</option>
-                                    )) : (<></>)}
-                                </select>
+                            <div className="form group modal Materia">
+                                <input
+                                    type="text"
+                                    id="Materia-horas-teoricas"
+                                    name="Materia_horas_teoricas"
+                                    className="inputMaterias"
+                                    value={addData.Materia_horas_teoricas}
+                                    onChange={handleSelectOnChange}
+                                    required
+                                />
                                 <span className="highlight Materias"></span>
                                 <span className="bottomBar Materias"></span>
-                                <label className="Materias">Carrera de la Materia</label>
-                            </div> */}
+                                <label className="Materias">Horas Teoricas</label>
+                            </div>
+
+                            <div className="form group modal Materia">
+                                <input
+                                    type="text"
+                                    id="Materia-horas-practicas"
+                                    name="Materia_horas_practicas"
+                                    className="inputMaterias"
+                                    value={addData.Materia_horas_practicas}
+                                    onChange={handleSelectOnChange}
+                                    required
+                                />
+                                <span className="highlight Materias"></span>
+                                <span className="bottomBar Materias"></span>
+                                <label className="Materias">Horas Practicas</label>
+                            </div>
+
+                            <div className="form group modal Materia">
+                                <input
+                                    type="text"
+                                    id="Materia-creditos"
+                                    name="Materia_creditos"
+                                    className="inputMaterias"
+                                    value={addData.Materia_creditos}
+                                    onChange={handleSelectOnChange}
+                                    required
+                                />
+                                <span className="highlight Materias"></span>
+                                <span className="bottomBar Materias"></span>
+                                <label className="Materias">Creditos</label>
+                            </div>
+
+                            <div className="form group modal Materia">
+                                <input
+                                    type="text"
+                                    id="Materia-unidades"
+                                    name="Materia_unidades"
+                                    className="inputMaterias"
+                                    value={addData.Materia_unidades}
+                                    onChange={handleSelectOnChange}
+                                    required
+                                />
+                                <span className="highlight Materias"></span>
+                                <span className="bottomBar Materias"></span>
+                                <label className="Materias">Unidades</label>
+                            </div>
+
                         </form>
 
                         <input
@@ -451,8 +596,8 @@ const Materias = props => {
                         />
                     </Modal>
                     {/* Eliminar */}
-                    <Modal show={showModalDelete} setShow={setShowModalDelete} title={Nombre_Materia}>
-                        <p>Realmente esta seguro que quiere eliminar la Materia: <strong>{Nombre_Materia}</strong></p>
+                    <Modal show={showModalDelete} setShow={setShowModalDelete} title={modificaciones.Materia_name}>
+                        <p>Realmente esta seguro que quiere eliminar la Materia: <strong>{modificaciones.Materia_name}</strong></p>
                         <div className="Materias-Detalles buttons">
                             <input
                                 type="submit"
@@ -469,14 +614,19 @@ const Materias = props => {
                         </div>
                     </Modal>
                     {/* Confirmar */}
-                    <Modal show={showModalConfirm} setShow={setShowModalConfirm} title={Nombre_Materia}>
+                    <Modal show={showModalConfirm} setShow={setShowModalConfirm} title={modificaciones.Materia_name}>
                         <div className="modal group">
                             <p>Realmente esta seguro que quiere actualizar los datos de la Materia:</p>
                             <br />
                             <div className="Usuarios-Detalles summary">
-                                {ID_Materia === addData.Materia_ID ? null : <p>ID de la materia pasara de: <strong className="Resaltado">{ID_Materia}</strong> a <strong className="Resaltado">{addData.Materia_ID}</strong></p>}
-                                {Nombre_Materia === addData.Materia_name ? null : <p>Nombre de la materia pasara de: <strong className="Resaltado">{Nombre_Materia}</strong> a <strong className="Resaltado">{addData.Materia_name}</strong></p>}
-                                {/* {ID_Carrera === addData.materia_carrera ? null : <p>Carrera de la materia pasara de: <strong className="Resaltado">{Nombre_Carrera}</strong> a <strong className="Resaltado">{addData.Nombre_Carrera}</strong></p>} */}
+                                {modificaciones.Materia_reticula === addData.Materia_reticula ? null : <p>ID de la materia pasara de: <strong className="Resaltado">{modificaciones.Materia_reticula}</strong> a <strong className="Resaltado">{addData.Materia_reticula}</strong></p>}
+                                {modificaciones.Materia_name === addData.Materia_name ? null : <p>Nombre de la materia pasara de: <strong className="Resaltado">{modificaciones.Materia_name}</strong> a <strong className="Resaltado">{addData.Materia_name}</strong></p>}
+                                {modificaciones.Materia_carrera === addData.materia_carrera ? null : <p>Carrera de la materia pasara de: <strong className="Resaltado">{modificaciones.Materia_nombre_carrera}</strong> a <strong className="Resaltado">{addData.Nombre_Carrera}</strong></p>}
+                                {modificaciones.Materia_horas_teoricas === addData.Materia_horas_teoricas ? null : <p>Las horas teoricas de la materia pasara de: <strong className="Resaltado">{modificaciones.Materia_horas_teoricas}</strong> a <strong className="Resaltado">{addData.Materia_horas_teoricas}</strong></p>}
+                                {modificaciones.Materia_horas_practicas === addData.Materia_horas_practicas ? null : <p>Las horas practicas de la materia pasara de: <strong className="Resaltado">{modificaciones.Materia_horas_practicas}</strong> a <strong className="Resaltado">{addData.Materia_horas_practicas}</strong></p>}
+                                {modificaciones.Materia_creditos === addData.Materia_creditos ? null : <p>Los creditos de la materia pasara de: <strong className="Resaltado">{modificaciones.Materia_creditos}</strong> a <strong className="Resaltado">{addData.Materia_creditos}</strong></p>}
+                                {modificaciones.Materia_unidades === addData.Materia_unidades ? null : <p>Las unidades de la materia pasara de: <strong className="Resaltado">{modificaciones.Materia_unidades}</strong> a <strong className="Resaltado">{addData.Materia_unidades}</strong></p>}
+
                             </div>
                         </div>
                         <input
