@@ -50,6 +50,15 @@ $select-color: #a7a7a7;
 
     .form.group.modal.Usuario.usr {
 
+
+        input[type='text'] {
+            position: relative;
+        }
+        .usuarios-grid-Opcion {
+            left: -29%;
+            width: 50%;
+        }
+
         .highlight.Usuarios-usr {
             position: absolute;
             height: 100%;
@@ -59,13 +68,13 @@ $select-color: #a7a7a7;
             pointer-events: none;
             opacity: 0.5;
         }
-
+        
         .bottomBar.Usuarios-usr {
             background: #111111;
             position: absolute;
             display: block;
             height: 2px;
-            width: 100%;
+            width: 50%;
             left: -4%;
         }
     }
