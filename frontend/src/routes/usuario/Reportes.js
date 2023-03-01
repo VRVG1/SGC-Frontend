@@ -291,15 +291,20 @@ export const Reportes = () => {
     const TituloMateria = () => {
         let titulo;
         if (selMateria.ID_Asignan !== null) {
-            let grado = asignan.filter(asigna => (asigna.ID_Asignan === selMateria.ID_Asignan))[0].Grado;
+            let semestre = asignan.filter(asigna => (asigna.ID_Asignan === selMateria.ID_Asignan))[0].Semestre;
             let grupo = asignan.filter(asigna => (asigna.ID_Asignan === selMateria.ID_Asignan))[0].Grupo;
             let ID_Materia = asignan.filter(asigna => (asigna.ID_Asignan === selMateria.ID_Asignan))[0].ID_Materia;
-            let ID_Carrera = asignan.filter(asigna => (asigna.ID_Asignan === selMateria.ID_Asignan))[0].ID_Carrera;
-            let nombreMateria = materias.filter(materia => (materia.ID_Materia === ID_Materia))[0].Nombre_Materia;
-            let NombreCarrera = carreras.filter(carrera => (carrera.ID_Carrera === ID_Carrera))[0].Nombre_Carrera;
+            let nombreMateria = materias.filter(materia => (materia.Clave_reticula === ID_Materia))[0].Nombre_Materia;
+            let ID_Carrera = materias.filter(materia => (materia.Clave_reticula === ID_Materia))[0].Carrera;
+            let NombreCarrera = carreras.filter(carrera => (carrera.ID_Carrera == ID_Carrera))[0].Nombre_Carrera;
+            console.log(asignan.filter(asigna => (asigna.ID_Asignan === selMateria.ID_Asignan)))
+            console.log("selMateria", selMateria)
+            console.log("materia", materias)
+            console.log("asignan", asignan)
+            console.log("carrera", carreras)
             titulo = (
                 <h3>
-                    {NombreCarrera + "\t" + nombreMateria + "\t" + grado + "\t" + grupo}
+                    {NombreCarrera + "\t" + nombreMateria + "\t" + semestre + "\t" + grupo}
                 </h3>
             );
         }
@@ -403,87 +408,89 @@ export const Reportes = () => {
             {loading === false ?
                 (<>
                     {Object.keys(reportes).length !== 0 ? <>
-                        <div className='reportesUser-Container'>
-                            <div className='listReportes'>
-                                <ul>
-                                    {Object.keys(reporteName).length !== 0 ? reporteName.map((reporte, index) => {
-                                        if (reporte.Opcional) {
-                                            return (
-                                                <li key={index}>
-                                                    <div className='listReportes__Reporte'
-                                                        onClick={() => {
-                                                            filtrarReportes(index)
-                                                        }}>
-                                                        {reporte.Nombre_Reporte}
-                                                    </div>
-                                                </li>
-                                            )
-                                        } else {
-                                            return (
-                                                <li key={index}>
-                                                    <div className='listReportes__Reporte__cuadrado'
-                                                        onClick={() => { filtrarReportes(index) }}>
-                                                        {reporte.Nombre_Reporte}
-                                                    </div>
-                                                </li>
-                                            )
-                                        }
-                                    }) :
+                        <div className='reportesUser-Main'>
+                            <div className='reportesUser-Container'>
+                                <div className='listReportes'>
+                                    <ul>
+                                        {Object.keys(reporteName).length !== 0 ? reporteName.map((reporte, index) => {
+                                            if (reporte.Opcional) {
+                                                return (
+                                                    <li key={index}>
+                                                        <div className='listReportes__Reporte'
+                                                            onClick={() => {
+                                                                filtrarReportes(index)
+                                                            }}>
+                                                            {reporte.Nombre_Reporte}
+                                                        </div>
+                                                    </li>
+                                                )
+                                            } else {
+                                                return (
+                                                    <li key={index}>
+                                                        <div className='listReportes__Reporte__cuadrado'
+                                                            onClick={() => { filtrarReportes(index) }}>
+                                                            {reporte.Nombre_Reporte}
+                                                        </div>
+                                                    </li>
+                                                )
+                                            }
+                                        }) :
+                                            <>
+                                            </>}
+                                    </ul>
+                                </div>
+                                <div className='cabeceraReportes'>
+                                    {selReporte !== null ?
                                         <>
-                                        </>}
-                                </ul>
-                            </div>
-                            <div className='cabeceraReportes'>
-                                {selReporte !== null ?
-                                    <>
-                                        <h1 className='reportesUsuario'>{selReporte.Nombre_Reporte}</h1>
-                                        <hr />
-                                        <p className='reportesUsuario'>{selReporte.Descripcion}</p>
-
-                                    </> : <></>}
-                            </div>
-                            <div className='subirArchivos'>
-                                {selMateria.index !== null ?
-                                    <>
-                                        <div className='subirArchivos__module'>
-                                            <TituloMateria />
+                                            <h1 className='reportesUsuario'>{selReporte.Nombre_Reporte}</h1>
                                             <hr />
-                                            <div className='fileUploadU-grid'>
-                                                <div className='fileUpload'>
-                                                    <div className="file-uploadU">
-                                                        <p className='subidor__pU'>Soltar archivo(s)</p>
-                                                        <div className='subidorU'>
-                                                            <input
-                                                                id={"index"}
-                                                                accept=".pdf"
-                                                                type="file"
-                                                                onChange={uploadFileHandler}
-                                                                className="file-uploadU__input"
-                                                                multiple />
+                                            <p className='reportesUsuario'>{selReporte.Descripcion}</p>
+
+                                        </> : <></>}
+                                </div>
+                                <div className='subirArchivos'>
+                                    {selMateria.index !== null ?
+                                        <>
+                                            <div className='subirArchivos__module'>
+                                                <TituloMateria />
+                                                <hr />
+                                                <div className='fileUploadU-grid'>
+                                                    <div className='fileUpload'>
+                                                        <div className="file-uploadU">
+                                                            <p className='subidor__pU'>Soltar archivo(s)</p>
+                                                            <div className='subidorU'>
+                                                                <input
+                                                                    id={"index"}
+                                                                    accept=".pdf"
+                                                                    type="file"
+                                                                    onChange={uploadFileHandler}
+                                                                    className="file-uploadU__input"
+                                                                    multiple />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className='listFile'>
+                                                        <div className='fileNames-containerU'>
+                                                            {pendejadaDeMierda ?
+                                                                <>
+                                                                    <FilesShow />
+                                                                </> : <></>}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className='listFile'>
-                                                    <div className='fileNames-containerU'>
-                                                        {pendejadaDeMierda ?
-                                                            <>
-                                                                <FilesShow />
-                                                            </> : <></>}
-                                                    </div>
+                                                <button
+                                                    onClick={fileSummit}
+                                                >Enviar</button>
+                                            </div>
+                                            <div className='buttons_selector'>
+                                                {mostarBotonAtras ? <button className='BotonAtras' id="siguiente" onClick={anterior}>Anterior</button> : <button className='BotonAtras' id="siguiente" disabled>Anterior</button>}
+                                                <div className='dots'>
+                                                    <SetDots />
                                                 </div>
+                                                {mostarBotonSiguiente ? <button className='BotonAdelante' id="anterior" onClick={siguiente}>Siguiente</button> : <button className='BotonAdelante' id="anterior" disabled>Siguiente</button>}
                                             </div>
-                                            <button
-                                                onClick={fileSummit}
-                                            >Enviar</button>
-                                        </div>
-                                        <div className='buttons_selector'>
-                                            {mostarBotonAtras ? <button className='BotonAtras' id="siguiente" onClick={anterior}>Anterior</button> : <button className='BotonAtras' id="siguiente" disabled>Anterior</button>}
-                                            <div className='dots'>
-                                                <SetDots />
-                                            </div>
-                                            {mostarBotonSiguiente ? <button className='BotonAdelante' id="anterior" onClick={siguiente}>Siguiente</button> : <button className='BotonAdelante' id="anterior" disabled>Siguiente</button>}
-                                        </div>
-                                    </> : <></>}
+                                        </> : <></>}
+                                </div>
                             </div>
                         </div>
                         <Modal show={showModalDatosEnviados} setShow={setShowModalDatosEnviados} title={modalData.titulo}>
@@ -503,7 +510,7 @@ export const Reportes = () => {
                         </Modal>
                     </> :
                         <>
-                            
+
 
                             <div className='Sin_Resultados img'>
                                 <img src={"/static/media/kana-buscar.7a7b8c78c2c4aaec2dd5.png"} alt="Sin resultados" />

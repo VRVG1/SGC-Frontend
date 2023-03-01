@@ -9,7 +9,6 @@ const getAsignanAllUser = async (token) => {
     const url = jsonData.host + "/materia/asignan";
     const res = await fetch(url, get);
     const result = await res.json();
-    console.log(res)
     return result;
 }
 

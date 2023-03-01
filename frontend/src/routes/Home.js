@@ -61,7 +61,7 @@ const Home = () => {
       <div className='usuario-container'>
 
         <Saludo />
-        <h1>Bienvenido al Sistema Gestor del Curso</h1>
+        <h1>Bienvenido al Sistema de Gestión del Curso</h1>
       </div>
     </div>
   );

@@ -66,8 +66,6 @@ const ReportesCheck = props => {
     const getGenerann = useCallback(async () => {
         await getGeneran(auth.user.token).then(res => {
             setGeneran(res);
-            console.log("AQUI LO DE VIC");
-            console.log(res);
         }).catch(err => {
             console.log(err);
         });
@@ -414,10 +412,7 @@ const ReportesCheck = props => {
                                                                                     PK = PK.ID_Generacion
                                                                                 }
                                                                                 if (asignan2.ID_Usuario === maestro.PK) {
-                                                                                    let si = materias.filter(materia => materia.ID_Materia === asignan2.ID_Materia)[0].Nombre_Materia;
-                                                                                    console.log("------");
-                                                                                    console.log(estado, PK);
-
+                                                                                    let si = materias.filter(materia => materia.Clave_reticula === asignan2.ID_Materia)[0].Nombre_Materia;
 
                                                                                     if (typeof (dataInput.nombreMateria) === "undefined") {
                                                                                         return (

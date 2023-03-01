@@ -9,13 +9,12 @@ $select-color: #a7a7a7;
     flex-direction: column;
     justify-content: center;
     width: 60%;
-    margin-left: 20%;
-    margin-top: 5%; 
-    margin-bottom: 0%;
     border-radius: 15px 15px 15px 15px;
     -webkit-box-shadow: 12px 12px 11px 3px rgba(0,0,0,0.61); 
     box-shadow: 12px 12px 11px 3px rgba(0,0,0,0.61);
     position: relative;
+    left: 20%;
+    top: 8rem; 
    
 }
 
@@ -433,6 +432,9 @@ th{
 .Sin_Resultados {
   overflow: none;
   display: flex;
+  position: relative;
+  left: 10rem;
+  top: 3rem;
 }
 
 .containerDetallesUser{
