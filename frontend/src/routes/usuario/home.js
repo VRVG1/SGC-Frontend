@@ -18,6 +18,7 @@ export const Home2 = () => {
   const [carreras, setCarreras] = useState([]);
   const [aBorrar, setABorrar] = useState([]);
   const [materias, setMaterias] = useState([]);
+  const [allmaterias, setallmaterias] = useState([])
   const [asignanMaterias, setAsignanMaterias] = useState([]);
   const [showModalAlert, setShowModalAlert] = useState(false);
   const [mensajeAlerta, setMensajeAlerta] = useState('');
@@ -33,7 +34,9 @@ export const Home2 = () => {
     semestre: '',
     dia: '',
     hora: '',
-    aula: ''
+    aula: '',
+    Nombre_Carrera: '',
+    Nombre_Materia: '',
   });
   const [dataTable, setDataTable] = useState([]);
   let date = new Date();
@@ -47,15 +50,15 @@ export const Home2 = () => {
    * 
    */
   useEffect(() => {
-    // const obtenerMateria = async () => {
-    //   await getAllMaterias(auth.user.token).then((data) => {
-    //     setMaterias([{
-    //       Carrera: "",
-    //       Clave_reticula: "",
-    //       Nombre_Materia: ""
-    //     }, ...data]);
-    //   });
-    // };
+    const obtenerMateria = async () => {
+      await getAllMaterias(auth.user.token).then((data) => {
+        setallmaterias([{
+          Carrera: "",
+          Clave_reticula: "",
+          Nombre_Materia: ""
+        }, ...data]);
+      });
+    };
     const obtenerCarrera = async () => {
       await getAllCarrera(auth.user.token).then((data) => {
         setCarreras([{
@@ -67,10 +70,10 @@ export const Home2 = () => {
 
     getInforUser();
     obtenerCarrera();
-    //obtenerMateria();
+    obtenerMateria();
     return () => {
       setCarreras([]);
-      setMaterias([]);
+      setallmaterias([]);
       setInfoUser([]);
     }
   }, []);
@@ -93,7 +96,9 @@ export const Home2 = () => {
             semestre: data.Grado,
             dia: data.dia,
             aula: data.aula,
-            hora: data.hora
+            hora: data.hora,
+            Nombre_Carrera: '',
+            Nombre_Materia: ''
           }
         ];
         setDataTable(oldArray => [...oldArray, ...data2]);
@@ -146,10 +151,25 @@ export const Home2 = () => {
    */
   const handleChange = (e) => {
     if (e.target.value.match(regex[e.target.name]) != null) {
-      setSelectedData({
-        ...selectedData,
-        [e.target.name]: e.target.value,
-      });
+      if (e.target.name === "carrera_ID") {
+        setSelectedData({
+          ...selectedData,
+          [e.target.name]: e.target.value,
+          "Nombre_Carrera": getCarreraName(e.target.value),
+          
+        })
+      } else if (e.target.name === "Clave_reticula") {
+        setSelectedData({
+          ...selectedData,
+          [e.target.name]: e.target.value,
+          "Nombre_Materia": getMateriaName(e.target.value)
+        })
+      } else {
+        setSelectedData({
+          ...selectedData,
+          [e.target.name]: e.target.value,
+        });
+      }
     }
   };
 
@@ -161,14 +181,27 @@ export const Home2 = () => {
   const agregarTabla = () => {
     let yaEsta = false;
     // Por si hace falta, poner en el if de abajo || selectedData.Clave_reticula === ''
-    if (selectedData.carrera_ID === ''  || selectedData.grupo === '' || selectedData.semestre === '' || selectedData.aula === '' || selectedData.dia === '' || selectedData.hora === '') {
+    if (selectedData.carrera_ID === ''
+      || selectedData.grupo === ''
+      || selectedData.semestre === ''
+      || selectedData.aula === ''
+      || selectedData.dia === ''
+      || selectedData.hora === ''
+      || selectedData.Clave_reticula === '') {
       setShowModalAlert(true);
       setMensajeAlerta('Todos los campos son obligatorios');
       return;
     }
+
     dataTable.map((data) => {
       //Por si hace falta, poner en el if de abajo && data.Clave_reticula === selectedData.Clave_reticula
-      if (data.carrera_ID === selectedData.carrera_ID  && data.grupo === selectedData.grupo && data.semestre === selectedData.semestre && data.aula === selectedData.aula && data.hora === selectedData.hora && data.dia === selectedData.dia) {
+      if (data.carrera_ID === selectedData.carrera_ID
+        && data.grupo === selectedData.grupo
+        && data.semestre === selectedData.semestre
+        && data.aula === selectedData.aula
+        && data.hora === selectedData.hora
+        && data.dia === selectedData.dia
+        && data.Clave_reticula === selectedData.Clave_reticula) {
         yaEsta = true;
         setShowModalAlert(true);
         setMensajeAlerta('Ya se a asignaron esos datos');
@@ -235,29 +268,28 @@ export const Home2 = () => {
    */
   useEffect(() => {
     const getMateria = async () => {
-      if (selectedData.carrera_ID !== ""){
+      if (selectedData.carrera_ID !== "") {
         await getMateriaXCarrera(auth.user.token, selectedData.carrera_ID).then((data) => {
           setMaterias(data)
           setSelectedData({
             ...selectedData,
-            Clave_reticula: data[0].Clave_reticula
+            Clave_reticula: data[0].Clave_reticula,
+            Nombre_Materia: getMateriaName(data[0].Clave_reticula),
+
           })
         }).catch((err) => {
           console.log(err)
-          setMaterias([])
         });
+      } else {
+        setMaterias([])
       }
     }
-    
+
     getMateria();
-    return () => {
-      setMaterias([])
-    }
   }, [selectedData.carrera_ID])
-  
+
 
   useEffect(() => {
-    //console.log(dataTable, aBorrar, asignanMaterias);
     if (continuacion !== 0 && send) {
       if (asignanMaterias.length > 0) {
         let aguardar = false;
@@ -328,7 +360,23 @@ export const Home2 = () => {
     return saludo;
   }
 
+  const getMateriaName = (data) => {
+    let si = allmaterias.filter(materia => materia.Clave_reticula === data)
+    if (si.length !== 0) {
+      return si[0].Nombre_Materia
+    } else {
+      return ''
+    }
+  }
 
+  const getCarreraName = (data) => {
+    let si = carreras.filter(carrera => carrera.ID_Carrera === data)
+    if (si.length !== 0) {
+      return si[0].Nombre_Carrera
+    } else {
+      return ''
+    }
+  }
 
   return (
     <div className='usuario-container-parent'>
@@ -361,15 +409,18 @@ export const Home2 = () => {
                       <tbody>
                         {dataTable.map((data, index) => (
                           <tr key={index}>
-                            <td>{carreras.filter(carrera => carrera.ID_Carrera === data.carrera_ID)[0].Nombre_Carrera}</td>
-                            <td>{materias.filter(materia => materia.Clave_reticula === data.Clave_reticula)[0].Nombre_Materia}</td>
+                            <td>{data.Nombre_Carrera}</td>
+                            <td>{data.Nombre_Materia}</td>
                             <td>{data.grupo}</td>
                             <td>{data.semestre}</td>
                             <td>{data.hora}</td>
                             <td>{data.dia}</td>
                             <td>{data.aula}</td>
                             <td> <button onClick={() => {
-                              if (aBorrar.filter(data2 => data2.carrera_ID === data.carrera_ID && data2.Clave_reticula === data.Clave_reticula && data2.grupo === data.grupo && data2.semestre === data.semestre).length === 0) {
+                              if (aBorrar.filter(data2 => data2.carrera_ID === data.carrera_ID
+                                && data2.Clave_reticula === data.Clave_reticula
+                                && data2.grupo === data.grupo
+                                && data2.semestre === data.semestre).length === 0) {
 
                                 setABorrar([...aBorrar, data]);
                               }
@@ -383,6 +434,7 @@ export const Home2 = () => {
                   </div>
                   <button onClick={sendData}>Confirmar</button>
                 </div>
+
                 <div className='usuario-grid__2'>
                   <div className="form group modal Usuario usr">
                     <select name="carrera_ID" value={selectedData.carrera_ID} onChange={handleChange} className='usuarios-grid-Opcion'>
@@ -529,8 +581,8 @@ export const Home2 = () => {
                     <tbody>
                       {dataTable.map((data, index) => (
                         <tr key={index}>
-                          <td>{carreras.filter(carrera => carrera.ID_Carrera === data.carrera_ID)[0].Nombre_Carrera}</td>
-                          <td>{materias.filter(materia => materia.Clave_reticula === data.Clave_reticula)[0].Nombre_Materia}</td>
+                          <td>{data.Nombre_Carrera}</td>
+                          <td>{data.Nombre_Materia}</td>
                           <td>{data.grupo}</td>
                           <td>{data.semestre}</td>
                           <td>{data.hora}</td>
