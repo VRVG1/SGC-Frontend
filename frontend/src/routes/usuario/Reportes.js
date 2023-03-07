@@ -297,11 +297,6 @@ export const Reportes = () => {
             let nombreMateria = materias.filter(materia => (materia.Clave_reticula === ID_Materia))[0].Nombre_Materia;
             let ID_Carrera = materias.filter(materia => (materia.Clave_reticula === ID_Materia))[0].Carrera;
             let NombreCarrera = carreras.filter(carrera => (carrera.ID_Carrera == ID_Carrera))[0].Nombre_Carrera;
-            console.log(asignan.filter(asigna => (asigna.ID_Asignan === selMateria.ID_Asignan)))
-            console.log("selMateria", selMateria)
-            console.log("materia", materias)
-            console.log("asignan", asignan)
-            console.log("carrera", carreras)
             titulo = (
                 <h3>
                     {NombreCarrera + "\t" + nombreMateria + "\t" + semestre + "\t" + grupo}

@@ -5,6 +5,7 @@ import getAllCarrera from '../helpers/Carreras/getAllCarrera'
 import getAllMaterias from '../helpers/Materias/getAllMaterias'
 import postAsigna from '../helpers/Asignan/postAsignan.js'
 import getAllAsignanUser from '../helpers/Asignan/getAllAsignanUser.js'
+import getAsignanC from '../helpers/Asignan/getAsignanC'
 import deleteAsignacion from '../helpers/Asignan/deleteAsignacion.js'
 import { AuthContext } from '../helpers/Auth/auth-context'
 import Modal from '../modal/Modal'
@@ -79,7 +80,20 @@ export const Home2 = () => {
   }, []);
 
   useEffect(() => {
-    getAsignan();
+    //getAsignan();
+    const pinga2 = async () => {
+      if (infoUser.PK !== undefined) {
+        await getAsignanC(auth.user.token, infoUser.PK).then((data) => {
+          setAsignanMaterias(data);
+        }
+  
+        ).catch((err) => {
+          //console.log(err);
+        }
+        );
+      }
+    }
+    pinga2();
     return () => {
       setAsignanMaterias([]);
     }
@@ -87,18 +101,19 @@ export const Home2 = () => {
 
   useEffect(() => {
     if (asignanMaterias.length > 0) {
+      console.log(asignanMaterias)
       asignanMaterias.map((data) => {
-        let data2 = [
+        const data2 = [
           {
             carrera_ID: data.ID_Carrera,
-            Clave_reticula: data.Clave_reticula,
+            Clave_reticula: data.ID_Materia,
             grupo: data.Grupo,
-            semestre: data.Grado,
-            dia: data.dia,
-            aula: data.aula,
-            hora: data.hora,
-            Nombre_Carrera: '',
-            Nombre_Materia: ''
+            semestre: data.Semestre,
+            dia: data.Dia,
+            aula: data.Aula,
+            hora: data.Hora,
+            Nombre_Carrera: data.Carrera,
+            Nombre_Materia: data.Nombre_Materia
           }
         ];
         setDataTable(oldArray => [...oldArray, ...data2]);
@@ -112,6 +127,7 @@ export const Home2 = () => {
     async () => {
       if (infoUser.PK !== undefined) {
         await getAllAsignanUser(auth.user.token, infoUser.PK).then((data) => {
+          console.log(data)
           setAsignanMaterias(data);
         }
 
@@ -443,8 +459,7 @@ export const Home2 = () => {
                           return (
                             <option key={carrera.ID_Carrera} value={carrera.ID_Carrera}>{carrera.Nombre_Carrera}</option>
                           )
-                        }
-                        )
+                        })
                       ) : (
                         <></>
                       )}
@@ -510,15 +525,15 @@ export const Home2 = () => {
                   <div className="form group modal Usuario usr">
                     <select name='hora' value={selectedData.hora} onChange={handleChange} className='usuarios-grid-Opcion'>
                       <option value={""}></option>
-                      <option value={"07:00 - 08:00"}>07:00 - 08:00</option>
-                      <option value={"08:00 - 09:00"}>08:00 - 09:00</option>
+                      <option value={"07:00 - 08:00"}>7:00 - 8:00</option>
+                      <option value={"08:00 - 09:00"}>8:00 - 9:00</option>
                       <option value={"10:00 - 11:00"}>10:00 - 11:00</option>
                       <option value={"11:00 - 12:00"}>11:00 - 12:00</option>
                       <option value={"12:00 - 13:00"}>12:00 - 13:00</option>
                       <option value={"13:00 - 14:00"}>13:00 - 14:00</option>
                       <option value={"14:00 - 15:00"}>14:00 - 15:00</option>
-                      <option value={"7:00 - 9:00"}>7:00 - 9:00</option>
-                      <option value={"9:00 - 11:00"}>9:00 - 11:00</option>
+                      <option value={"07:00 - 09:00"}>7:00 - 9:00</option>
+                      <option value={"09:00 - 11:00"}>9:00 - 11:00</option>
                       <option value={"11:00 - 13:00"}>11:00 - 13:00</option>
                       <option value={"13:00 - 15:00"}>13:00 - 15:00</option>
                     </select>

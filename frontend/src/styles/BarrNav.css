@@ -99,7 +99,7 @@ main{
   transition: all 0.3s ease;
 }
 .sidebar .nav-links li.showMenu i.arrow{
-  transform: rotate(-180deg);
+  transform: translate(0pc, -1rem) rotate(-180deg);
 }
 .sidebar.close .nav-links i.arrow{
   display: none;
@@ -129,6 +129,8 @@ main{
 }
 .sidebar .nav-links li.showMenu .sub-menu{
   display: block;
+  display: relative;
+  top: -10%;
 }
 .sidebar .nav-links li .sub-menu .a{
   color: #fff;
@@ -266,8 +268,8 @@ main{
 
  .li{
    color: #fff;
-   font-size: 0.85rem;
-   opacity: 0.8;
+   font-size: 1rem;
+   opacity: 0.80;
    margin-bottom: 2%;
    margin-top: 2%;
  }
