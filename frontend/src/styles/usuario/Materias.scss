@@ -33,14 +33,14 @@ $red: #dd1818;
             width: 22rem;
             text-align: center;
             border-right: $red solid 2px;
-    
+
             .materia-title {
                 p {
                     font-size: 1.4rem;
                     font-weight: bolder;
                 }
             }
-    
+
             .materia-detalles {
                 display: flex;
                 flex-direction: row;
@@ -54,13 +54,14 @@ $red: #dd1818;
                 }
             }
         }
-    
+
         .scroll {
             overflow-x: scroll;
             display: flex;
             flex-direction: row;
             width: 74rem;
         }
+
         .materia-flex-right {
             display: flex;
             flex-direction: row;
@@ -72,16 +73,17 @@ $red: #dd1818;
             padding: 0.5rem;
 
 
-            
+
             .materia-unidad-card {
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between;
+                justify-content: space-around;
                 width: 100%;
 
                 .card-title {
                     position: relative;
                     top: 0.5rem;
+
                     p {
                         font-size: 1.3rem;
                         font-weight: bold;
@@ -91,6 +93,7 @@ $red: #dd1818;
                 .card-body {
                     display: flex;
                     flex-direction: column;
+
                     .fecha {
                         p {
                             font-size: 1.2rem;
@@ -102,6 +105,7 @@ $red: #dd1818;
                         p {
                             font-size: 1.2rem;
                         }
+
                         input {
                             position: relative;
                             background-color: rgba(0, 0, 0, 0.0);
@@ -117,4 +121,44 @@ $red: #dd1818;
         }
     }
 
+}
+
+.Modal-Input {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+
+    h5{
+        font-size: 1.5rem;
+    }
+
+    p {
+        input {
+            margin-left: 20px;
+            background: none;
+            border: none;
+            border-bottom: $foreground 2px solid;
+        }
+
+        input#Reprobados {
+            width: 10%;
+        }
+    }
+}
+
+.Modal2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    h5 {
+        font-size: 1.4rem;
+    }
+
+    button {
+        width: fit-content;
+    }
 }

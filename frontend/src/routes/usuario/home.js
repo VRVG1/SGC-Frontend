@@ -5,7 +5,7 @@ import getAllCarrera from '../helpers/Carreras/getAllCarrera'
 import getAllMaterias from '../helpers/Materias/getAllMaterias'
 import postAsigna from '../helpers/Asignan/postAsignan.js'
 import getAllAsignanUser from '../helpers/Asignan/getAllAsignanUser.js'
-import getAsignanC from '../helpers/Asignan/getAsignanC'
+import asignanCNames_allpk from '../helpers/Asignan/asignanCNames-allpk'
 import deleteAsignacion from '../helpers/Asignan/deleteAsignacion.js'
 import { AuthContext } from '../helpers/Auth/auth-context'
 import Modal from '../modal/Modal'
@@ -83,8 +83,9 @@ export const Home2 = () => {
     //getAsignan();
     const pinga2 = async () => {
       if (infoUser.PK !== undefined) {
-        await getAsignanC(auth.user.token, infoUser.PK).then((data) => {
+        await asignanCNames_allpk(auth.user.token, infoUser.PK).then((data) => {
           setAsignanMaterias(data);
+          console.log(data)
         }
   
         ).catch((err) => {
