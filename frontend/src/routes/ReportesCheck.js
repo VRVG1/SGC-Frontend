@@ -66,8 +66,6 @@ const ReportesCheck = props => {
     const getGenerann = useCallback(async () => {
         await getGeneran(auth.user.token).then(res => {
             setGeneran(res);
-            console.log("AQUI LO DE VIC");
-            console.log(res);
         }).catch(err => {
             console.log(err);
         });
@@ -263,14 +261,14 @@ const ReportesCheck = props => {
                         <div className="ReportesCheck-search">
                             <h1> Reportes Check </h1>
 
-                            <div className="search-button-dialog">
+                            {/* <div className="search-button-dialog">
                                 <div className="search-button-dialog__content">
 
-                                    {/* <p><input type="checkbox" id="hidden2" name="rbtn-search" value="Carrera"
+                                    <p><input type="checkbox" id="hidden2" name="rbtn-search" value="Carrera"
                                         onClick={changeEstado} />Carrera</p>
 
                                         <p><input type="checkbox" id="hidden3" name="rbtn-search" value="Grupo"
-                                    onClick={changeEstado} />Grupo</p> */}
+                                    onClick={changeEstado} />Grupo</p>
                                     <p><input type="checkbox" defaultChecked="true" id="hidden1" name="rbtn-search" value="Maestro"
                                         onClick={changeEstado}
                                     />Docente</p>
@@ -278,7 +276,7 @@ const ReportesCheck = props => {
                                     <p><input type="checkbox" id="hidden4" name="rbtn-search" value="Materia"
                                         onClick={changeEstado} />Materia</p>
                                 </div>
-                            </div>
+                            </div> */}
                             <form>
                                 <div className={hidden.hidden1}>
                                     <input
@@ -419,10 +417,7 @@ const ReportesCheck = props => {
                                                                                     PK = PK.ID_Generacion
                                                                                 }
                                                                                 if (asignan2.ID_Usuario === maestro.PK) {
-                                                                                    let si = materias.filter(materia => materia.ID_Materia === asignan2.ID_Materia)[0].Nombre_Materia;
-                                                                                    console.log("------");
-                                                                                    console.log(estado, PK);
-
+                                                                                    let si = materias.filter(materia => materia.Clave_reticula === asignan2.ID_Materia)[0].Nombre_Materia;
 
                                                                                     if (typeof (dataInput.nombreMateria) === "undefined") {
                                                                                         return (

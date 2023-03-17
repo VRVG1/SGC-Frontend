@@ -1,0 +1,164 @@
+$background: #f3f3f3;
+$foreground: #111111;
+$red: #dd1818;
+
+.Materia-container {
+    background-color: $background;
+    display: flex;
+    flex-direction: column;
+    padding-left: 4.5rem;
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+
+    width: 100%;
+
+    .materia-flex {
+        background-color: $background;
+        display: flex;
+        background-color: $background;
+        border-radius: 15px 15px 15px 15px;
+        -webkit-box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+        box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+        min-height: 12rem;
+        height: 12rem;
+        margin: 2rem 0% 0% 2rem;
+        width: calc(100% - 3.5rem);
+        max-width: calc(100% - 3.5rem);
+        min-width: calc(100% - 3.5rem);
+
+        .materia-flex-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 22rem;
+            text-align: center;
+            border-right: $red solid 2px;
+
+            .materia-title {
+                p {
+                    font-size: 1.4rem;
+                    font-weight: bolder;
+                }
+            }
+
+            .materia-detalles {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                position: relative;
+                bottom: 2rem;
+
+                p {
+                    font-size: 1.3rem;
+                    font-weight: bold;
+                }
+            }
+        }
+
+        .scroll {
+            overflow-x: scroll;
+            display: flex;
+            flex-direction: row;
+            width: 74rem;
+        }
+
+        .materia-flex-right {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            text-align: center;
+            width: 20rem;
+            max-width: 20rem;
+            min-width: 20rem;
+            padding: 0.5rem;
+
+
+
+            .materia-unidad-card {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                width: 100%;
+
+                .card-title {
+                    position: relative;
+                    top: 0.5rem;
+
+                    p {
+                        font-size: 1.3rem;
+                        font-weight: bold;
+                    }
+                }
+
+                .card-body {
+                    display: flex;
+                    flex-direction: column;
+
+                    .fecha {
+                        p {
+                            font-size: 1.2rem;
+                            font-weight: bold;
+                        }
+                    }
+
+                    .reprobados {
+                        p {
+                            font-size: 1.2rem;
+                        }
+
+                        input {
+                            position: relative;
+                            background-color: rgba(0, 0, 0, 0.0);
+                            border: none;
+                            border-bottom: solid 1px;
+                            width: 3rem;
+                            text-align: center;
+                            left: 0.5rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+.Modal-Input {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+
+    h5{
+        font-size: 1.5rem;
+    }
+
+    p {
+        input {
+            margin-left: 20px;
+            background: none;
+            border: none;
+            border-bottom: $foreground 2px solid;
+        }
+
+        input#Reprobados {
+            width: 10%;
+        }
+    }
+}
+
+.Modal2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    h5 {
+        font-size: 1.4rem;
+    }
+
+    button {
+        width: fit-content;
+    }
+}

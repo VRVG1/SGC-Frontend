@@ -181,7 +181,6 @@ const Materias = props => {
      */
     const save = async () => {
         setLoading(true);
-        console.log(datainput);
         setResultado(await postCarrera(datainput, auth.user.token));
     }
     /**

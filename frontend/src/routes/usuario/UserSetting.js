@@ -46,7 +46,6 @@ const UserSettings = () => {
             setLoading(true);
             let result = await putDocente(dataInput, auth.user.token);
             if (result === "Accepted") {
-                console.log("actualizado")
                 setLoading(false);
                 setShowModalConfirm(true);
             } else {
@@ -69,10 +68,9 @@ const UserSettings = () => {
                     Nombre_Usuario: data.Nombre_Usuario,
                     PK: data.PK,
                 })
-                console.log(data)
             }
             ).catch((err) => {
-                console.log(err);
+                //console.log(err);
             }
             );
         }

@@ -37,6 +37,8 @@ import OlvideContra from './routes/OlivdeContra';
 import { Reportes } from './routes/usuario/Reportes';
 import UserSettings from './routes/usuario/UserSetting';
 import BarNavS from "./routes/Supervisor/BarNavS.js";
+import UMaterias from "./routes/usuario/Materias";
+import ReportesMaterias from './routes/RepostesMaterias';
 
 import "./styles/style.css";
 import "./styles/BarrNav.css"
@@ -52,6 +54,8 @@ import "./styles/Home.scss"
 import "./styles/usuario/reportesU.scss"
 import "./styles/usuario/UserSetting.scss"
 import "./styles/sysSettings.scss"
+import "./styles/usuario/Materias.scss"
+import "./styles/ReportesMaterias.scss"
 
 /**
   * Funcion que facilita el acceso al contexto 'AuthContext'.
@@ -219,6 +223,7 @@ function Application() {
             <Route path="carreras" element={<Carreras />} />
             <Route path="reportes/admin" element={<ReportesAdmin />} />
             <Route path="reportes/check" element={<ReportesCheck />} />
+            <Route path="reportes/materias" element={<ReportesMaterias />} />
             <Route path="exportardatos" element={<ExportData />} />
             <Route path="Respaldoyrestauraciones" element={<BackUpRestore />} />
             <Route path='ajustes' element={<SysSettings />} />
@@ -236,6 +241,7 @@ function Application() {
             <Route path='home' element={<Home2 />} />
             <Route path='reportes' element={<Reportes />} />
             <Route path='ajustes' element={<UserSettings />} />
+            <Route path='materias' element={<UMaterias />} />
           </Route>
           <Route
             path="/supervisor"

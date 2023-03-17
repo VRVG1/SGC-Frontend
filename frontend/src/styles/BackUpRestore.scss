@@ -6,11 +6,12 @@ $blur: #08080850;
 .conteiner-BUR {
     background-color: rgba(240, 255, 255, 0);
     width: 80%;
-    position: relative;
-    margin: 15% auto auto auto;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    position: relative;
+    left: 10%;
+    top: 12rem;
 }
 
 .conteiner-BUR__BU {

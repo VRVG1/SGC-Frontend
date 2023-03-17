@@ -5,10 +5,13 @@ import getAllCarrera from '../helpers/Carreras/getAllCarrera'
 import getAllMaterias from '../helpers/Materias/getAllMaterias'
 import postAsigna from '../helpers/Asignan/postAsignan.js'
 import getAllAsignanUser from '../helpers/Asignan/getAllAsignanUser.js'
+import asignanCNames_allpk from '../helpers/Asignan/asignanCNames-allpk'
 import deleteAsignacion from '../helpers/Asignan/deleteAsignacion.js'
 import { AuthContext } from '../helpers/Auth/auth-context'
 import Modal from '../modal/Modal'
 import getInfoUser from '../helpers/Usuarios/getInfoUser'
+import getMateriaXCarrera from '../helpers/Materias/getCarreraIDMaterias'
+
 export const Home2 = () => {
   let auth = useContext(AuthContext);
   const [infoUser, setInfoUser] = useState([]);
@@ -16,6 +19,7 @@ export const Home2 = () => {
   const [carreras, setCarreras] = useState([]);
   const [aBorrar, setABorrar] = useState([]);
   const [materias, setMaterias] = useState([]);
+  const [allmaterias, setallmaterias] = useState([])
   const [asignanMaterias, setAsignanMaterias] = useState([]);
   const [showModalAlert, setShowModalAlert] = useState(false);
   const [mensajeAlerta, setMensajeAlerta] = useState('');
@@ -26,13 +30,21 @@ export const Home2 = () => {
   const [boraccion, setBoraccion] = useState(0);
   const [selectedData, setSelectedData] = useState({
     carrera_ID: '',
-    materia_ID: '',
+    Clave_reticula: '',
     grupo: '',
     semestre: '',
+    dia: '',
+    hora: '',
+    aula: '',
+    Nombre_Carrera: '',
+    Nombre_Materia: '',
   });
   const [dataTable, setDataTable] = useState([]);
   let date = new Date();
   let hour = date.getHours();
+  const [regex, setRegex] = useState({
+    aula: /^[a-z]{0,1}[0-9]{0,2}$/,
+  });
 
   /**
    * Hacer el llamado al los helper para obtener las carreras y materias
@@ -41,9 +53,9 @@ export const Home2 = () => {
   useEffect(() => {
     const obtenerMateria = async () => {
       await getAllMaterias(auth.user.token).then((data) => {
-        setMaterias([{
+        setallmaterias([{
           Carrera: "",
-          ID_Materia: "",
+          Clave_reticula: "",
           Nombre_Materia: ""
         }, ...data]);
       });
@@ -62,13 +74,27 @@ export const Home2 = () => {
     obtenerMateria();
     return () => {
       setCarreras([]);
-      setMaterias([]);
+      setallmaterias([]);
       setInfoUser([]);
     }
   }, []);
 
   useEffect(() => {
-    getAsignan();
+    //getAsignan();
+    const pinga2 = async () => {
+      if (infoUser.PK !== undefined) {
+        await asignanCNames_allpk(auth.user.token, infoUser.PK).then((data) => {
+          setAsignanMaterias(data);
+          console.log(data)
+        }
+  
+        ).catch((err) => {
+          //console.log(err);
+        }
+        );
+      }
+    }
+    pinga2();
     return () => {
       setAsignanMaterias([]);
     }
@@ -76,14 +102,19 @@ export const Home2 = () => {
 
   useEffect(() => {
     if (asignanMaterias.length > 0) {
-      let array = [];
+      console.log(asignanMaterias)
       asignanMaterias.map((data) => {
-        let data2 = [
+        const data2 = [
           {
             carrera_ID: data.ID_Carrera,
-            materia_ID: data.ID_Materia,
+            Clave_reticula: data.ID_Materia,
             grupo: data.Grupo,
-            semestre: data.Grado.toString(),
+            semestre: data.Semestre,
+            dia: data.Dia,
+            aula: data.Aula,
+            hora: data.Hora,
+            Nombre_Carrera: data.Carrera,
+            Nombre_Materia: data.Nombre_Materia
           }
         ];
         setDataTable(oldArray => [...oldArray, ...data2]);
@@ -95,50 +126,68 @@ export const Home2 = () => {
    */
   const getAsignan = useCallback(
     async () => {
-      if (infoUser.PK != undefined) {
+      if (infoUser.PK !== undefined) {
         await getAllAsignanUser(auth.user.token, infoUser.PK).then((data) => {
+          console.log(data)
           setAsignanMaterias(data);
         }
-      
-      ).catch((err) => {
-        //console.log(err);
+
+        ).catch((err) => {
+          //console.log(err);
+        }
+        );
       }
-      );
-    }
-  },
+    },
     [infoUser],
   )
   /**
    * Funcion para obtener los datos del usuario
    */
-  const getInforUser = useCallback( 
+  const getInforUser = useCallback(
     async () => {
-    await getInfoUser(auth.user.token).then((data) => {
-      setInfoUser(data);
-    }
-    ).catch((err) => {
-      //console.log(err);
-    }
-    );
-  }, [])
-  
+      await getInfoUser(auth.user.token).then((data) => {
+        setInfoUser(data);
+      }
+      ).catch((err) => {
+        //console.log(err);
+      }
+      );
+    }, [])
+
   const deleteAsignan = async (PK) => {
-    await deleteAsignacion(auth.user.token, PK).then((data) => {
+    await deleteAsignacion(auth.user.token, PK).then(() => {
       console.log("Se elimino correctamente");
     }).catch((err) => {
       console.log(err);
     });
-  } 
+  }
 
   /**
    * Metodo para obtener los datos que se selecciones de los inputs
    * @param {*} e 
    */
   const handleChange = (e) => {
-    setSelectedData({
-      ...selectedData,
-      [e.target.name]: e.target.value,
-    });
+    if (e.target.value.match(regex[e.target.name]) != null) {
+      if (e.target.name === "carrera_ID") {
+        setSelectedData({
+          ...selectedData,
+          [e.target.name]: e.target.value,
+          "Nombre_Carrera": getCarreraName(e.target.value),
+          
+        })
+      } else if (e.target.name === "Clave_reticula") {
+        setSelectedData({
+          ...selectedData,
+          [e.target.name]: e.target.value,
+          "Nombre_Materia": getMateriaName(e.target.value)
+        })
+      } else {
+        setSelectedData({
+          ...selectedData,
+          [e.target.name]: e.target.value,
+        });
+      }
+    }
   };
 
   /**
@@ -148,13 +197,28 @@ export const Home2 = () => {
    */
   const agregarTabla = () => {
     let yaEsta = false;
-    if (selectedData.carrera_ID === '' || selectedData.materia_ID === '' || selectedData.grupo === '' || selectedData.semestre === '') {
+    // Por si hace falta, poner en el if de abajo || selectedData.Clave_reticula === ''
+    if (selectedData.carrera_ID === ''
+      || selectedData.grupo === ''
+      || selectedData.semestre === ''
+      || selectedData.aula === ''
+      || selectedData.dia === ''
+      || selectedData.hora === ''
+      || selectedData.Clave_reticula === '') {
       setShowModalAlert(true);
       setMensajeAlerta('Todos los campos son obligatorios');
       return;
     }
+
     dataTable.map((data) => {
-      if (data.carrera_ID === selectedData.carrera_ID && data.materia_ID === selectedData.materia_ID && data.grupo === selectedData.grupo && data.semestre === selectedData.semestre) {
+      //Por si hace falta, poner en el if de abajo && data.Clave_reticula === selectedData.Clave_reticula
+      if (data.carrera_ID === selectedData.carrera_ID
+        && data.grupo === selectedData.grupo
+        && data.semestre === selectedData.semestre
+        && data.aula === selectedData.aula
+        && data.hora === selectedData.hora
+        && data.dia === selectedData.dia
+        && data.Clave_reticula === selectedData.Clave_reticula) {
         yaEsta = true;
         setShowModalAlert(true);
         setMensajeAlerta('Ya se a asignaron esos datos');
@@ -185,7 +249,7 @@ export const Home2 = () => {
     let aux = aBorrar;
     dataTable.map(async (data) => {
       aux.map(auxiliar => {
-        if (auxiliar.carrera_ID === data.carrera_ID && auxiliar.materia_ID === data.materia_ID && auxiliar.grupo === data.grupo && auxiliar.semestre === data.semestre) {
+        if (auxiliar.carrera_ID === data.carrera_ID && auxiliar.Clave_reticula === data.Clave_reticula && auxiliar.grupo === data.grupo && auxiliar.semestre === data.semestre && auxiliar.dia === data.dia && auxiliar.aula === data.aula && auxiliar.hora === data.hora) {
           aux.splice(aux.indexOf(auxiliar), 1);
         }
       })
@@ -200,7 +264,7 @@ export const Home2 = () => {
       aBorrar.map(async (data) => {
         let a;
         try {
-          a = asignanMaterias.filter(datos => datos.ID_Carrera === data.carrera_ID && datos.ID_Materia === data.materia_ID && datos.Grupo === data.grupo && datos.Grado.toString() === data.semestre)[0].ID_Asignan;
+          a = asignanMaterias.filter(datos => datos.ID_Carrera === data.carrera_ID && datos.Clave_reticula === data.Clave_reticula && datos.Grupo === data.grupo && datos.Grado.toString() === data.semestre && data.aula === datos.aula && data.hora === datos.hora && data.dia === datos.dia)[0].ID_Asignan;
           deleteAsignan(a);
         } catch (error) {
           console.log(error);
@@ -209,28 +273,54 @@ export const Home2 = () => {
     }
   }
   useEffect(() => {
-    if(aBorrar.length > 0 && send){
+    if (aBorrar.length > 0 && send) {
       borrar()
     }
     setContinuacion(Math.random());
-  }, [aBorrar,boraccion]);
+  }, [aBorrar, boraccion]);
+
+  /**
+   * useEffect para actualizar el selector de materia dependiendo de la carrera elegida
+   * Se efectual el hook cuando se actualizar la variable selectedData.carrera_ID
+   */
+  useEffect(() => {
+    const getMateria = async () => {
+      if (selectedData.carrera_ID !== "") {
+        await getMateriaXCarrera(auth.user.token, selectedData.carrera_ID).then((data) => {
+          setMaterias(data)
+          setSelectedData({
+            ...selectedData,
+            Clave_reticula: data[0].Clave_reticula,
+            Nombre_Materia: getMateriaName(data[0].Clave_reticula),
+
+          })
+        }).catch((err) => {
+          console.log(err)
+        });
+      } else {
+        setMaterias([])
+      }
+    }
+
+    getMateria();
+  }, [selectedData.carrera_ID])
+
 
   useEffect(() => {
-    console.log(dataTable, aBorrar, asignanMaterias);
     if (continuacion !== 0 && send) {
       if (asignanMaterias.length > 0) {
         let aguardar = false;
         dataTable.map(async (data) => {
           aguardar = false;
           asignanMaterias.map(async (data2) => {
-            if (data.carrera_ID === data2.ID_Carrera && data.materia_ID === data2.ID_Materia && data.grupo === data2.Grupo && data.semestre === data2.Grado.toString()) {
+            if (data.carrera_ID === data2.ID_Carrera && data.Clave_reticula === data2.Clave_reticula && data.grupo === data2.Grupo && data.semestre === data2.Grado.toString() && data.dia === data2.dia && data.aula === data2.aula && data.hora === data2.hora) {
               console.log('No hacer nada porque ya esta asignado');
               aguardar = false;
             } else {
               aguardar = true;
               console.log("mandar a guardar")
             }
-            
+
           });
           if (aguardar) {
             await postAsigna(data, auth.user.token, infoUser.PK);
@@ -286,15 +376,31 @@ export const Home2 = () => {
     }
     return saludo;
   }
-  
 
+  const getMateriaName = (data) => {
+    let si = allmaterias.filter(materia => materia.Clave_reticula === data)
+    if (si.length !== 0) {
+      return si[0].Nombre_Materia
+    } else {
+      return ''
+    }
+  }
+
+  const getCarreraName = (data) => {
+    let si = carreras.filter(carrera => carrera.ID_Carrera === data)
+    if (si.length !== 0) {
+      return si[0].Nombre_Carrera
+    } else {
+      return ''
+    }
+  }
 
   return (
     <div className='usuario-container-parent'>
       <div className='usuario-container'>
-       
-        <Saludo/>
-        <h1>Bienvenido al Sistema Gestor del Curso</h1>
+
+        <Saludo />
+        <h1>Bienvenido al Sistema de Gestión del Curso</h1>
       </div>
       {
         /* Div para la seleccion de materias */
@@ -311,19 +417,28 @@ export const Home2 = () => {
                           <th>Materia</th>
                           <th>Grupo</th>
                           <th>Semestre</th>
+                          <th>Hora</th>
+                          <th>Dia</th>
+                          <th>Aula</th>
                           <th>Eliminar</th>
                         </tr>
                       </thead>
                       <tbody>
                         {dataTable.map((data, index) => (
                           <tr key={index}>
-                            <td>{carreras.filter(carrera => carrera.ID_Carrera === data.carrera_ID)[0].Nombre_Carrera}</td>
-                            <td>{materias.filter(materia => materia.ID_Materia === data.materia_ID)[0].Nombre_Materia}</td>
+                            <td>{data.Nombre_Carrera}</td>
+                            <td>{data.Nombre_Materia}</td>
                             <td>{data.grupo}</td>
                             <td>{data.semestre}</td>
+                            <td>{data.hora}</td>
+                            <td>{data.dia}</td>
+                            <td>{data.aula}</td>
                             <td> <button onClick={() => {
-                              if (aBorrar.filter(data2 => data2.carrera_ID === data.carrera_ID && data2.materia_ID === data.materia_ID && data2.grupo === data.grupo && data2.semestre === data.semestre).length === 0) {
-                                
+                              if (aBorrar.filter(data2 => data2.carrera_ID === data.carrera_ID
+                                && data2.Clave_reticula === data.Clave_reticula
+                                && data2.grupo === data.grupo
+                                && data2.semestre === data.semestre).length === 0) {
+
                                 setABorrar([...aBorrar, data]);
                               }
                               //setABorrar(oldArray => [...oldArray, data]);
@@ -336,16 +451,16 @@ export const Home2 = () => {
                   </div>
                   <button onClick={sendData}>Confirmar</button>
                 </div>
+
                 <div className='usuario-grid__2'>
                   <div className="form group modal Usuario usr">
-                    <select name="carrera_ID" value={selectedData.carrera_ID} onChange={handleChange} className='usuarios-grid-Carrera'>
+                    <select name="carrera_ID" value={selectedData.carrera_ID} onChange={handleChange} className='usuarios-grid-Opcion'>
                       {Object.keys(carreras).length !== 0 ? (
                         carreras.map((carrera) => {
                           return (
                             <option key={carrera.ID_Carrera} value={carrera.ID_Carrera}>{carrera.Nombre_Carrera}</option>
                           )
-                        }
-                        )
+                        })
                       ) : (
                         <></>
                       )}
@@ -356,11 +471,11 @@ export const Home2 = () => {
                   </div>
 
                   <div className="form group modal Usuario usr">
-                    <select name='materia_ID' value={selectedData.materia_ID} onChange={handleChange} className='usuarios-grid-Materia'>
+                    <select name='Clave_reticula' value={selectedData.Clave_reticula} onChange={handleChange} className='usuarios-grid-Opcion'>
                       {Object.keys(materias).length !== 0 ? (
                         materias.map((materia) => {
                           return (
-                            <option key={materia.ID_Materia} value={materia.ID_Materia}>{materia.Nombre_Materia}</option>
+                            <option key={materia.Clave_reticula} value={materia.Clave_reticula}>{materia.Nombre_Materia}</option>
                           )
                         }
                         )
@@ -374,7 +489,7 @@ export const Home2 = () => {
                   </div>
 
                   <div className="form group modal Usuario usr">
-                    <select name='grupo' value={selectedData.grupo} onChange={handleChange} className='usuarios-grid-Grupo'>
+                    <select name='grupo' value={selectedData.grupo} onChange={handleChange} className='usuarios-grid-Opcion'>
                       <option value={""}></option>
                       <option value={"A"}>A</option>
                       <option value={"B"}>B</option>
@@ -407,6 +522,56 @@ export const Home2 = () => {
                     <span className="bottomBar Usuarios-usr"></span>
                     <label className="Usuarios-usr">Semestre</label>
                   </div>
+
+                  <div className="form group modal Usuario usr">
+                    <select name='hora' value={selectedData.hora} onChange={handleChange} className='usuarios-grid-Opcion'>
+                      <option value={""}></option>
+                      <option value={"07:00 - 08:00"}>7:00 - 8:00</option>
+                      <option value={"08:00 - 09:00"}>8:00 - 9:00</option>
+                      <option value={"10:00 - 11:00"}>10:00 - 11:00</option>
+                      <option value={"11:00 - 12:00"}>11:00 - 12:00</option>
+                      <option value={"12:00 - 13:00"}>12:00 - 13:00</option>
+                      <option value={"13:00 - 14:00"}>13:00 - 14:00</option>
+                      <option value={"14:00 - 15:00"}>14:00 - 15:00</option>
+                      <option value={"07:00 - 09:00"}>7:00 - 9:00</option>
+                      <option value={"09:00 - 11:00"}>9:00 - 11:00</option>
+                      <option value={"11:00 - 13:00"}>11:00 - 13:00</option>
+                      <option value={"13:00 - 15:00"}>13:00 - 15:00</option>
+                    </select>
+                    <span className="highlight Usuarios-usr"></span>
+                    <span className="bottomBar Usuarios-usr"></span>
+                    <label className="Usuarios-usr">Hora</label>
+                  </div>
+
+                  <div className="form group modal Usuario usr">
+                    <select name='dia' value={selectedData.dia} onChange={handleChange} className='usuarios-grid-Opcion'>
+                      <option value={""}></option>
+                      <option value={"Lunes"}>Lunes</option>
+                      <option value={"Martes"}>Martes</option>
+                      <option value={"Miercoles"}>Miercoles</option>
+                      <option value={"Jueves"}>Jueves</option>
+                      <option value={"Viernes"}>Viernes</option>
+                    </select>
+                    <span className="highlight Usuarios-usr"></span>
+                    <span className="bottomBar Usuarios-usr"></span>
+                    <label className="Usuarios-usr">Dia</label>
+                  </div>
+
+                  <div className="form group modal Usuario usr">
+                    <input
+                      type="text"
+                      id="aula"
+                      name="aula"
+                      className="usuarios-grid-Opcion"
+                      value={selectedData.aula}
+                      onChange={handleChange}
+                      required
+                    />
+                    <span className="highlight Usuarios-usr"></span>
+                    <span className="bottomBar Usuarios-usr"></span>
+                    <label className="Usuarios-usr">Aula</label>
+                  </div>
+
                   <button onClick={agregarTabla}>Agregar</button>
                 </div>
               </div>
@@ -424,15 +589,21 @@ export const Home2 = () => {
                         <th>Materia</th>
                         <th>Grupo</th>
                         <th>Semestre</th>
+                        <th>Hora</th>
+                        <th>Dia</th>
+                        <th>Aula</th>
                       </tr>
                     </thead>
                     <tbody>
                       {dataTable.map((data, index) => (
                         <tr key={index}>
-                          <td>{carreras.filter(carrera => carrera.ID_Carrera === data.carrera_ID)[0].Nombre_Carrera}</td>
-                          <td>{materias.filter(materia => materia.ID_Materia === data.materia_ID)[0].Nombre_Materia}</td>
+                          <td>{data.Nombre_Carrera}</td>
+                          <td>{data.Nombre_Materia}</td>
                           <td>{data.grupo}</td>
                           <td>{data.semestre}</td>
+                          <td>{data.hora}</td>
+                          <td>{data.dia}</td>
+                          <td>{data.aula}</td>
                         </tr>
                       ))}
                     </tbody>

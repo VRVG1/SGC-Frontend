@@ -1,0 +1,338 @@
+$background: #f3f3f3;
+$foreground: #111111;
+$red: #dd1818;
+
+.rContainer-buscar {
+    background-color: $background;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: $background;
+    border-radius: 15px 15px 15px 15px;
+    -webkit-box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+    box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+    height: 10rem;
+    width: calc(100% - 3.5rem);
+    max-width: calc(100% - 3.5rem);
+    min-width: calc(100% - 3.5rem);
+    margin: 2rem 0% 0% 2rem;
+
+    .rmateria {
+        position: relative;
+        margin-bottom: 1%;
+        margin-top: 1%;
+    }
+
+    select-hidden {
+        display: none;
+        visibility: hidden;
+    }
+
+    select {
+        cursor: pointer;
+        display: inline-block;
+        font-size: 1rem;
+        padding: 10px 10px 10px 5px;
+        width: 27vw;
+        border: none;
+        border-bottom: 1px solid $background;
+        text-decoration: none;
+        color: $foreground;
+        background-color: $background;
+        transition: 0.2s ease all;
+        position: relative;
+        left: -5%;
+
+        &:focus {
+            outline: none;
+        }
+
+        &:focus~.bar:before,
+        &:focus~.bar:after {
+            width: 50%;
+        }
+
+        &:focus~label.Materias,
+        &:valid~label.Materias {
+            top: -25%;
+            font-size: 0.85rem;
+            color: #111111;
+        }
+    }
+
+
+
+    input[type="text"].inputMaterias,
+    input[type="password"].inputMaterias,
+    input[type="email"].inputMaterias {
+        font-size: 1rem;
+        background-color: #3797ce00;
+        padding: 10px 10px 10px 5px;
+        display: inline-block;
+        width: 30%;
+        border: none;
+        border-bottom: 1px solid $background;
+        text-decoration: none;
+        color: #111111;
+        position: relative;
+        left: 35%;
+    }
+
+
+    input[type="text"].inputMaterias-search,
+    input[type="password"].inputMaterias-search,
+    input[type="email"].inputMaterias-search {
+        font-size: 1rem;
+        background-color: #3797ce00;
+        padding: 10px 10px 10px 5px;
+        display: inline-block;
+        width: 30vw;
+        border: none;
+        border-bottom: 1px solid $background;
+        text-decoration: none;
+        color: #111111;
+    }
+
+
+    input[type="text"].inputMaterias:focus,
+    input[type="password"].inputMaterias:focus,
+    input[type="email"].inputMaterias:focus {
+        outline: none;
+    }
+
+    input.inputMaterias:focus~.bar:before,
+    input.inputMaterias:focus~.bar:after {
+        width: 50%;
+    }
+
+    label.Materias {
+        color: #111111;
+        font-size: 1rem;
+        font-weight: normal;
+        position: absolute;
+        pointer-events: none;
+        left: 35%;
+        top: 45%;
+        transition: 0.2s ease all;
+        -moz-transition: 0.2s ease all;
+        -webkit-transition: 0.2s ease all;
+    }
+
+    label.Materias-search {
+        color: #111111;
+        font-size: 1rem;
+        font-weight: normal;
+        position: absolute;
+        pointer-events: none;
+        left: 0%;
+        top: 45%;
+        transition: 0.2s ease all;
+        -moz-transition: 0.2s ease all;
+        -webkit-transition: 0.2s ease all;
+    }
+
+    input[type="text"].inputMaterias:focus~label.Materias,
+    input[type="text"].inputMaterias:valid~label.Materias,
+    input[type="password"].inputMaterias:focus~label.Materias,
+    input[type="password"].inputMaterias:valid~label.Materias,
+    input[type="email"].inputMaterias:focus~label.Materias,
+    input[type="email"].inputMaterias:valid~label.Materias {
+        top: -25%;
+        font-size: 0.85rem;
+        color: #111111;
+    }
+
+    .bottomBar.Materias {
+        background: #111111;
+        position: absolute;
+        display: block;
+        height: 2px;
+        width: 30%;
+        left: 35%;
+    }
+
+    .bottomBar.Materias-main {
+        background: #111111;
+        position: absolute;
+        display: block;
+        height: 2px;
+        width: 30vw;
+        left: 0%;
+
+    }
+
+    .bottomBar.Materias:before,
+    .bottomBar.Materias:after {
+        content: '';
+        height: 2px;
+        width: 0;
+        bottom: 0%;
+        position: absolute;
+        background: #E00005;
+        transition: 0.2s ease all;
+        -moz-transition: 0.2s ease all;
+        -webkit-transition: 0.2s ease all;
+    }
+
+    .bottomBar.Materias:before {
+        left: 50%;
+    }
+
+    .bottomBar.Materias:after {
+        right: 50%;
+    }
+
+    input.inputMaterias:focus~.bottomBar.Materias:before,
+    input.inputMaterias:focus~.bottomBar.Materias:after {
+        width: 50%;
+    }
+
+    .highlight.Materias {
+        position: absolute;
+        height: 60%;
+        width: 100px;
+        top: 25%;
+        left: 0;
+        pointer-events: none;
+        opacity: 0.5;
+    }
+}
+
+.rMateria-container {
+    background-color: $background;
+    display: flex;
+    flex-direction: column;
+    padding-left: 4.5rem;
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+
+    width: 100%;
+
+    .rMaterias-Maestros {
+        background-color: $background;
+        display: flex;
+        flex-direction: column;
+        background-color: $background;
+        border-radius: 15px 15px 15px 15px;
+        -webkit-box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+        box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+        margin: 2rem 0% 0% 2rem;
+        width: calc(100% - 3.5rem);
+        padding-bottom: 2rem;
+
+        h1 {
+            padding-top: 1rem;
+        }
+
+        .rmateria-flex {
+            background-color: $background;
+            display: flex;
+            background-color: $background;
+            border-radius: 15px 15px 15px 15px;
+            -webkit-box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+            box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+            min-height: 12rem;
+            height: 12rem;
+            margin: 2rem 0% 0% 2rem;
+            width: calc(100% - 3.5rem);
+            max-width: calc(100% - 3.5rem);
+            min-width: calc(100% - 3.5rem);
+
+            .rmateria-flex-left {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                width: 22rem;
+                text-align: center;
+                border-right: $red solid 2px;
+
+                .rmateria-title {
+                    p {
+                        font-size: 1.4rem;
+                        font-weight: bolder;
+                    }
+                }
+
+                .rmateria-detalles {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-around;
+                    position: relative;
+                    bottom: 2rem;
+
+                    p {
+                        font-size: 1.3rem;
+                        font-weight: bold;
+                    }
+                }
+            }
+
+            .rscroll {
+                overflow-x: scroll;
+                display: flex;
+                flex-direction: row;
+                width: 74rem;
+            }
+
+            .rmateria-flex-right {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                text-align: center;
+                width: 20rem;
+                max-width: 20rem;
+                min-width: 20rem;
+                padding: 0.5rem;
+
+
+
+                .rmateria-unidad-card {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-around;
+                    width: 100%;
+
+                    .rcard-title {
+                        position: relative;
+                        top: 0.5rem;
+
+                        p {
+                            font-size: 1.3rem;
+                            font-weight: bold;
+                        }
+                    }
+
+                    .rcard-body {
+                        display: flex;
+                        flex-direction: column;
+
+                        .rfecha {
+                            p {
+                                font-size: 1.2rem;
+                                font-weight: bold;
+                            }
+                        }
+
+                        .rreprobados {
+                            p {
+                                font-size: 1.2rem;
+                            }
+
+                            input {
+                                position: relative;
+                                background-color: rgba(0, 0, 0, 0.0);
+                                border: none;
+                                border-bottom: solid 1px;
+                                width: 3rem;
+                                text-align: center;
+                                left: 0.5rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+}

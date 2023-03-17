@@ -9,7 +9,7 @@ import deleteUser from "./helpers/Usuarios/deleteUser.js";
 import getCarreras from "./helpers/Carreras/getAllCarrera.js";
 import getMaterias from "./helpers/Materias/getAllMaterias.js";
 import Loader from "./Loader.js";
-import getAllAsignanUser from "./helpers/Asignan/getAllAsignanUser.js";
+import getAsignanC from "./helpers/Asignan/getAsignanC.js";
 import kanaBuscar from "../img/kana-buscar.png"
 
 import { AuthContext } from "./helpers/Auth/auth-context.js";
@@ -69,7 +69,7 @@ const Usuarios = props => {
    * @param {*} pk 
    */
   const getAsignan = async (pk) => {
-    let data = await getAllAsignanUser(auth.user.token, pk).then(res => {
+    let data = await getAsignanC(auth.user.token, pk).then(res => {
       setUserAsignan(res);
     });
   }
@@ -259,12 +259,15 @@ const Usuarios = props => {
   const DatosTablaDetalles = () => {
     const datosTabla = [];
     userAsignan.map((asigna, index) => {
-
       datosTabla.push(
         <tr key={index}>
-          <td>{materia.filter(materia => materia.ID_Materia === asigna.ID_Materia)[0].Nombre_Materia}</td>
-          <td>{carrera.filter(carrera => carrera.ID_Carrera === asigna.ID_Carrera)[0].Nombre_Carrera}</td>
+          <td>{asigna.Carrera}</td>
+          <td>{asigna.Nombre_Materia}</td>
+          <td>{asigna.Semestre}</td>
           <td>{asigna.Grupo}</td>
+          <td>{asigna.Hora}</td>
+          <td>{asigna.Dia}</td>
+          <td>{asigna.Aula}</td>
         </tr>
       )
     })
@@ -443,9 +446,13 @@ const Usuarios = props => {
                       <table>
                         <thead>
                           <tr>
-                            <th>Materias</th>
                             <th>Carrera</th>
+                            <th>Materias</th>
+                            <th>Semestre</th>
                             <th>Grupo</th>
+                            <th>Hora</th>
+                            <th>Dia</th>
+                            <th>Aula</th>
                           </tr>
                         </thead>
                         <tbody>

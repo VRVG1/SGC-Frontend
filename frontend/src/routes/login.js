@@ -41,7 +41,6 @@ export const Login = (props) => {
 
   return (
     <div id="bg" className="bg">
-      {console.log(loginContext)}
       <div className={animation.wrapper}>
         <div id="content">
           <p className="titleLogin"> Sistema Gestion del Curso SGC </p>
