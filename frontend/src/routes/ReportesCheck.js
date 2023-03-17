@@ -192,12 +192,17 @@ const ReportesCheck = props => {
 
     const Archivos = () => {
         let content = [];
+        // WARN: El href de la etiqueta <a> hace referencia a una dirección
+        //       inexistente
+        const jsonData = require('../variables.json');
 
         for (let key in pdfNames) {
             content.push(
-                <a className="links" href={`http://localhost:8000/media/Generados/` + pdfNames[key]} target="_blank"><div className='archivo'>
-                    <p className='archivoP'>{pdfNames[key]}</p>
-                </div></a>
+                <a className="links" href={`${ jsonData.host }media/Generados/` + pdfNames[key]} target="_blank">
+                    <div className='archivo'>
+                        <p className='archivoP'>{pdfNames[key]}</p>
+                    </div>
+                </a>
             )
         }
         return content;
