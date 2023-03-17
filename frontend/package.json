@@ -22,10 +22,6 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -40,6 +36,7 @@
     ]
   },
   "devDependencies": {
+    "lodash": "^4.17.21",
     "sass-loader": "^13.0.0"
   }
 }
