@@ -497,12 +497,12 @@ th {
 
   .izquierda {
     display: inline-flex;
-    background-color: $blanco;
+    background-color: #f3f3f3;
     height: 30px;
-    width: 40%;
+    width: 50%;
     align-items: center;
     justify-content: space-evenly;
-    gap: 3rem;
+    gap: 2rem;
 
     .label-radio {
       height: 100%;
@@ -556,20 +556,23 @@ th {
 
     #Filtro-1:checked:checked ~ .label-1,
     #Filtro-2:checked:checked ~ .label-2,
-    #Filtro-3:checked:checked ~ .label-3 {
+    #Filtro-3:checked:checked ~ .label-3,
+    #Filtro-4:checked:checked ~ .label-4 {
       border-color: $azul;
       background: $azul;
     }
 
     #Filtro-1:checked:checked ~ .label-1 .punto,
     #Filtro-2:checked:checked ~ .label-2 .punto,
-    #Filtro-3:checked:checked ~ .label-3 .punto {
+    #Filtro-3:checked:checked ~ .label-3 .punto,
+    #Filtro-4:checked:checked ~ .label-4 .punto {
       background: #fff;
     }
 
     #Filtro-1:checked:checked ~ .label-1 .punto::before,
     #Filtro-2:checked:checked ~ .label-2 .punto::before,
-    #Filtro-3:checked:checked ~ .label-3 .punto::before {
+    #Filtro-3:checked:checked ~ .label-3 .punto::before,
+    #Filtro-4:checked:checked ~ .label-4 .punto::before {
       opacity: 1;
       transform: scale(1);
       background: $rojo;
@@ -583,19 +586,20 @@ th {
 
     #Filtro-1:checked:checked ~ .label-1 span,
     #Filtro-2:checked:checked ~ .label-2 span,
-    #Filtro-3:checked:checked ~ .label-3 span {
+    #Filtro-3:checked:checked ~ .label-3 span,
+    #Filtro-4:checked:checked ~ .label-4 span {
       color: #fff;
     }
   }
 
   .derecha {
     display: inline-flex;
-    background-color: $blanco;
+    background-color: #f3f3f3;
     height: 30px;
-    width: 40%;
+    width: 50%;
     align-items: center;
     justify-content: space-evenly;
-    gap: 3rem;
+    gap: 2rem;
 
     .label-radio {
       height: 100%;
@@ -647,22 +651,25 @@ th {
       display: none;
     }
 
-    #Filtro-4:checked:checked ~ .label-4,
     #Filtro-5:checked:checked ~ .label-5,
-    #Filtro-6:checked:checked ~ .label-6 {
+    #Filtro-6:checked:checked ~ .label-6,
+    #Filtro-7:checked:checked ~ .label-7,
+    #Filtro-8:checked:checked ~ .label-8 {
       border-color: $azul;
       background: $azul;
     }
 
-    #Filtro-4:checked:checked ~ .label-4 .punto,
     #Filtro-5:checked:checked ~ .label-5 .punto,
-    #Filtro-6:checked:checked ~ .label-6 .punto {
+    #Filtro-6:checked:checked ~ .label-6 .punto,
+    #Filtro-7:checked:checked ~ .label-7 .punto,
+    #Filtro-8:checked:checked ~ .label-8 .punto {
       background: #fff;
     }
 
-    #Filtro-4:checked:checked ~ .label-4 .punto::before,
     #Filtro-5:checked:checked ~ .label-5 .punto::before,
-    #Filtro-6:checked:checked ~ .label-6 .punto::before {
+    #Filtro-6:checked:checked ~ .label-6 .punto::before,
+    #Filtro-7:checked:checked ~ .label-7 .punto::before,
+    #Filtro-8:checked:checked ~ .label-8 .punto::before {
       opacity: 1;
       transform: scale(1);
       background: $rojo;
@@ -674,9 +681,10 @@ th {
       color: $color-text;
     }
 
-    #Filtro-4:checked:checked ~ .label-4 span,
     #Filtro-5:checked:checked ~ .label-5 span,
-    #Filtro-6:checked:checked ~ .label-6 span {
+    #Filtro-6:checked:checked ~ .label-6 span,
+    #Filtro-7:checked:checked ~ .label-7 span,
+    #Filtro-8:checked:checked ~ .label-8 span {
       color: #fff;
     }
   }

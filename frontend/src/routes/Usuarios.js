@@ -256,7 +256,10 @@ const Usuarios = (props) => {
    * Metodo para buscar en la tabla elementos
    * @param {*} event
    */
-  const buscador = (event) => {
+  const buscador = async (event) => {
+    if (event.target.id === "Filtro 1") {
+      console.log("Aqui la url");
+    }
     var filtrados = userData.map((user) => {
       if (
         user.Nombre_Usuario.toLowerCase().includes(
@@ -391,7 +394,7 @@ const Usuarios = (props) => {
             <div className="form group modal Usuario">
               <input
                 type="text"
-                id="usuario-name"
+                id={placeholder}
                 name="usuario-name"
                 className="inputUsuarios-search"
                 required
