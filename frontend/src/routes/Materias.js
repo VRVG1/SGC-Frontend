@@ -1,41 +1,38 @@
 //TODO: Agregar el ID para la borracion de materias
-import React, { useState, useEffect, useContext } from "react";
-import Modal from "./modal/Modal.js";
-import getAllCarrera from "./helpers/Carreras/getAllCarrera.js";
-import getAllMaterias from "./helpers/Materias/getAllMaterias.js";
-import deleteMateria from "./helpers/Materias/deleteMateria.js";
-import Loader from "./Loader.js";
-import postMateria from "./helpers/Materias/postMateria.js";
-import putMateria from "./helpers/Materias/putMateria.js";
+import React, { useState, useEffect, useContext } from "react"
+import Modal from "./modal/Modal.js"
+import getAllCarrera from "./helpers/Carreras/getAllCarrera.js"
+import getAllMaterias from "./helpers/Materias/getAllMaterias.js"
+import deleteMateria from "./helpers/Materias/deleteMateria.js"
+import Loader from "./Loader.js"
+import postMateria from "./helpers/Materias/postMateria.js"
+import putMateria from "./helpers/Materias/putMateria.js"
 //Import filtros
-import filtroCarrera from "./helpers/Materias/filtroCarrera.js";
-import filtroMaestro from "./helpers/Materias/filtroMaestro.js";
-import filtroAula from "./helpers/Materias/filtroAula.js";
-import filtroCreditos from "./helpers/Materias/filtroCreditos.js";
-import filtroGrupo from "./helpers/Materias/filtroGrupo.js";
-import filtrosUnidades from "./helpers/Materias/filtroUnidades.js";
+import filtroMat from "./helpers/Materias/filtrosMat.js"
+//import PDFDownler
+import pdfCarrera from "./helpers/Materias/PDFCarrera.js"
 
-import kanaBuscar from "../img/kana-buscar.png";
+import kanaBuscar from "../img/kana-buscar.png"
 
-import { AuthContext } from "./helpers/Auth/auth-context.js";
+import { AuthContext } from "./helpers/Auth/auth-context.js"
 /**
  * Componente para la vista de materias
  * @param {*} props
  * @returns componente
  */
 const Materias = (props) => {
-  let auth = useContext(AuthContext);
+  let auth = useContext(AuthContext)
 
-  const [showModalAdd, setShowModalAdd] = useState(false);
-  const [showModalDetails, setShowModalDetails] = useState(false);
-  const [showModalResultado, setShowModalResultado] = useState(false);
-  const [showModalModify, setShowModalModify] = useState(false);
-  const [showModalConfirm, setShowModalConfirm] = useState(false);
-  const [showModalDelete, setShowModalDelete] = useState(false);
-  const [showModalNoCarreras, setShowModalNoCarreras] = useState(false);
-  const [materiaData, setMateriaData] = useState({});
-  const [filtrados, setFiltrados] = useState({});
-  const [carreraData, setCareraData] = useState({});
+  const [showModalAdd, setShowModalAdd] = useState(false)
+  const [showModalDetails, setShowModalDetails] = useState(false)
+  const [showModalResultado, setShowModalResultado] = useState(false)
+  const [showModalModify, setShowModalModify] = useState(false)
+  const [showModalConfirm, setShowModalConfirm] = useState(false)
+  const [showModalDelete, setShowModalDelete] = useState(false)
+  const [showModalNoCarreras, setShowModalNoCarreras] = useState(false)
+  const [materiaData, setMateriaData] = useState({})
+  const [filtrados, setFiltrados] = useState({})
+  const [carreraData, setCareraData] = useState({})
   const [addData, setAddData] = useState({
     Materia_name: "",
     Materia_reticula: "",
@@ -44,7 +41,7 @@ const Materias = (props) => {
     Materia_creditos: "",
     Materia_unidades: "",
     //Nombre_Carrera: ''
-  });
+  })
   const [regex, setRegex] = useState({
     Materia_name: /^[A-Za-z\sÀ-ÿ]{0,200}$/,
     Materia_reticula: /^[A-Z]{0,3}-{0,1}[0-9]{0,4}$/,
@@ -53,15 +50,15 @@ const Materias = (props) => {
     Materia_creditos: /^[0-9]{0,2}$/,
     Materia_unidades: /^[0-9]{0,2}$/,
     //materia_carrera: '',
-  });
-  const [actualizarCarrera, setActualizarCarrera] = useState(0);
-  const [actualizarMateria, setActualizarMateria] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [addMaterias, setAddMaterias] = useState("");
-  const [statusContenido, setStatusContenido] = useState("");
+  })
+  const [actualizarCarrera, setActualizarCarrera] = useState(0)
+  const [actualizarMateria, setActualizarMateria] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [addMaterias, setAddMaterias] = useState("")
+  const [statusContenido, setStatusContenido] = useState("")
 
-  const [Clave_reticula, setClave_reticula] = useState("");
-  const [Nombre_Materia, setNombre_Materia] = useState("");
+  const [Clave_reticula, setClave_reticula] = useState("")
+  const [Nombre_Materia, setNombre_Materia] = useState("")
   const [modificaciones, setModificaciones] = useState({
     Materia_name: "",
     Materia_reticula: "",
@@ -71,23 +68,23 @@ const Materias = (props) => {
     Materia_unidades: "",
     Materia_carrera: "",
     Materia_nombre_carrera: "",
-  });
+  })
 
-  const [resultadoTitulo, setResultadoTitulo] = useState("");
-  const [placeholder, setPlaceholder] = useState("Nombre de Materia");
-  const [botones, setBotones] = useState(false);
-  const [filtroInput, setFiltroInput] = useState("");
+  const [resultadoTitulo, setResultadoTitulo] = useState("")
+  const [placeholder, setPlaceholder] = useState("Nombre de Materia")
+  const [botones, setBotones] = useState(false)
+  const [filtroInput, setFiltroInput] = useState("")
 
-  const [ptio, setPtio] = useState({});
+  const [ptio, setPtio] = useState({})
   /**
    * Metodo para obtener todas las materiass
    */
   const obtenerMaterias = () => {
     getAllMaterias(auth.user.token).then((data) => {
-      setMateriaData(data);
-      setFiltrados(data);
-    });
-  };
+      setMateriaData(data)
+      setFiltrados(data)
+    })
+  }
 
   /**
    * Metodo para obtener todos los datos de la
@@ -96,59 +93,59 @@ const Materias = (props) => {
   const obtenerCarrera = async () => {
     await getAllCarrera(auth.user.token).then((data) => {
       if (data.length > 0) {
-        setCareraData(data);
+        setCareraData(data)
       }
-    });
-  };
+    })
+  }
 
   /**
    * useEffect para obtener los datos de carrera cada que se actualizen
    */
   useEffect(() => {
-    obtenerCarrera();
-  }, [actualizarCarrera]);
+    obtenerCarrera()
+  }, [actualizarCarrera])
   /**
    * hook useEffect para la recoleccion de datos generales de materias
    */
   useEffect(() => {
-    obtenerMaterias();
-  }, [actualizarMateria]);
+    obtenerMaterias()
+  }, [actualizarMateria])
 
   /**
    * Metodo para realizar la accion borrar materia
    */
   const deleteMaterias = async () => {
-    setLoading(true);
-    setAddMaterias(await deleteMateria(Clave_reticula, auth.user.token));
-    setResultadoTitulo("Eliminación");
-    setStatusContenido("Eliminación exitosa");
-  };
+    setLoading(true)
+    setAddMaterias(await deleteMateria(Clave_reticula, auth.user.token))
+    setResultadoTitulo("Eliminación")
+    setStatusContenido("Eliminación exitosa")
+  }
 
   /**
    * Metodo para abrir la interfaz de modificar
    */
   const modifircar = () => {
-    setAddMaterias("");
+    setAddMaterias("")
     setAddData({
       ...addData,
       Materia_name: Nombre_Materia,
       //materia_carrera: ID_Carrera,
       Materia_reticula: Clave_reticula,
       //Nombre_Carrera: Nombre_Carrera
-    });
-    setShowModalConfirm(false);
-    setShowModalModify(true);
-    setShowModalDetails(false);
-  };
+    })
+    setShowModalConfirm(false)
+    setShowModalModify(true)
+    setShowModalDetails(false)
+  }
   /**
    * Metodo para realizar la accion modificar
    */
   const confirmModificar = async () => {
-    setLoading(true);
-    setAddMaterias(await putMateria(addData, Clave_reticula, auth.user.token));
-    setStatusContenido("Se ha modificado la materia de manera exitosa");
-    setResultadoTitulo("Modificación fue exitosa");
-  };
+    setLoading(true)
+    setAddMaterias(await putMateria(addData, Clave_reticula, auth.user.token))
+    setStatusContenido("Se ha modificado la materia de manera exitosa")
+    setResultadoTitulo("Modificación fue exitosa")
+  }
 
   /**
    * Metodo para mostrar los detalles de una materia
@@ -157,10 +154,10 @@ const Materias = (props) => {
   function details(id) {
     const materia = materiaData.find(
       (elemento) => elemento.Clave_reticula === id
-    );
+    )
     const carrera = carreraData.find(
       (element) => element.ID_Carrera === materia.Carrera
-    );
+    )
     setModificaciones({
       ...modificaciones,
       Materia_name: materia.Nombre_Materia,
@@ -171,13 +168,13 @@ const Materias = (props) => {
       Materia_horas_practicas: materia.horas_Practicas,
       Materia_creditos: materia.creditos,
       Materia_unidades: materia.unidades,
-    });
-    setClave_reticula(materia.Clave_reticula);
-    setNombre_Materia(materia.Nombre_Materia);
+    })
+    setClave_reticula(materia.Clave_reticula)
+    setNombre_Materia(materia.Nombre_Materia)
     //setID_Carrera(carrera.ID_Carrera);
     //setNombre_Carrera(carrera.Nombre_Carrera);
-    setAddMaterias("");
-    setShowModalDetails(true);
+    setAddMaterias("")
+    setShowModalDetails(true)
     setAddData({
       ...addData,
       Materia_name: materia.Nombre_Materia,
@@ -188,8 +185,8 @@ const Materias = (props) => {
       Materia_horas_practicas: materia.horas_Practicas,
       Materia_creditos: materia.creditos,
       Materia_unidades: materia.unidades,
-    });
-    setShowModalConfirm(false);
+    })
+    setShowModalConfirm(false)
   }
 
   /**
@@ -224,11 +221,11 @@ const Materias = (props) => {
       //Nombre_Carrera: ''
       materia_carrera: carreraData[0].ID_Carrera,
       Nombre_Carrera: carreraData[0].Nombre_Carrera,
-    });
-    setAddMaterias("");
+    })
+    setAddMaterias("")
     //setActualizarCarrera(Math.random())
-    setShowModalAdd(true);
-  };
+    setShowModalAdd(true)
+  }
   /**
    * Metodo que tienen como parametro el eventeo del input usado para guardar el valor
    * en su respectiva variable usando useState()
@@ -243,139 +240,103 @@ const Materias = (props) => {
           materia_carrera: carreraData.find(
             (element) => element.Nombre_Carrera === event.target.value
           ).ID_Carrera,
-        });
+        })
       }
       setAddData({
         ...addData,
         [event.target.name]: event.target.value,
-      });
+      })
     }
-  };
+  }
   useEffect(() => {
     setAddData({
       ...addData,
       materia_carrera: ptio.materia_carrera,
       Nombre_Carrera: ptio.Nombre_Carrera,
-    });
+    })
     return () => {
-      setAddData({});
-    };
-  }, [ptio]);
+      setAddData({})
+    }
+  }, [ptio])
 
   /**
    * Metodo para crear un post de materia
    */
   const postermateria = async () => {
-    setLoading(true);
-    setAddMaterias(await postMateria(addData, auth.user.token));
-    setStatusContenido("Se ha agregado la materia correctamente");
-    setResultadoTitulo("Materia agregada");
-  };
+    setLoading(true)
+    setAddMaterias(await postMateria(addData, auth.user.token))
+    setStatusContenido("Se ha agregado la materia correctamente")
+    setResultadoTitulo("Materia agregada")
+  }
 
   /**
    * useEffect para mostrar mensaje de resultado al momento de agregar
    */
   useEffect(() => {
     if (addMaterias === "OK") {
-      setShowModalResultado(true);
-      setActualizarMateria(Math.random());
+      setShowModalResultado(true)
+      setActualizarMateria(Math.random())
     } else if (addMaterias !== "") {
-      setShowModalResultado(true);
+      setShowModalResultado(true)
       setStatusContenido(
         "Problemas al realizar la operacion, intente mas tarde"
-      );
-      setResultadoTitulo("ERROR");
-      setActualizarMateria(Math.random());
+      )
+      setResultadoTitulo("ERROR")
+      setActualizarMateria(Math.random())
     }
-    setLoading(false);
-  }, [addMaterias]);
+    setLoading(false)
+  }, [addMaterias])
 
   /**
    * Metodo para cerra todas los modales
    */
   const closeAdd = () => {
-    setAddMaterias("");
-    setShowModalAdd(false);
-    setShowModalResultado(false);
-    setShowModalDelete(false);
-    setShowModalConfirm(false);
-    setShowModalDetails(false);
-    setShowModalModify(false);
-  };
+    setAddMaterias("")
+    setShowModalAdd(false)
+    setShowModalResultado(false)
+    setShowModalDelete(false)
+    setShowModalConfirm(false)
+    setShowModalDetails(false)
+    setShowModalModify(false)
+  }
 
   /**
    * Metodo para buscar en la tabla elementos
    * @param {*} event
    */
   const buscador = async (event) => {
-    setFiltroInput(event.target.value);
-    let id = event.target.id;
-    let filtradosl;
-    if (id === "Carrera") {
-      await filtroCarrera(auth.user.token, event.target.value.toLowerCase())
-        .then((data) => {
-          filtradosl = data;
-        })
-        .catch((err) => {
-          filtradosl = materiaData;
-        });
-    } else if (id === "Maestro") {
-      await filtroMaestro(auth.user.token, event.target.value.toLowerCase())
-        .then((data) => {
-          filtradosl = data;
-        })
-        .catch((err) => {
-          filtradosl = materiaData;
-        });
-    } else if (id === "Aula") {
-      await filtroAula(auth.user.token, event.target.value.toLowerCase())
-        .then((data) => {
-          filtradosl = data;
-        })
-        .catch((err) => {
-          filtradosl = materiaData;
-        });
-    } else if (id === "Grupo") {
-      await filtroGrupo(auth.user.token, event.target.value.toLowerCase())
-        .then((data) => {
-          filtradosl = data;
-        })
-        .catch((err) => {
-          filtradosl = materiaData;
-        });
-    } else if (id === "Creditos") {
-      await filtroCreditos(auth.user.token, event.target.value.toLowerCase())
-        .then((data) => {
-          filtradosl = data;
-        })
-        .catch((err) => {
-          filtradosl = materiaData;
-        });
-    } else if (id === "Unidades") {
-      await filtrosUnidades(auth.user.token, event.target.value.toLowerCase())
-        .then((data) => {
-          filtradosl = data;
-        })
-        .catch((err) => {
-          filtradosl = materiaData;
-        });
-    } else {
+    setFiltroInput(event.target.value)
+    let id = event.target.id
+    let filtradosl
+    if (id === "Nombre de Materia") {
       filtradosl = materiaData.map((materia) => {
         if (
           materia.Nombre_Materia.toLowerCase().includes(
             event.target.value.toLowerCase()
           )
         ) {
-          return materia;
+          return materia
         }
-      });
+      })
       filtradosl = filtradosl.filter((elemento) => {
-        return elemento !== undefined;
-      });
+        return elemento !== undefined
+      })
+    } else {
+      await filtroMat(auth.user.token, event.target.value.toLowerCase(), id)
+        .then((data) => {
+          filtradosl = data
+        })
+        .catch((err) => {
+          filtradosl = materiaData
+        })
     }
 
-    setFiltrados(filtradosl);
-  };
+    setFiltrados(filtradosl)
+  }
+
+  const pdfDownload = async () => {
+    await pdfCarrera(auth.user.token, filtroInput, placeholder)
+  }
 
   /**
    * Realiza el cambio de filtrosVariables dependiendo de
@@ -385,9 +346,9 @@ const Materias = (props) => {
    * @param {*} event
    */
   const handleRadioOption = (event) => {
-    setPlaceholder(event.target.getAttribute("key-name"));
-    setBotones(true);
-  };
+    setPlaceholder(event.target.getAttribute("key-name"))
+    setBotones(true)
+  }
 
   const Filtros = () => {
     return (
@@ -486,16 +447,40 @@ const Materias = (props) => {
           </label>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const HoraSelect = () => {
-    let lista = [];
-    for (let i = 8; i < 24; i++) {
-      lista.push(<option value={i + ":00"}></option>);
+    let lista = []
+    for (let i = 7; i < 21; i++) {
+      if (i === 9) {
+        lista.push(
+          <option value={"0" + i + ":00 - " + (i + 1) + ":00"}></option>
+        )
+      } else if (i < 10) {
+        lista.push(
+          <option value={"0" + i + ":00 - 0" + (i + 1) + ":00"}></option>
+        )
+      } else {
+        lista.push(<option value={i + ":00 - " + (i + 1) + ":00"}></option>)
+      }
     }
-    return lista;
-  };
+    for (let i = 7; i < 21; i++) {
+      if (i === 9) {
+        lista.push(
+          <option value={"0" + i + ":00 - " + (i + 2) + ":00"}></option>
+        )
+      } else if (i < 10) {
+        lista.push(
+          <option value={"0" + i + ":00 - 0" + (i + 2) + ":00"}></option>
+        )
+      } else {
+        lista.push(<option value={i + ":00 - " + (i + 2) + ":00"}></option>)
+      }
+      i += 1
+    }
+    return lista
+  }
   return (
     <>
       {loading === false ? (
@@ -551,7 +536,7 @@ const Materias = (props) => {
                           {materia.Nombre_Materia}
                         </td>
                       </tr>
-                    );
+                    )
                   })}
                 </tbody>
               </table>
@@ -574,16 +559,17 @@ const Materias = (props) => {
                   type="submit"
                   className="button Usuarios"
                   value="Descargar"
+                  onClick={pdfDownload}
                 ></input>
                 <input
                   type="submit"
                   className="button Usuarios"
                   value="Cancelar"
                   onClick={() => {
-                    setBotones(false);
-                    setPlaceholder("Nombre de Materia");
-                    setFiltroInput("");
-                    setFiltrados(materiaData);
+                    setBotones(false)
+                    setPlaceholder("Nombre de Materia")
+                    setFiltroInput("")
+                    setFiltrados(materiaData)
                   }}
                 ></input>
               </div>
@@ -1043,7 +1029,7 @@ const Materias = (props) => {
         <Loader />
       )}
     </>
-  );
-};
+  )
+}
 
-export default Materias;
+export default Materias

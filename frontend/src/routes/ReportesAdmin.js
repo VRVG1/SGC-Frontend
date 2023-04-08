@@ -1,51 +1,50 @@
-import React, { useState, useEffect, useContext } from "react";
-import getAllUsuarios from "./helpers/Usuarios/getAllUsuarios.js";
-import Modal from "./modal/Modal.js";
-import postAsigna from "./helpers/Reportes/postRepostes.js";
-import getAllReportes from "./helpers/Reportes/getAllReportes.js";
-import putReportes from "./helpers/Reportes/putReportes.js";
-import deleteReportes from "./helpers/Reportes/deleteReporte.js";
-import postSendReportes from "./helpers/Reportes/postSendReprote.js";
-import sendReportes from "./helpers/Reportes/sendReprote.js";
-import sendMail from "./helpers/Mensajeria/postMSM.js";
-import { AuthContext } from "./helpers/Auth/auth-context.js";
+import React, { useState, useEffect, useContext } from "react"
+import getAllUsuarios from "./helpers/Usuarios/getAllUsuarios.js"
+import Modal from "./modal/Modal.js"
+import postAsigna from "./helpers/Reportes/postRepostes.js"
+import getAllReportes from "./helpers/Reportes/getAllReportes.js"
+import putReportes from "./helpers/Reportes/putReportes.js"
+import deleteReportes from "./helpers/Reportes/deleteReporte.js"
+import postSendReportes from "./helpers/Reportes/postSendReprote.js"
+import sendReportes from "./helpers/Reportes/sendReprote.js"
+import sendMail from "./helpers/Mensajeria/postMSM.js"
+import { AuthContext } from "./helpers/Auth/auth-context.js"
 
-const _ = require("lodash");
+const _ = require("lodash")
 
 const ReportesAdmin = (props) => {
-  let auth = useContext(AuthContext);
-  const [actualizacion, setActualizacion] = useState(0);
-  const [idReporte, setIdReporte] = useState(0);
-  const [titulo, setTitulo] = useState("");
-  const [mensaje, setMensaje] = useState("");
-  const [showModalResultado, setShowModalResultado] = useState(false);
-  const [contenidoModal, setContenidoModal] = useState("");
-  const [showModalAdd, setShowModalAdd] = useState(false);
-  const [showModalDetails, setShowModalDetails] = useState(false);
-  const [selector, setSelector] = useState(
-    "Modal-Reportes-Admin-Select-hidden"
-  );
+  let auth = useContext(AuthContext)
+  const [actualizacion, setActualizacion] = useState(0)
+  const [idReporte, setIdReporte] = useState(0)
+  const [titulo, setTitulo] = useState("")
+  const [mensaje, setMensaje] = useState("")
+  const [showModalResultado, setShowModalResultado] = useState(false)
+  const [contenidoModal, setContenidoModal] = useState("")
+  const [showModalAdd, setShowModalAdd] = useState(false)
+  const [showModalDetails, setShowModalDetails] = useState(false)
+  const [selector, setSelector] = useState("Modal-Reportes-Admin-Select-hidden")
   const [dataInput, setdataInput] = useState({
     Repostes_name: "",
     Repostes_descripcion: "",
     Repostes_fecha: "",
     Repostes_obligatorio: true,
+    Repostes_calificacion: false,
     opc: "General",
     nombreMasters: "",
     mensajeTXT: "",
-  });
-  const [showModalERROR, setShowModalERROR] = useState(false);
+  })
+  const [showModalERROR, setShowModalERROR] = useState(false)
   const [modalContenido, setModalContenido] = useState({
     modalTitulo: "",
     modalMensaje: "",
-  });
-  const [tablaData, setTablaData] = useState([]);
-  const [predictionData, setPredictionData] = useState([]);
-  const [predictionData2, setPredictionData2] = useState([]);
+  })
+  const [tablaData, setTablaData] = useState([])
+  const [predictionData, setPredictionData] = useState([])
+  const [predictionData2, setPredictionData2] = useState([])
   const [regex, setRegex] = useState({
     Repostes_name: /^[a-zA-Z\s\d~._-]{0,200}$/,
-  });
-  const [reprotes, setRepotes] = useState([]);
+  })
+  const [reprotes, setRepotes] = useState([])
 
   /**
    * Recibe los datos escritos en un input
@@ -56,15 +55,20 @@ const ReportesAdmin = (props) => {
       setdataInput({
         ...dataInput,
         [event.target.name]: event.target.value,
-      });
+      })
     }
     if (event.target.name === "Repostes_obligatorio") {
       setdataInput({
         ...dataInput,
         [event.target.name]: event.target.checked,
-      });
+      })
+    } else if (event.target.name === "Repostes_calificacion") {
+      setdataInput({
+        ...dataInput,
+        [event.target.name]: event.target.checked,
+      })
     }
-  };
+  }
   /**
    * Recibir los datos de los usuarion de la base de datos
    */
@@ -81,24 +85,24 @@ const ReportesAdmin = (props) => {
                 Tipo_Usuario: item.Tipo_Usuario,
                 Nombre_Usuario: item.Nombre_Usuario,
               },
-            ]);
+            ])
           }
-        });
-      });
-    };
+        })
+      })
+    }
     const obtenerReportes = async () => {
       await getAllReportes(auth.user.token).then((data) => {
-        setRepotes(data);
-      });
-    };
-    obtenerReportes();
-    obtenerUsuarios();
+        setRepotes(data)
+      })
+    }
+    obtenerReportes()
+    obtenerUsuarios()
     return () => {
-      setTablaData([]);
-      setPredictionData([]);
-      setRepotes([]);
-    };
-  }, [actualizacion]);
+      setTablaData([])
+      setPredictionData([])
+      setRepotes([])
+    }
+  }, [actualizacion])
 
   /**
    * Recibe los datos escritos en un input
@@ -111,24 +115,25 @@ const ReportesAdmin = (props) => {
       Repostes_descripcion: "",
       Repostes_fecha: "",
       Repostes_obligatorio: true,
-    });
-    setShowModalAdd(true);
-  };
+      Repostes_calificacion: false,
+    })
+    setShowModalAdd(true)
+  }
   /**
    * Buscar algo, el maestro a mandar el mensaje
    * @param {*} event
    */
   const buscador = (event) => {
-    const { value } = event.target;
+    const { value } = event.target
     const filtro = _.filter(predictionData2, (item) => {
-      return item.Nombre_Usuario.toLowerCase().includes(value.toLowerCase());
-    });
+      return item.Nombre_Usuario.toLowerCase().includes(value.toLowerCase())
+    })
     if (value === "") {
-      setPredictionData([]);
+      setPredictionData([])
     } else {
-      setPredictionData(filtro);
+      setPredictionData(filtro)
     }
-  };
+  }
 
   /**
    * Manda el reporte a la base de datos para guardar, solo guardar
@@ -145,38 +150,39 @@ const ReportesAdmin = (props) => {
       ) {
         await postAsigna(dataInput, auth.user.token)
           .then((data) => {
-            setMensaje("Reporte agregado correctamente");
-            setShowModalResultado(true);
-            setShowModalAdd(false);
-            setContenidoModal("Reporte agregado correctamente");
+            setMensaje("Reporte agregado correctamente")
+            setShowModalResultado(true)
+            setShowModalAdd(false)
+            setContenidoModal("Reporte agregado correctamente")
             setdataInput({
               ...dataInput,
               Repostes_name: "",
               Repostes_descripcion: "",
               Repostes_fecha: "",
               Repostes_obligatorio: true,
-            });
+              Repostes_calificacion: false,
+            })
           })
           .catch((error) => {
-            setMensaje("Error al agregar el reporte");
-            setShowModalResultado(true);
-            setShowModalAdd(false);
-            setContenidoModal("Favor de revisar el manual de administrador");
-          });
-        setActualizacion(Math.random());
+            setMensaje("Error al agregar el reporte")
+            setShowModalResultado(true)
+            setShowModalAdd(false)
+            setContenidoModal("Favor de revisar el manual de administrador")
+          })
+        setActualizacion(Math.random())
       } else {
-        setContenidoModal("Todos los campos son obligatorios");
-        setMensaje("");
-        setShowModalResultado(true);
+        setContenidoModal("Todos los campos son obligatorios")
+        setMensaje("")
+        setShowModalResultado(true)
       }
     } else {
       setMensaje(
         "Ya existe un reportes con el nombre:\n" + dataInput.Repostes_name
-      );
-      setShowModalResultado(true);
-      setContenidoModal("El reporte ya existe");
+      )
+      setShowModalResultado(true)
+      setContenidoModal("El reporte ya existe")
     }
-  };
+  }
   /**
    * Manda el reporte a la base de datos para guardar y enviar el reporte para los docentes
    */
@@ -192,86 +198,89 @@ const ReportesAdmin = (props) => {
       ) {
         await postSendReportes(dataInput, auth.user.token)
           .then((data) => {
-            setMensaje("Reporte agregado y enviado correctamente");
-            setShowModalResultado(true);
-            setShowModalAdd(false);
-            setContenidoModal("Reporte agregado correctamente");
+            setMensaje("Reporte agregado y enviado correctamente")
+            setShowModalResultado(true)
+            setShowModalAdd(false)
+            setContenidoModal("Reporte agregado correctamente")
             setdataInput({
               ...dataInput,
               Repostes_name: "",
               Repostes_descripcion: "",
               Repostes_fecha: "",
               Repostes_obligatorio: true,
-            });
+              Repostes_calificacion: false,
+            })
           })
           .catch((error) => {
-            setMensaje("Error al agregar y enviar el reporte");
-            setShowModalResultado(true);
-            setShowModalAdd(false);
-            setContenidoModal("Favor de revisar el manual de administrador");
-          });
-        setActualizacion(Math.random());
+            setMensaje("Error al agregar y enviar el reporte")
+            setShowModalResultado(true)
+            setShowModalAdd(false)
+            setContenidoModal("Favor de revisar el manual de administrador")
+          })
+        setActualizacion(Math.random())
       } else {
-        setContenidoModal("Todos los campos son obligatorios");
-        setMensaje("");
-        setShowModalResultado(true);
+        setContenidoModal("Todos los campos son obligatorios")
+        setMensaje("")
+        setShowModalResultado(true)
       }
     } else {
       setMensaje(
         "Ya existe un reportes con el nombre:\n" + dataInput.Repostes_name
-      );
-      setShowModalResultado(true);
-      setContenidoModal("El reporte ya existe");
+      )
+      setShowModalResultado(true)
+      setContenidoModal("El reporte ya existe")
     }
-  };
+  }
 
   /**
    * Metodo para abrir el modal de detalles con los datos del reporte
    * @param {*} ID_Reporte
    */
   const detalles = (ID_Reporte) => {
-    setIdReporte(ID_Reporte);
+    setIdReporte(ID_Reporte)
     const reporte = reprotes.find(
       (elemento) => elemento.ID_Reporte === ID_Reporte
-    );
-    setTitulo(reporte.Nombre_Reporte);
+    )
+    setTitulo(reporte.Nombre_Reporte)
     setdataInput({
       ...dataInput,
       Repostes_name: reporte.Nombre_Reporte,
       Repostes_descripcion: reporte.Descripcion,
       Repostes_fecha: reporte.Fecha_Entrega,
       Repostes_obligatorio: reporte.Opcional,
+      Repostes_calificacion: reporte.Calificaciones,
       opc: "General",
       nombreMasters: "",
-    });
-    setShowModalDetails(true);
-  };
+    })
+    setShowModalDetails(true)
+  }
   /**
    * Metodo para realizar la peticion de actualizacion en la base de datos
    */
   const putReporte = async () => {
     await putReportes(auth.user.token, idReporte, dataInput)
       .then((data) => {
-        setMensaje("Reporte agregado correctamente");
-        setShowModalResultado(true);
-        setShowModalDetails(false);
-        setContenidoModal("Reporte actualizado correctamente");
+        setMensaje("Reporte agregado correctamente")
+        setShowModalResultado(true)
+        setShowModalDetails(false)
+        setContenidoModal("Reporte actualizado correctamente")
         setdataInput({
           ...dataInput,
           Repostes_name: "",
           Repostes_descripcion: "",
           Repostes_fecha: "",
           Repostes_obligatorio: true,
-        });
+          Repostes_calificacion: false,
+        })
       })
       .catch((error) => {
-        setMensaje("Error al agregar el reporte");
-        setShowModalResultado(true);
-        setShowModalDetails(false);
-        setContenidoModal("Favor de revisar el manual de administrador");
-      });
-    setActualizacion(Math.random());
-  };
+        setMensaje("Error al agregar el reporte")
+        setShowModalResultado(true)
+        setShowModalDetails(false)
+        setContenidoModal("Favor de revisar el manual de administrador")
+      })
+    setActualizacion(Math.random())
+  }
 
   /**
    * Metodo para eliminar un reporte de la base de datos
@@ -279,20 +288,20 @@ const ReportesAdmin = (props) => {
   const deleteReprote = async () => {
     await deleteReportes(auth.user.token, idReporte)
       .then((data) => {
-        setMensaje("Reporte eliminado correctamente");
-        setShowModalResultado(true);
-        setShowModalDetails(false);
-        setContenidoModal("Operacion realizada correctamente");
+        setMensaje("Reporte eliminado correctamente")
+        setShowModalResultado(true)
+        setShowModalDetails(false)
+        setContenidoModal("Operacion realizada correctamente")
       })
       .catch((error) => {
-        setMensaje("Error al eliminar el reporte");
-        setShowModalResultado(true);
-        setShowModalDetails(false);
-        setContenidoModal("Favor de revisar el manual de administrador");
-      });
-    setActualizacion(Math.random());
-    setShowModalERROR(false);
-  };
+        setMensaje("Error al eliminar el reporte")
+        setShowModalResultado(true)
+        setShowModalDetails(false)
+        setContenidoModal("Favor de revisar el manual de administrador")
+      })
+    setActualizacion(Math.random())
+    setShowModalERROR(false)
+  }
 
   /**
    * Metodo para enviar un reprote guardado
@@ -300,61 +309,61 @@ const ReportesAdmin = (props) => {
   const sendReporte = async () => {
     await sendReportes(auth.user.token, idReporte)
       .then((data) => {
-        setMensaje("Reporte enviado correctamente");
-        setShowModalResultado(true);
-        setShowModalDetails(false);
-        setContenidoModal(data);
+        setMensaje("Reporte enviado correctamente")
+        setShowModalResultado(true)
+        setShowModalDetails(false)
+        setContenidoModal(data)
       })
       .catch((error) => {
-        setMensaje("Error al enviar el reporte");
-        setShowModalResultado(true);
-        setShowModalDetails(false);
-        setContenidoModal(error);
-      });
+        setMensaje("Error al enviar el reporte")
+        setShowModalResultado(true)
+        setShowModalDetails(false)
+        setContenidoModal(error)
+      })
     //setActualizacion(Math.random());
-  };
+  }
 
   const mandarMensaje = async () => {
     if (dataInput.mensajeTXT !== "") {
       if (dataInput.opc === "General") {
         await sendMail(auth.user.token, dataInput.mensajeTXT, "0")
           .then((data) => {
-            setMensaje(dataInput.mensajeTXT);
-            setShowModalResultado(true);
-            setShowModalDetails(false);
-            setContenidoModal(data);
+            setMensaje(dataInput.mensajeTXT)
+            setShowModalResultado(true)
+            setShowModalDetails(false)
+            setContenidoModal(data)
           })
           .catch((error) => {
-            setMensaje("Error al enviar el mensaje");
-            setShowModalResultado(true);
-            setShowModalDetails(false);
-            setContenidoModal(error);
-          });
+            setMensaje("Error al enviar el mensaje")
+            setShowModalResultado(true)
+            setShowModalDetails(false)
+            setContenidoModal(error)
+          })
       } else if (dataInput.opc === "Especifico") {
-        let mensajeResultado = "";
+        let mensajeResultado = ""
         tablaData.map((element) => {
           sendMail(auth.user.token, dataInput.mensajeTXT, element.id)
             .then((data) => {
-              mensajeResultado = mensajeResultado + data + "\n";
+              mensajeResultado = mensajeResultado + data + "\n"
             })
             .catch((error) => {
-              mensajeResultado = error;
-              setShowModalResultado(true);
-              setShowModalDetails(false);
-              setContenidoModal(error);
-            });
-        });
-        setMensaje(dataInput.mensajeTXT);
-        setShowModalResultado(true);
-        setShowModalDetails(false);
-        setContenidoModal("Correos enviados correctamente");
+              mensajeResultado = error
+              setShowModalResultado(true)
+              setShowModalDetails(false)
+              setContenidoModal(error)
+            })
+        })
+        setMensaje(dataInput.mensajeTXT)
+        setShowModalResultado(true)
+        setShowModalDetails(false)
+        setContenidoModal("Correos enviados correctamente")
       }
     } else {
-      setContenidoModal("Agregue un mensaje");
-      setMensaje("No se puede mandar un mensaje vacio");
-      setShowModalResultado(true);
+      setContenidoModal("Agregue un mensaje")
+      setMensaje("No se puede mandar un mensaje vacio")
+      setShowModalResultado(true)
     }
-  };
+  }
 
   return (
     <>
@@ -371,7 +380,7 @@ const ReportesAdmin = (props) => {
                         {item.Nombre_Reporte}
                       </td>
                     </tr>
-                  );
+                  )
                 })
               ) : (
                 <></>
@@ -439,7 +448,7 @@ const ReportesAdmin = (props) => {
                             onClick={() => {
                               setTablaData(
                                 tablaData.filter((item) => item.id !== data.id)
-                              );
+                              )
                               setPredictionData((predictionData) => [
                                 ...predictionData,
                                 {
@@ -447,7 +456,7 @@ const ReportesAdmin = (props) => {
                                   Tipo_Usuario: "Docente",
                                   Nombre_Usuario: data.nombre,
                                 },
-                              ]);
+                              ])
                               setPredictionData2((predictionData2) => [
                                 ...predictionData2,
                                 {
@@ -455,7 +464,7 @@ const ReportesAdmin = (props) => {
                                   Tipo_Usuario: "Docente",
                                   Nombre_Usuario: data.nombre,
                                 },
-                              ]);
+                              ])
                             }}
                           >
                             Quitar
@@ -486,21 +495,21 @@ const ReportesAdmin = (props) => {
                             setTablaData((tablaData) => [
                               ...tablaData,
                               { id: data.PK, nombre: data.Nombre_Usuario },
-                            ]);
+                            ])
                             setdataInput({
                               ...dataInput,
                               Repostes_name: "",
-                            });
+                            })
                             setPredictionData(
                               predictionData.filter(
                                 (item) => item.PK !== data.PK
                               )
-                            );
+                            )
                             setPredictionData2(
                               predictionData2.filter(
                                 (item) => item.PK !== data.PK
                               )
-                            );
+                            )
                           }}
                         >
                           {data.Nombre_Usuario}
@@ -574,6 +583,15 @@ const ReportesAdmin = (props) => {
                   onChange={handleInputOnChange}
                   checked={dataInput.Repostes_obligatorio}
                 />
+                <label className="LabelModalReportesAdmin separado">
+                  Calificaciones
+                </label>
+                <input
+                  type="checkbox"
+                  name="Repostes_calificacion"
+                  onChange={handleInputOnChange}
+                  checked={dataInput.Repostes_calificacion}
+                />
               </div>
             </div>
           </form>
@@ -643,6 +661,15 @@ const ReportesAdmin = (props) => {
                     onChange={handleInputOnChange}
                     checked={dataInput.Repostes_obligatorio}
                   />
+                  <label className="LabelModalReportesAdmin separado">
+                    Calificaciones
+                  </label>
+                  <input
+                    type="checkbox"
+                    name="Repostes_calificacion"
+                    onChange={handleInputOnChange}
+                    checked={dataInput.Repostes_calificacion}
+                  />
                 </div>
               </form>
             </div>
@@ -650,12 +677,12 @@ const ReportesAdmin = (props) => {
               <button
                 className="Eliminar"
                 onClick={() => {
-                  setShowModalERROR(true);
+                  setShowModalERROR(true)
                   setModalContenido({
                     ...contenidoModal,
                     modalTitulo: "Eliminar Reporte",
                     modalMensaje: "¿Está seguro que desea eliminar el reporte?",
-                  });
+                  })
                 }}
               >
                 Eliminar
@@ -705,7 +732,7 @@ const ReportesAdmin = (props) => {
         </div>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default ReportesAdmin;
+export default ReportesAdmin

@@ -4,98 +4,98 @@ import React, {
   useState,
   useContext,
   useCallback,
-} from "react";
-import getReportesU from "../helpers/usuarioReporte/getReportesU.js";
-import getOneAsignan from "../helpers/Asignan/getOneAsignan.js";
-import getOneRepirte from "../helpers/Reportes/getOneReporte.js";
-import getAllCarrera from "../helpers/Carreras/getAllCarrera.js";
-import getAllMaterias from "../helpers/Materias/getAllMaterias.js";
-import getPDFName from "../helpers/Reportes/getPDFName.js";
-import Modal from "../modal/Modal.js";
-import deletePDF from "../helpers/usuarioReporte/deletePDF.js";
-import { AuthContext } from "../helpers/Auth/auth-context.js";
-import Loader from "../Loader.js";
-import _ from "lodash";
-import postReportes from "../helpers/usuarioReporte/postReportes.js";
-import putGeneran from "../helpers/usuarioReporte/putGeneran.js";
+} from "react"
+import getReportesU from "../helpers/usuarioReporte/getReportesU.js"
+import getOneAsignan from "../helpers/Asignan/getOneAsignan.js"
+import getOneRepirte from "../helpers/Reportes/getOneReporte.js"
+import getAllCarrera from "../helpers/Carreras/getAllCarrera.js"
+import getAllMaterias from "../helpers/Materias/getAllMaterias.js"
+import getPDFName from "../helpers/Reportes/getPDFName.js"
+import Modal from "../modal/Modal.js"
+import deletePDF from "../helpers/usuarioReporte/deletePDF.js"
+import { AuthContext } from "../helpers/Auth/auth-context.js"
+import Loader from "../Loader.js"
+import _ from "lodash"
+import postReportes from "../helpers/usuarioReporte/postReportes.js"
+import putGeneran from "../helpers/usuarioReporte/putGeneran.js"
 
-import kanaBuscar from "../../img/kana-buscar.png";
+import kanaBuscar from "../../img/kana-buscar.png"
 
 export const Reportes = () => {
-  let auth = useContext(AuthContext);
+  let auth = useContext(AuthContext)
 
-  const reference = useRef(null);
+  const reference = useRef(null)
 
-  const [reportes, setReportes] = useState([]); // reportes son todos los reportes que se generaron
-  const [selReporte, setSelReporte] = useState(null); // selReporte es el reporte seleccionado para la vista
-  const [asignan, setAsignan] = useState([]); // asignan son todas las asignan que se generaron
-  const [reporteName, setReporteName] = useState([]); // reporte que es uno individual para los titulos
-  const [loading, setLoading] = useState(true);
-  const [reportesFiltrados, setReportesFiltrados] = useState([]); // reportesFiltrados son los reportes filtrados
-  const [iDBorrarPDF, setIDBorrarPDF] = useState(null); // idBorrarPDF es el id del reporte que se va a borrar
-  const [materias, setMaterias] = useState([]);
-  const [carreras, setCarreras] = useState([]);
+  const [reportes, setReportes] = useState([]) // reportes son todos los reportes que se generaron
+  const [selReporte, setSelReporte] = useState(null) // selReporte es el reporte seleccionado para la vista
+  const [asignan, setAsignan] = useState([]) // asignan son todas las asignan que se generaron
+  const [reporteName, setReporteName] = useState([]) // reporte que es uno individual para los titulos
+  const [loading, setLoading] = useState(true)
+  const [reportesFiltrados, setReportesFiltrados] = useState([]) // reportesFiltrados son los reportes filtrados
+  const [iDBorrarPDF, setIDBorrarPDF] = useState(null) // idBorrarPDF es el id del reporte que se va a borrar
+  const [materias, setMaterias] = useState([])
+  const [carreras, setCarreras] = useState([])
   const [selMateria, setSelMateria] = useState({
     index: null,
     ID_Asignan: null,
     ID_Reporte: null,
     ID_Generacion: null,
-  });
+  })
 
-  const [mostarBotonAtras, setMostarBotonAtras] = useState(false);
-  const [mostarBotonSiguiente, setMostarBotonSiguiente] = useState(true);
-  const [archivosPDF, setArchivosPDF] = useState([]);
-  const [showModalDatosEnviados, setShowModalDatosEnviados] = useState(false);
-  const [pendejadaDeMierda, setPendejadaDeMierda] = useState(false);
-  const [showModalBorrar, setShowModalBorrar] = useState(false);
+  const [mostarBotonAtras, setMostarBotonAtras] = useState(false)
+  const [mostarBotonSiguiente, setMostarBotonSiguiente] = useState(true)
+  const [archivosPDF, setArchivosPDF] = useState([])
+  const [showModalDatosEnviados, setShowModalDatosEnviados] = useState(false)
+  const [pendejadaDeMierda, setPendejadaDeMierda] = useState(false)
+  const [showModalBorrar, setShowModalBorrar] = useState(false)
   const [modalData, setModalData] = useState({
     mensaje: "",
     titulo: "",
-  });
+  })
 
-  const [files, setFiles] = useState("");
-  const [filesTamano, setFilesTamano] = useState(true);
-  const [fileProgeso, setFileProgeso] = useState(false);
-  const [fileResponse, setFileResponse] = useState(null);
+  const [files, setFiles] = useState("")
+  const [filesTamano, setFilesTamano] = useState(true)
+  const [fileProgeso, setFileProgeso] = useState(false)
+  const [fileResponse, setFileResponse] = useState(null)
 
   const deletePDFS = async () => {
-    await deletePDF(auth.user.token, selMateria.ID_Generacion);
-    setShowModalBorrar(false);
+    await deletePDF(auth.user.token, selMateria.ID_Generacion)
+    setShowModalBorrar(false)
     setModalData({
       mensaje: "Se han borrado los PDFs",
       titulo: "Borrado",
-    });
-    setShowModalDatosEnviados(true);
-    window.location.reload();
-  };
+    })
+    setShowModalDatosEnviados(true)
+    window.location.reload()
+  }
 
   /**
    * Metodo que sirve para appendiar los archivos a subir
    */
   const uploadFileHandler = (e) => {
-    setFiles(e.target.files);
-  };
+    setFiles(e.target.files)
+  }
   /**
    * Metodo que sirve como intermediario entre el helper y el metodo de abajo xd
    * @param {*} formData
    */
   const uploadFile = async (formData) => {
-    setFileProgeso(true);
+    setFileProgeso(true)
     await postReportes(auth.user.token, formData).then((res) => {
-      setFileResponse(res);
-      setFileProgeso(false);
-    });
-  };
+      setFileResponse(res)
+      setFileProgeso(false)
+    })
+  }
 
   const getPDF = async (id) => {
     await getPDFName(id, auth.user.token)
       .then((res) => {
-        setArchivosPDF(res);
+        setArchivosPDF(res)
       })
       .catch((err) => {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
 
   /**
    * Funcion para subir los archivos a la base de datos
@@ -106,28 +106,28 @@ export const Reportes = () => {
       setModalData({
         mensaje: "Ya se a enviado este reporte",
         titulo: "Reporte entregado",
-      });
-      setShowModalDatosEnviados(true);
+      })
+      setShowModalDatosEnviados(true)
     } else if (files === "") {
       setModalData({
         mensaje: "No has seleccionado ningun archivo",
         titulo: "Error",
-      });
-      setShowModalDatosEnviados(true);
+      })
+      setShowModalDatosEnviados(true)
     } else {
-      e.preventDefault();
-      setLoading(true);
-      const formData = new FormData();
+      e.preventDefault()
+      setLoading(true)
+      const formData = new FormData()
       for (var i = 0; i < files.length; i++) {
-        formData.append("Path_PDF", files[i]);
-        formData.append("ID_Generacion", selMateria.ID_Generacion);
-        await uploadFile(formData);
+        formData.append("Path_PDF", files[i])
+        formData.append("ID_Generacion", selMateria.ID_Generacion)
+        await uploadFile(formData)
       }
-      await putGeneran(auth.user.token, selMateria.ID_Generacion);
-      setLoading(false);
-      window.location.reload();
+      await putGeneran(auth.user.token, selMateria.ID_Generacion)
+      setLoading(false)
+      window.location.reload()
     }
-  };
+  }
 
   /**
    * Metodo para mostrar los archivos que se van a subir o si se puede, los que ya se subieron
@@ -135,7 +135,7 @@ export const Reportes = () => {
    * @returns
    */
   const FilesShow = () => {
-    let mensaje = [];
+    let mensaje = []
     if (files.length > 0) {
       for (let i = 0; i < files.length; i++) {
         mensaje = mensaje.concat(
@@ -144,40 +144,40 @@ export const Reportes = () => {
               {files[i].name}
             </p>
           </div>
-        );
+        )
       }
-      return mensaje;
+      return mensaje
     }
-    let si = 1;
+    let si = 1
     for (let key in archivosPDF) {
       mensaje = mensaje.concat(
         <div className="archivo" key={key}>
           <p
             className="archivoP"
             onClick={() => {
-              setShowModalBorrar(true);
-              setIDBorrarPDF(key);
+              setShowModalBorrar(true)
+              setIDBorrarPDF(key)
             }}
             key={si + key}
           >
             {archivosPDF[key]}
           </p>
         </div>
-      );
-      si++;
+      )
+      si++
     }
-    return mensaje;
-  };
+    return mensaje
+  }
   useEffect(() => {
     if (selMateria.ID_Asignan !== null) {
-      setArchivosPDF(getPDF(selMateria.ID_Generacion));
+      setArchivosPDF(getPDF(selMateria.ID_Generacion))
     }
-  }, [selMateria]);
+  }, [selMateria])
 
   useEffect(() => {
-    setLoading(false);
-    setPendejadaDeMierda(true);
-  }, [archivosPDF]);
+    setLoading(false)
+    setPendejadaDeMierda(true)
+  }, [archivosPDF])
   /**
    * useEffect para obtener las materias
    */
@@ -185,135 +185,135 @@ export const Reportes = () => {
   useEffect(() => {
     const getMaterias = async () => {
       await getAllMaterias(auth.user.token).then((res) => {
-        setMaterias(res);
-      });
-    };
+        setMaterias(res)
+      })
+    }
     const getCarreras = async () => {
       await getAllCarrera(auth.user.token).then((res) => {
-        setCarreras(res);
-      });
-    };
-    getMaterias();
-    getCarreras();
-  }, []);
+        setCarreras(res)
+      })
+    }
+    getMaterias()
+    getCarreras()
+  }, [])
   /**
    *  Funcion para obtener todos los reportes que se le asgino al maestro
    */
   const getReporte = useCallback(async () => {
     await getReportesU(auth.user.token).then((res) => {
-      setReportes(res);
-    });
-  }, []);
+      setReportes(res)
+    })
+  }, [])
 
   /**
    * Funcion para obtener los asginan del maestro
    */
   const getAsignan = useCallback(async (id) => {
     await getOneAsignan(auth.user.token, id).then((res) => {
-      setAsignan((arrays) => [...arrays, res]);
-    });
-  }, []);
+      setAsignan((arrays) => [...arrays, res])
+    })
+  }, [])
 
   /**
    * Funcion para obtener los reportes individuales
    */
   const getReporteName = useCallback(async (id) => {
     await getOneRepirte(auth.user.token, id).then((res) => {
-      setReporteName((arrays) => [...arrays, res]);
-    });
-  }, []);
+      setReporteName((arrays) => [...arrays, res])
+    })
+  }, [])
   /**
    * Funcnion para obtener los ids de los reportes
    */
-  const setIds = reportes.map((reporte) => reporte.ID_Reporte);
+  const setIds = reportes.map((reporte) => reporte.ID_Reporte)
 
-  const setIdsAsignan = reportes.map((reportes) => reportes.ID_Asignan);
+  const setIdsAsignan = reportes.map((reportes) => reportes.ID_Asignan)
 
   /**
    * Useeffect para obtener los reportes
    */
   useEffect(() => {
-    getReporte();
-  }, [getReporte]);
+    getReporte()
+  }, [getReporte])
 
   /**
    * Useeffect para almacenar los datos a precentar
    */
   useEffect(() => {
     if (reportes.length > 0) {
-      let array = setIds;
-      let arrayAsignan = setIdsAsignan;
-      let arrayAsignan2 = [];
-      let array2 = [];
+      let array = setIds
+      let arrayAsignan = setIdsAsignan
+      let arrayAsignan2 = []
+      let array2 = []
       array2 = array.filter(function (item, pos) {
-        return array.indexOf(item) === pos;
-      });
+        return array.indexOf(item) === pos
+      })
       arrayAsignan2 = arrayAsignan.filter(function (item, pos) {
-        return arrayAsignan.indexOf(item) === pos;
-      });
+        return arrayAsignan.indexOf(item) === pos
+      })
       array2.map(async (id) => {
-        await getReporteName(id);
-      });
+        await getReporteName(id)
+      })
       arrayAsignan2.map(async (id) => {
-        await getAsignan(id);
-      });
-      setLoading(false);
+        await getAsignan(id)
+      })
+      setLoading(false)
     } else {
-      setLoading(false);
+      setLoading(false)
     }
-  }, [reportes]);
+  }, [reportes])
 
   const cargarReportesFiltrados = useCallback(async (array, index) => {
-    setMostarBotonAtras(false);
-    setMostarBotonSiguiente(true);
-    setReportesFiltrados(array);
+    setMostarBotonAtras(false)
+    setMostarBotonSiguiente(true)
+    setReportesFiltrados(array)
     setSelMateria({
       ...selMateria,
       ID_Asignan: array[0].ID_Asignan,
       ID_Generacion: array[0].ID_Generacion,
       ID_Reporte: array[0].ID_Reporte,
       index: 0,
-    });
-  }, []);
+    })
+  }, [])
 
   /**
    * Filtra los reportes que coincidan con el reporte seleccionado
    * @param {*} index
    */
   const filtrarReportes = async (index) => {
-    setSelReporte(reporteName[index]);
+    setSelReporte(reporteName[index])
     let array = reportes.filter(
       (reporte) => reporte.ID_Reporte === reporteName[index].ID_Reporte
-    );
-    setLoading(true);
-    await cargarReportesFiltrados(array, index);
-    setLoading(false);
-  };
+    )
+    setLoading(true)
+    await cargarReportesFiltrados(array, index)
+    setLoading(false)
+  }
   /**
    * Funcion para mostar el titulo en las cartas de reportes
    * @returns
    */
   const TituloMateria = () => {
-    let titulo;
+    let titulo
     if (selMateria.ID_Asignan !== null) {
       let semestre = asignan.filter(
         (asigna) => asigna.ID_Asignan === selMateria.ID_Asignan
-      )[0].Semestre;
+      )[0].Semestre
       let grupo = asignan.filter(
         (asigna) => asigna.ID_Asignan === selMateria.ID_Asignan
-      )[0].Grupo;
+      )[0].Grupo
       let ID_Materia = asignan.filter(
         (asigna) => asigna.ID_Asignan === selMateria.ID_Asignan
-      )[0].ID_Materia;
+      )[0].ID_Materia
       let nombreMateria = materias.filter(
         (materia) => materia.pik === ID_Materia
-      )[0].Nombre_Materia;
+      )[0].Nombre_Materia
       let ID_Carrera = materias.filter(
         (materia) => materia.pik === ID_Materia
-      )[0].Carrera;
+      )[0].Carrera
       let NombreCarrera = carreras.filter(
         (carrera) => carrera.ID_Carrera == ID_Carrera
-      )[0].Nombre_Carrera;
+      )[0].Nombre_Carrera
       titulo = (
         <h3>
           {NombreCarrera +
@@ -324,71 +324,71 @@ export const Reportes = () => {
             "\t" +
             grupo}
         </h3>
-      );
+      )
     }
-    return titulo;
-  };
+    return titulo
+  }
 
   /**
    * Metodo para ver el reporte siguiente
    */
   const siguiente = () => {
     if (selMateria.index < reportesFiltrados.length - 1) {
-      setMostarBotonAtras(true);
-      setFiles("");
+      setMostarBotonAtras(true)
+      setFiles("")
       setSelMateria({
         ...selMateria,
         index: selMateria.index + 1,
         ID_Asignan: reportesFiltrados[selMateria.index + 1].ID_Asignan,
         ID_Reporte: reportesFiltrados[selMateria.index + 1].ID_Reporte,
         ID_Generacion: reportesFiltrados[selMateria.index + 1].ID_Generacion,
-      });
+      })
       setArchivosPDF(
         getPDF(reportesFiltrados[selMateria.index + 1].ID_Generacion)
-      );
+      )
       if (selMateria.index === reportesFiltrados.length - 2) {
-        setMostarBotonSiguiente(false);
-        setMostarBotonAtras(true);
+        setMostarBotonSiguiente(false)
+        setMostarBotonAtras(true)
       }
     } else {
-      setMostarBotonSiguiente(false);
-      setMostarBotonAtras(true);
+      setMostarBotonSiguiente(false)
+      setMostarBotonAtras(true)
     }
-  };
+  }
 
   /**
    * Funcion para ver el reporte anterior
    */
   const anterior = () => {
     if (selMateria.index > 0) {
-      setMostarBotonSiguiente(true);
-      setFiles("");
+      setMostarBotonSiguiente(true)
+      setFiles("")
       setSelMateria({
         ...selMateria,
         index: selMateria.index - 1,
         ID_Asignan: reportesFiltrados[selMateria.index - 1].ID_Asignan,
         ID_Reporte: reportesFiltrados[selMateria.index - 1].ID_Reporte,
         ID_Generacion: reportesFiltrados[selMateria.index - 1].ID_Generacion,
-      });
+      })
       setArchivosPDF(
         getPDF(reportesFiltrados[selMateria.index - 1].ID_Generacion)
-      );
+      )
       if (selMateria.index === 1) {
-        setMostarBotonAtras(false);
-        setMostarBotonSiguiente(true);
+        setMostarBotonAtras(false)
+        setMostarBotonSiguiente(true)
       }
     } else {
-      setMostarBotonAtras(false);
-      setMostarBotonSiguiente(true);
+      setMostarBotonAtras(false)
+      setMostarBotonSiguiente(true)
     }
-  };
+  }
 
   const SetDots = () => {
-    let date = new Date();
+    let date = new Date()
     let hoy =
-      date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-    let dots = [];
-    let si = new Date(hoy).getTime();
+      date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
+    let dots = []
+    let si = new Date(hoy).getTime()
 
     if (
       reporteName.filter(
@@ -404,17 +404,17 @@ export const Reportes = () => {
             )[0].Fecha_Entrega
           ).getTime() -
             si) /
-          (1000 * 60 * 60 * 24);
+          (1000 * 60 * 60 * 24)
         if (reportesFiltrados[i].Estatus === "Entrega tarde") {
-          dots.push(<span key={i} className="dot tarde"></span>);
+          dots.push(<span key={i} className="dot tarde"></span>)
         } else if (reportesFiltrados[i].Estatus === "Entrega a tiempo") {
-          dots.push(<span key={i} className="dot"></span>);
+          dots.push(<span key={i} className="dot"></span>)
         } else if (diff < 0) {
-          dots.push(<span key={i} className="dot noEntregado"></span>);
+          dots.push(<span key={i} className="dot noEntregado"></span>)
         } else if (diff > 0 && diff < 6) {
-          dots.push(<span key={i} className="dot trucha"></span>);
+          dots.push(<span key={i} className="dot trucha"></span>)
         } else {
-          dots.push(<span key={i} className="dot actual"></span>);
+          dots.push(<span key={i} className="dot actual"></span>)
         }
       }
     } else {
@@ -427,22 +427,22 @@ export const Reportes = () => {
             )[0].Fecha_Entrega
           ).getTime() -
             si) /
-          (1000 * 60 * 60 * 24);
-        dots.push(<span key={i} className="square"></span>);
+          (1000 * 60 * 60 * 24)
+        dots.push(<span key={i} className="square"></span>)
       }
     }
-    return dots;
-  };
+    return dots
+  }
   /**
    * Metodos para listar todos los archivos PDF que se van a borrar
    */
   const MostrarArchivos = () => {
-    let lista = [];
+    let lista = []
     for (let key in archivosPDF) {
-      lista.push(<p>{archivosPDF[key]}</p>);
+      lista.push(<p>{archivosPDF[key]}</p>)
     }
-    return lista;
-  };
+    return lista
+  }
   return (
     <>
       {loading === false ? (
@@ -461,26 +461,26 @@ export const Reportes = () => {
                                 <div
                                   className="listReportes__Reporte"
                                   onClick={() => {
-                                    filtrarReportes(index);
+                                    filtrarReportes(index)
                                   }}
                                 >
                                   {reporte.Nombre_Reporte}
                                 </div>
                               </li>
-                            );
+                            )
                           } else {
                             return (
                               <li key={index}>
                                 <div
                                   className="listReportes__Reporte__cuadrado"
                                   onClick={() => {
-                                    filtrarReportes(index);
+                                    filtrarReportes(index)
                                   }}
                                 >
                                   {reporte.Nombre_Reporte}
                                 </div>
                               </li>
-                            );
+                            )
                           }
                         })
                       ) : (
@@ -495,9 +495,41 @@ export const Reportes = () => {
                           {selReporte.Nombre_Reporte}
                         </h1>
                         <hr />
-                        <p className="reportesUsuario">
-                          {selReporte.Descripcion}
-                        </p>
+                        <div
+                          className="container-descripcion"
+                          style={{
+                            height: "330px",
+                            overflowY: "scroll",
+                          }}
+                        >
+                          <p className="reportesUsuario">
+                            {selReporte.Calificaciones ? (
+                              <>
+                                {" "}
+                                {selReporte.Descripcion} <br />
+                                <strong>Aviso</strong>
+                                <br />
+                                En este reporte se tiene que subir la boleta de
+                                calificaciones y el reporte correspondiente
+                                <br />
+                                <strong>
+                                  Nota el nombre del archivo de boleta de
+                                  calificaciones debe ser con el nombre:
+                                  <br />
+                                  "NombreCarrera_Materia_Semestre_Grupo_Calificaciones.pdf"
+                                  <br />
+                                  Ejemplo:
+                                  <br />
+                                  "Ingenieria en Sistemas
+                                  Computaciones_Programacion Orientada a
+                                  Objetos_2_A_Calificaciones.pdf"
+                                </strong>
+                              </>
+                            ) : (
+                              <> {selReporte.Descripcion}</>
+                            )}
+                          </p>
+                        </div>
                       </>
                     ) : (
                       <></>
@@ -607,8 +639,7 @@ export const Reportes = () => {
                   <button
                     className="alertMSM"
                     onClick={() => {
-                      console.log(selMateria.ID_Generacion);
-                      deletePDFS();
+                      deletePDFS()
                     }}
                   >
                     Confirmar
@@ -637,5 +668,5 @@ export const Reportes = () => {
         </>
       )}
     </>
-  );
-};
+  )
+}
