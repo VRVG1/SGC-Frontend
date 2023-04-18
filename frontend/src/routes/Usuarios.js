@@ -67,6 +67,8 @@ const Usuarios = (props) => {
   const [carrera, setCarrera] = useState("")
   const [materia, setMateria] = useState("")
 
+  const [calificacionesData, setCalificacionesData] = useState(userData)
+
   //useSatate para la funcion buscador
   const [filtroInput, setFiltroInput] = useState("")
   const [placeholder, setPlaceholder] = useState("Nombre de Usuario")
@@ -108,12 +110,14 @@ const Usuarios = (props) => {
   const handleRadioOption = async (event) => {
     if (
       event.target.getAttribute("key-name") === "Menor_Indice" ||
-      event.target.getAttribute("key-name") === "Mayor_Indice"
+      event.target.getAttribute("key-name") === "Mayor_Indice" ||
+      event.target.getAttribute("key-name") === "Calificaciones"
     ) {
       let filtradosl = []
       await filtroU(auth.user.token, "", event.target.getAttribute("key-name"))
         .then((data) => {
           filtradosl = data
+          setCalificacionesData(filtradosl)
         })
         .catch((err) => {
           filtradosl = userData
@@ -301,6 +305,20 @@ const Usuarios = (props) => {
       filtradosl = filtradosl.filter((elemento) => {
         return elemento !== undefined
       })
+    } else if (id === "Calificaciones") {
+      let si = calificacionesData
+      filtradosl = si.map((user) => {
+        if (
+          user.Nombre_Usuario.toLowerCase().includes(
+            event.target.value.toLowerCase()
+          )
+        ) {
+          return user
+        }
+      })
+      filtradosl = filtradosl.filter((elemento) => {
+        return elemento !== undefined
+      })
     } else {
       await filtroU(auth.user.token, event.target.value.toLowerCase(), id)
         .then((data) => {
@@ -365,6 +383,19 @@ const Usuarios = (props) => {
           <label className="label-radio label-2" htmlFor="Filtro-2">
             <div className="punto"></div>
             <span>Hora</span>
+          </label>
+
+          <input
+            type={"radio"}
+            id="Filtro-3"
+            key-name={"Calificaciones"}
+            name="selected-F"
+            onChange={handleRadioOption}
+            checked={"Calificaciones" === placeholder}
+          ></input>
+          <label className="label-radio label-3" htmlFor="Filtro-3">
+            <div className="punto"></div>
+            <span>Calificaciones</span>
           </label>
         </div>
         <div className="derecha">
@@ -431,7 +462,7 @@ const Usuarios = (props) => {
     let sexo = filtrados.map((user) => {
       if (user.Tipo_Usuario === "Docente") {
         return (
-          <tr key={user.PK}>
+          <tr key={user.Nombre_Usuario + user.PK}>
             <td
               onClick={() => {
                 detalles(user.PK)

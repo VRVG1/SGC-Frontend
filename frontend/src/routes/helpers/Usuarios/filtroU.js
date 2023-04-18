@@ -5,6 +5,7 @@ const urls = {
   Hora: "usuario/p2MaeXH/",
   Mayor_Indice: "usuario/p2MaeXIA",
   Menor_Indice: "usuario/p2MaeXIB",
+  Calificaciones: "usuario/p2MaeNC",
 }
 /**
  * Hace llamado a la base de datos de forma constante enviandole una cadena

@@ -5,6 +5,7 @@ const urls = {
   Hora: "usuario/p2MaeXHPDF/",
   Mayor_Indice: "usuario/p2MaeXIAPDF",
   Menor_Indice: "usuario/p2MaeXIBPDF",
+  Calificaciones: "usuario/p2MaeNCPDF",
 }
 /**
  * Mediante el txt recivido y el filtro, este hace la peticion a Django
