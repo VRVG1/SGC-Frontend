@@ -99,7 +99,7 @@ main{
   transition: all 0.3s ease;
 }
 .sidebar .nav-links li.showMenu i.arrow{
-  transform: rotate(-180deg);
+  transform: translate(0pc, -1rem) rotate(-180deg);
 }
 .sidebar.close .nav-links i.arrow{
   display: none;
@@ -129,6 +129,8 @@ main{
 }
 .sidebar .nav-links li.showMenu .sub-menu{
   display: block;
+  display: relative;
+  top: -10%;
 }
 .sidebar .nav-links li .sub-menu .a{
   color: #fff;
@@ -215,16 +217,22 @@ main{
   font-size: 12px;
 }
 .home-section{
-  position: relative;
   background: #003a5b;
   height: 10%;
-  left: 14.3em;
+  left: 14.5em;
   width: calc(100% - 14.3em);
   transition: all 0.5s ease;
+
+  position: fixed;
+  height: auto;
+  z-index: 100;
 }
 .sidebar.close ~ .home-section{
   left: 4em;
   width: calc(100% - 4em);
+  position: fixed;
+  height: auto;
+  z-index: 100;
 }
 .home-section .home-content{
   height: 60px;
@@ -260,8 +268,8 @@ main{
 
  .li{
    color: #fff;
-   font-size: 0.85rem;
-   opacity: 0.8;
+   font-size: 1rem;
+   opacity: 0.80;
    margin-bottom: 2%;
    margin-top: 2%;
  }

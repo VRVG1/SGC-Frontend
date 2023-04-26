@@ -4,18 +4,18 @@ import AuthPostBasics from "../Auth/AuthPostBasis.js";
  * @param {*} token
  * @returns array con todos los reportes
  */
-const getAllReportes = async (token) => {
+const getRUnidadesAdmin = async (token) => {
   let get = {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   };
   get = AuthPostBasics(token, get);
   const jsonData = require("../../../variables.json");
-  const url = jsonData.host + "reporte/reportes";
+  const url = jsonData.host + "reporte/getRUnidadesAdmin";
   const res = await fetch(url, get);
   const result = res.statusText;
   const data = res.json();
   return data;
 };
 
-export default getAllReportes;
+export default getRUnidadesAdmin;

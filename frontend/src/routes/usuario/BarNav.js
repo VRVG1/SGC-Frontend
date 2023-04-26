@@ -77,6 +77,26 @@ export default class Nav extends Component {
                         </li>
 
                         <li>
+                            <Link className='link' to="/usuario/materias" >
+                                <div className="iocn-link">
+                                    <span className='a'>
+                                        <i className='bx bxs-file-blank' ></i>
+                                        <span className="link_name">Materias</span>
+                                    </span>
+                                    <i
+                                        className='bx bxs-chevron-down arrow'
+                                        onClick={e => this.showingMenu(e)} >
+                                    </i>
+                                </div>
+                            </Link>
+                            <ul className="sub-menu">
+                                <li><span className='a'><span className="link_name">Materias</span></span></li>
+                                <Link className='link' to="/usuario/materias"><li className='li'></li></Link>
+                            </ul>
+                        </li>
+
+
+                        <li>
                             <Link className='link' to="/usuario/ajustes" >
                                 <div className="iocn-link">
                                     <span className='a'>
@@ -91,9 +111,11 @@ export default class Nav extends Component {
                             </Link>
                             <ul className="sub-menu">
                                 <li><span className='a'><span className="link_name">Ajustes</span></span></li>
-                                <Link className='link' to="/admin/ajustes"><li className='li'></li></Link>
+                                <Link className='link' to="/usuario/ajustes"><li className='li'></li></Link>
                             </ul>
                         </li>
+
+                        
 
                         <li>
                             <div className="profile-details">

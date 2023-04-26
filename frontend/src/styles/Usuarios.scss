@@ -1,30 +1,35 @@
-$blanco: #F3F3F3;
+$blanco: #f3f3f3;
 $color-text: #111111;
 $select-color: #a7a7a7;
+$azul: #005b8e;
+$rojo: #e00005;
+
 .containerUsuarios {
-    background-color: $blanco;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    width: 60%;
-    margin-left: 20%;
-    margin-top: 5%; 
-    margin-bottom: 0%;
-    border-radius: 15px 15px 15px 15px;
-    -webkit-box-shadow: 12px 12px 11px 3px rgba(0,0,0,0.61); 
-    box-shadow: 12px 12px 11px 3px rgba(0,0,0,0.61);
-    position: relative;
-   
+  background-color: $blanco;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  width: 60%;
+  border-radius: 15px 15px 15px 15px;
+  -webkit-box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+  box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+  position: relative;
+  left: 20%;
+  top: 8rem;
+
+  // .tabla{
+  //   border: $rojo solid 2px;
+  // }
 }
 
 /* Entrada de datos */
 
-.group.Usuarios	  { 
-    position: relative; 
-    margin-bottom: 5%;
-  }
+.group.Usuarios {
+  position: relative;
+  margin-bottom: 5%;
+}
 
 select-hidden {
   display: none;
@@ -45,199 +50,201 @@ select {
   transition: 0.2s ease all;
   position: relative;
   left: -5%;
-  
+
   &:focus {
-    outline:none;
+    outline: none;
   }
 
-  &:focus ~ .bar:before, &:focus ~ .bar:after {
+  &:focus ~ .bar:before,
+  &:focus ~ .bar:after {
     width: 50%;
   }
 
-  &:focus ~ label.Usuarios, &:valid ~ label.Usuarios {
-    top:-25%;
-    font-size:0.85rem;
-    color:#111111;
+  &:focus ~ label.Usuarios,
+  &:valid ~ label.Usuarios {
+    top: -25%;
+    font-size: 0.85rem;
+    color: #111111;
   }
 }
 
-  
-  
-  input[type="text"].inputUsuarios,
-  input[type="password"].inputUsuarios,
-  input[type="email"].inputUsuarios {
-    font-size: 1rem;
-    background-color: #3797ce00;
-    padding: 10px 10px 10px 5px;
-    display: inline-block;
-    width: 27vw;
-    border: none;
-    border-bottom: 1px solid $blanco;
-    text-decoration: none;
-    color: #111111;
-    position: relative;
-    left: -4%;
-  }
+input[type="text"].inputUsuarios,
+input[type="password"].inputUsuarios,
+input[type="email"].inputUsuarios {
+  font-size: 1rem;
+  background-color: #3797ce00;
+  padding: 10px 10px 10px 5px;
+  display: inline-block;
+  width: 27vw;
+  border: none;
+  border-bottom: 1px solid $blanco;
+  text-decoration: none;
+  color: #111111;
+  position: relative;
+  left: -4%;
+}
 
-   
-  input[type="text"].inputUsuarios-search,
-  input[type="password"].inputUsuarios-search,
-  input[type="email"].inputUsuarios-search {
-    font-size: 1rem;
-    background-color: #3797ce00;
-    padding: 10px 10px 10px 5px;
-    display: inline-block;
-    width: 30vw;
-    border: none;
-    border-bottom: 1px solid $blanco;
-    text-decoration: none;
-    color: #111111;
-  }
+input[type="text"].inputUsuarios-search,
+input[type="password"].inputUsuarios-search,
+input[type="email"].inputUsuarios-search {
+  font-size: 1rem;
+  background-color: #3797ce00;
+  padding: 10px 10px 10px 5px;
+  display: inline-block;
+  width: 30vw;
+  border: none;
+  border-bottom: 1px solid $blanco;
+  text-decoration: none;
+  color: #111111;
+}
 
-  
-  input[type="text"].inputUsuarios:focus,
-  input[type="password"].inputUsuarios:focus,
-  input[type="email"].inputUsuarios:focus {
-    outline:none;
-  }
-  
-  input.inputUsuarios:focus ~ .bar:before,  input.inputUsuarios:focus ~ .bar:after {
-    width:50%;
-  }
-  
-  label.Usuarios {
-    color:#111111; 
-    font-size:1rem;
-    font-weight:normal;
-    position:absolute;
-    pointer-events:none;
-    left: 10%;
-    top: 45%;
-    transition:0.2s ease all; 
-    -moz-transition:0.2s ease all; 
-    -webkit-transition:0.2s ease all;
-  }
+input[type="text"].inputUsuarios:focus,
+input[type="password"].inputUsuarios:focus,
+input[type="email"].inputUsuarios:focus {
+  outline: none;
+}
 
-  label.Usuarios-search {
-    color:#111111; 
-    font-size:1rem;
-    font-weight:normal;
-    position:absolute;
-    pointer-events:none;
-    left: 0%;
-    top: 45%;
-    transition:0.2s ease all; 
-    -moz-transition:0.2s ease all; 
-    -webkit-transition:0.2s ease all;
-  }
-  
-  input[type="text"].inputUsuarios:focus ~ label.Usuarios, 
-  input[type="text"].inputUsuarios:valid ~ label.Usuarios,
-  input[type="password"].inputUsuarios:focus ~ label.Usuarios,
-  input[type="password"].inputUsuarios:valid ~ label.Usuarios,
-  input[type="email"].inputUsuarios:focus ~ label.Usuarios,
-  input[type="email"].inputUsuarios:valid ~ label.Usuarios 		{
-    top:-25%;
-    font-size:0.85rem;
-    color:#111111;
-  }
-  
+input.inputUsuarios:focus ~ .bar:before,
+input.inputUsuarios:focus ~ .bar:after {
+  width: 50%;
+}
+
+label.Usuarios {
+  color: #111111;
+  font-size: 1rem;
+  font-weight: normal;
+  position: absolute;
+  pointer-events: none;
+  left: 10%;
+  top: 45%;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+}
+
+label.Usuarios-search {
+  color: #111111;
+  font-size: 1rem;
+  font-weight: normal;
+  position: absolute;
+  pointer-events: none;
+  left: 0%;
+  top: 45%;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+}
+
+input[type="text"].inputUsuarios:focus ~ label.Usuarios,
+input[type="text"].inputUsuarios:valid ~ label.Usuarios,
+input[type="password"].inputUsuarios:focus ~ label.Usuarios,
+input[type="password"].inputUsuarios:valid ~ label.Usuarios,
+input[type="email"].inputUsuarios:focus ~ label.Usuarios,
+input[type="email"].inputUsuarios:valid ~ label.Usuarios {
+  top: -25%;
+  font-size: 0.85rem;
+  color: #111111;
+}
+
 /* end of Invalid email style */
 
+.bottomBar.Usuarios {
+  background: #111111;
+  position: absolute;
+  display: block;
+  height: 2px;
+  width: 73%;
+  left: 10%;
+}
 
-  .bottomBar.Usuarios 	{ 
-    background: #111111;
-    position:absolute; 
-    display:block; 
-    height: 2px;
-    width:73%;
-    left: 10%; 
-  }
+.bottomBar.Usuarios-main {
+  background: #111111;
+  position: absolute;
+  display: block;
+  height: 2px;
+  width: 30vw;
+  left: 0%;
+}
 
-  .bottomBar.Usuarios-main 	{ 
-    background: #111111;
-    position:absolute; 
-    display:block; 
-    height: 2px;
-    width:30vw;
-    left: 0%; 
-    
-  }
+.bottomBar.inputUsuarios {
+  background: #111111;
+  position: absolute;
+  display: block;
+  height: 2px;
+  width: 73%;
+  left: 10%;
+}
 
-  .bottomBar.inputUsuarios 	{ 
-    background: #111111;
-    position:absolute; 
-    display:block; 
-    height: 2px;
-    width:73%;
-    left: 10%; 
-  }
+.bottomBar.Usuarios:before,
+.bottomBar.Usuarios:after {
+  content: "";
+  height: 2px;
+  width: 0;
+  bottom: 0%;
+  position: absolute;
+  background: $rojo;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+}
 
-  .bottomBar.Usuarios:before, .bottomBar.Usuarios:after 	{
-    content:'';
-    height:2px; 
-    width:0;
-    bottom: 0%; 
-    position:absolute;
-    background:#E00005; 
-    transition:0.2s ease all; 
-    -moz-transition:0.2s ease all; 
-    -webkit-transition:0.2s ease all;
-  }
+.bottomBar.inputUsuarios:before,
+.bottomBar.inputUsuarios:after {
+  content: "";
+  height: 2px;
+  width: 0;
+  bottom: 0%;
+  position: absolute;
+  background: #111111;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+}
 
-  .bottomBar.inputUsuarios:before, .bottomBar.inputUsuarios:after 	{
-    content:'';
-    height:2px; 
-    width:0;
-    bottom: 0%; 
-    position:absolute;
-    background:#111111; 
-    transition:0.2s ease all; 
-    -moz-transition:0.2s ease all; 
-    -webkit-transition:0.2s ease all;
-  }
+.bottomBar.Usuarios:before {
+  left: 50%;
+}
 
-  .bottomBar.Usuarios:before {
-    left:50%;
-  }
-  .bottomBar.Usuarios:after {
-    right:50%; 
-  }
-  
-  .bottomBar.inputUsuarios:before {
-    left:50%;
-  }
-  .bottomBar.inputUsuarios:after {
-    right:50%; 
-  }
+.bottomBar.Usuarios:after {
+  right: 50%;
+}
 
-  input.inputUsuarios:focus ~ .bottomBar.Usuarios:before,  input.inputUsuarios:focus ~ .bottomBar.Usuarios:after {
-    width:50%;
-  }
-  
-  .highlight.Usuarios {
-    position:absolute;
-    height:60%; 
-    width:100px; 
-    top:25%; 
-    left:0;
-    pointer-events:none;
-    opacity:0.5;
-  }
+.bottomBar.inputUsuarios:before {
+  left: 50%;
+}
 
-  .highlight.inputUsuarios {
-    position:absolute;
-    height:60%; 
-    width:100px; 
-    top:25%; 
-    left:0;
-    pointer-events:none;
-    opacity:0.5;
-  }
+.bottomBar.inputUsuarios:after {
+  right: 50%;
+}
+
+input.inputUsuarios:focus ~ .bottomBar.Usuarios:before,
+input.inputUsuarios:focus ~ .bottomBar.Usuarios:after {
+  width: 50%;
+}
+
+.highlight.Usuarios {
+  position: absolute;
+  height: 60%;
+  width: 100px;
+  top: 25%;
+  left: 0;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.highlight.inputUsuarios {
+  position: absolute;
+  height: 60%;
+  width: 100px;
+  top: 25%;
+  left: 0;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
 /* Tabla */
 
-
-  /*botones */
+/*botones */
 input[type="button"].button.Usuarios,
 input[type="submit"].button.Usuarios,
 input[type="reset"].button.Usuarios {
@@ -265,7 +272,6 @@ input[type="button"].button.Usuarios:hover,
 input[type="submit"].button.Usuarios:hover,
 input[type="reset"].button.Usuarios:hover {
   background-color: #003655;
-  
 }
 
 input[type="button"].button.Usuarios:active,
@@ -326,6 +332,7 @@ input[type="reset"].button.Usuarios.delete:active {
 .modal-detalles-usuario {
   display: flex-root;
 }
+
 /* Modal detalles labels */
 
 .Usuarios-Detalles.grid {
@@ -372,7 +379,6 @@ input[type="reset"].button.Usuarios.delete:active {
   background-color: #97101000;
 }
 
-
 .bottomBar.Usuarios-Detalles {
   background: #111111;
   position: relative;
@@ -414,15 +420,17 @@ label.Usuarios-Detalles {
   top: 0.3em;
   left: 0.3em;
 }
+
 h2.Resaltado {
   font-style: oblique;
 }
-th{
+
+th {
   color: #fff;
 }
 
 // En caso de que no encuentre coincidencias en las busquedas
-.kana{
+.kana {
   margin: 4% auto auto auto;
   width: 30%;
   background-size: cover;
@@ -430,44 +438,254 @@ th{
   background-repeat: no-repeat;
   overflow: hidden;
 }
+
 .Sin_Resultados {
   overflow: none;
   display: flex;
+  position: relative;
+  left: 10rem;
+  top: 3rem;
 }
 
-.containerDetallesUser{
-  display: grid; 
-  grid-template-columns: 1fr 1fr; 
-  grid-template-rows: 1fr 0fr; 
-  gap: 0px 0px; 
-  grid-template-areas: 
+.containerDetallesUser {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 0fr;
+  gap: 0px 0px;
+  grid-template-areas:
     "Inputs Tablass"
     "Buttons Buttons";
-    
-    .Inputs{
-      grid-area: Inputs;
-      width: 37vw;
 
-    }
-    .Tablass{
-      grid-area: Tablass;
-      width: 37vw;
-    }
-    .Buttons{
-      grid-area: Buttons;
-      display: flex;
-      flex-wrap: wrap;
-      flex-direction: row;
-      justify-content: center;
-      height: 10vh;
-      width: 100%;
-    }
+  .Inputs {
+    grid-area: Inputs;
+    width: 37vw;
+  }
+
+  .Tablass {
+    grid-area: Tablass;
+    width: 37vw;
+  }
+
+  .Buttons {
+    grid-area: Buttons;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    height: 10vh;
+    width: 100%;
+  }
 }
 
-.tablas{
+.tablas {
   width: 100%;
   overflow-y: auto;
   height: 30vh;
   margin-bottom: 3%;
   margin: auto;
+}
+
+.filtros-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+  width: 100%;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  gap: 0.5rem;
+
+  .izquierda {
+    display: inline-flex;
+    background-color: #f3f3f3;
+    height: 30px;
+    width: 50%;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 2rem;
+
+    .label-radio {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 2px solid lightgray;
+      transition: all 0.25s ease;
+      -webkit-transition: all 0.25s ease;
+      -moz-transition: all 0.25s ease;
+      -o-transition: all 0.25s ease;
+      position: initial;
+      pointer-events: all;
+
+      &:hover {
+        border: 2px solid $azul;
+      }
+
+      .punto {
+        height: 20px;
+        width: 20px;
+        background: #d9d9d9;
+        border-radius: 50%;
+        position: relative;
+
+        &::before {
+          position: absolute;
+          content: "";
+          top: 4px;
+          left: 4px;
+          width: 12px;
+          height: 12px;
+          background: $azul;
+          border-radius: 50%;
+          opacity: 0;
+          transform: scale(1.5);
+          transition: all 0.25s ease;
+          -webkit-transition: all 0.25s ease;
+          -moz-transition: all 0.25s ease;
+          -o-transition: all 0.25s ease;
+        }
+      }
+    }
+
+    input[type="radio"] {
+      display: none;
+    }
+
+    #Filtro-1:checked:checked ~ .label-1,
+    #Filtro-2:checked:checked ~ .label-2,
+    #Filtro-3:checked:checked ~ .label-3,
+    #Filtro-4:checked:checked ~ .label-4 {
+      border-color: $azul;
+      background: $azul;
+    }
+
+    #Filtro-1:checked:checked ~ .label-1 .punto,
+    #Filtro-2:checked:checked ~ .label-2 .punto,
+    #Filtro-3:checked:checked ~ .label-3 .punto,
+    #Filtro-4:checked:checked ~ .label-4 .punto {
+      background: #fff;
+    }
+
+    #Filtro-1:checked:checked ~ .label-1 .punto::before,
+    #Filtro-2:checked:checked ~ .label-2 .punto::before,
+    #Filtro-3:checked:checked ~ .label-3 .punto::before,
+    #Filtro-4:checked:checked ~ .label-4 .punto::before {
+      opacity: 1;
+      transform: scale(1);
+      background: $rojo;
+    }
+
+    span {
+      font-size: 1rem;
+      font-weight: 500;
+      color: $color-text;
+    }
+
+    #Filtro-1:checked:checked ~ .label-1 span,
+    #Filtro-2:checked:checked ~ .label-2 span,
+    #Filtro-3:checked:checked ~ .label-3 span,
+    #Filtro-4:checked:checked ~ .label-4 span {
+      color: #fff;
+    }
+  }
+
+  .derecha {
+    display: inline-flex;
+    background-color: #f3f3f3;
+    height: 30px;
+    width: 50%;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 2rem;
+
+    .label-radio {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 2px solid lightgray;
+      transition: all 0.25s ease;
+      -webkit-transition: all 0.25s ease;
+      -moz-transition: all 0.25s ease;
+      -o-transition: all 0.25s ease;
+      position: initial;
+      pointer-events: all;
+
+      &:hover {
+        border: 2px solid $azul;
+      }
+
+      .punto {
+        height: 20px;
+        width: 20px;
+        background: #d9d9d9;
+        border-radius: 50%;
+        position: relative;
+
+        &::before {
+          position: absolute;
+          content: "";
+          top: 4px;
+          left: 4px;
+          width: 12px;
+          height: 12px;
+          background: $azul;
+          border-radius: 50%;
+          opacity: 0;
+          transform: scale(1.5);
+          transition: all 0.25s ease;
+          -webkit-transition: all 0.25s ease;
+          -moz-transition: all 0.25s ease;
+          -o-transition: all 0.25s ease;
+        }
+      }
+    }
+
+    input[type="radio"] {
+      display: none;
+    }
+
+    #Filtro-5:checked:checked ~ .label-5,
+    #Filtro-6:checked:checked ~ .label-6,
+    #Filtro-7:checked:checked ~ .label-7,
+    #Filtro-8:checked:checked ~ .label-8 {
+      border-color: $azul;
+      background: $azul;
+    }
+
+    #Filtro-5:checked:checked ~ .label-5 .punto,
+    #Filtro-6:checked:checked ~ .label-6 .punto,
+    #Filtro-7:checked:checked ~ .label-7 .punto,
+    #Filtro-8:checked:checked ~ .label-8 .punto {
+      background: #fff;
+    }
+
+    #Filtro-5:checked:checked ~ .label-5 .punto::before,
+    #Filtro-6:checked:checked ~ .label-6 .punto::before,
+    #Filtro-7:checked:checked ~ .label-7 .punto::before,
+    #Filtro-8:checked:checked ~ .label-8 .punto::before {
+      opacity: 1;
+      transform: scale(1);
+      background: $rojo;
+    }
+
+    span {
+      font-size: 1rem;
+      font-weight: 500;
+      color: $color-text;
+    }
+
+    #Filtro-5:checked:checked ~ .label-5 span,
+    #Filtro-6:checked:checked ~ .label-6 span,
+    #Filtro-7:checked:checked ~ .label-7 span,
+    #Filtro-8:checked:checked ~ .label-8 span {
+      color: #fff;
+    }
+  }
 }
