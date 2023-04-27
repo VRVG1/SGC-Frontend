@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect, useCallback } from 'react';
 import { AuthContext } from './helpers/Auth/auth-context';
-import getAllCarrera from "./helpers/Carreras/getAllCarrera"
+import getAllCarrera from "./helpers/Carreras/getAllCarrera";
+import filtroEstadistico from "./helpers/Reportes/filtroEstadistica";
 
 const tituloTipoDatos = "Mostrar datos de:";
 const tipoDatosData = {
@@ -24,6 +25,11 @@ const ReportesEstadisticas = () => {
     const [carreras, setCarreras] = useState([]);
     const [filterListData, setFilterListData] = useState([]);
 
+    console.log("Filter List Data:");
+    console.log(filterListData);
+    // console.log("Filter Data:");
+    // console.log(filterData);
+
     const obtenerCarrera = useCallback(() => {
         getAllCarrera(auth.user.token).then((data) => {
             setCarreras(data)
@@ -31,6 +37,7 @@ const ReportesEstadisticas = () => {
     }, [setCarreras]);
 
     useEffect(obtenerCarrera, [setCarreras]);
+
 
     /**
         * React Component that contains the filters area of
@@ -67,7 +74,36 @@ const ReportesEstadisticas = () => {
             "radio-puntual": false,
             "radio-inpuntual": false,
         });
+        // console.log(filterCareer);
+        console.log("Filter Career:");
         console.log(filterCareer);
+        console.log("Filter Data:");
+        console.log(filterData);
+
+        const getFilterListData = useCallback(() => {
+            filtroEstadistico(
+                auth.user.token,
+                filterCareer["Nombre_Carrera"],
+                "Carrera"
+            ).then((res) => {
+                return {
+                    status: res.status,
+                    data: res.json
+                }
+            }).then((obj) => {
+                console.log("Then obj => {}")
+                console.log(obj);
+                if (obj.status === 200) {
+                    console.log(obj.data);
+                    setFilterListData(obj.data());
+                }
+            }).catch((error) => {
+                console.log("Peticion rechazada: ");
+                console.log(error.message);
+            });
+        }, [setFilterListData]);
+
+        useEffect(getFilterListData, [setFilterListData]);
 
         /**
             * React Component that represent the filter/selection of data
@@ -135,7 +171,9 @@ const ReportesEstadisticas = () => {
                         onChange={e => handleFilterDataList(e)}
                     >
                         <option value="">--Elija {tituloFilteredData}--</option>
-                        {/*TODO: Inject the array mapping here */}
+                        {Object.keys(filterListData).length !== 0 ? "" : filterListData.map(data => {
+                            // TODO: Ajustar los objetos de filterListData
+                        })}
                     </select>
                 </div>
             );
