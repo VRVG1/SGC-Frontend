@@ -1,33 +1,33 @@
 //TODO, si el mai se equivoca y tiene que modificar las materias
 //Pedirle a la base de datos que me mande los datos que el selecciono y agregarlo a la tabla
-import React, { useState, useEffect, useContext, useCallback } from "react";
-import getAllCarrera from "../helpers/Carreras/getAllCarrera";
-import getAllMaterias from "../helpers/Materias/getAllMaterias";
-import postAsigna from "../helpers/Asignan/postAsignan.js";
-import getAllAsignanUser from "../helpers/Asignan/getAllAsignanUser.js";
-import asignanCNames_allpk from "../helpers/Asignan/asignanCNames-allpk";
-import deleteAsignacion from "../helpers/Asignan/deleteAsignacion.js";
-import { AuthContext } from "../helpers/Auth/auth-context";
-import Modal from "../modal/Modal";
-import getInfoUser from "../helpers/Usuarios/getInfoUser";
-import getMateriaXCarrera from "../helpers/Materias/getCarreraIDMaterias";
+import React, { useState, useEffect, useContext, useCallback } from "react"
+import getAllCarrera from "../helpers/Carreras/getAllCarrera"
+import getAllMaterias from "../helpers/Materias/getAllMaterias"
+import postAsigna from "../helpers/Asignan/postAsignan.js"
+import getAllAsignanUser from "../helpers/Asignan/getAllAsignanUser.js"
+import asignanCNames_allpk from "../helpers/Asignan/asignanCNames-allpk"
+import deleteAsignacion from "../helpers/Asignan/deleteAsignacion.js"
+import { AuthContext } from "../helpers/Auth/auth-context"
+import Modal from "../modal/Modal"
+import getInfoUser from "../helpers/Usuarios/getInfoUser"
+import getMateriaXCarrera from "../helpers/Materias/getCarreraIDMaterias"
 
 export const Home2 = () => {
-  let auth = useContext(AuthContext);
-  const [infoUser, setInfoUser] = useState([]);
-  const [disponible, setDisponible] = useState(true);
-  const [carreras, setCarreras] = useState([]);
-  const [aBorrar, setABorrar] = useState([]);
-  const [materias, setMaterias] = useState([]);
-  const [allmaterias, setallmaterias] = useState([]);
-  const [asignanMaterias, setAsignanMaterias] = useState([]);
-  const [showModalAlert, setShowModalAlert] = useState(false);
-  const [mensajeAlerta, setMensajeAlerta] = useState("");
-  const [showModalConfirm, setShowModalConfirm] = useState(false);
-  const [showModalDatosEnviados, setShowModalDatosEnviados] = useState(false);
-  const [send, setSend] = useState(false);
-  const [continuacion, setContinuacion] = useState(0);
-  const [boraccion, setBoraccion] = useState(0);
+  let auth = useContext(AuthContext)
+  const [infoUser, setInfoUser] = useState([])
+  const [disponible, setDisponible] = useState(true)
+  const [carreras, setCarreras] = useState([])
+  const [aBorrar, setABorrar] = useState([])
+  const [materias, setMaterias] = useState([])
+  const [allmaterias, setallmaterias] = useState([])
+  const [asignanMaterias, setAsignanMaterias] = useState([])
+  const [showModalAlert, setShowModalAlert] = useState(false)
+  const [mensajeAlerta, setMensajeAlerta] = useState("")
+  const [showModalConfirm, setShowModalConfirm] = useState(false)
+  const [showModalDatosEnviados, setShowModalDatosEnviados] = useState(false)
+  const [send, setSend] = useState(false)
+  const [continuacion, setContinuacion] = useState(0)
+  const [boraccion, setBoraccion] = useState(0)
   const [selectedData, setSelectedData] = useState({
     carrera_ID: "",
     Clave_reticula: "",
@@ -39,13 +39,13 @@ export const Home2 = () => {
     Nombre_Carrera: "",
     Nombre_Materia: "",
     pik: "",
-  });
-  const [dataTable, setDataTable] = useState([]);
-  let date = new Date();
-  let hour = date.getHours();
+  })
+  const [dataTable, setDataTable] = useState([])
+  let date = new Date()
+  let hour = date.getHours()
   const [regex, setRegex] = useState({
     aula: /^[a-z]{0,1}[0-9]{0,2}$/,
-  });
+  })
 
   /**
    * Hacer el llamado al los helper para obtener las carreras y materias
@@ -62,9 +62,9 @@ export const Home2 = () => {
             pik: "",
           },
           ...data,
-        ]);
-      });
-    };
+        ])
+      })
+    }
     const obtenerCarrera = async () => {
       await getAllCarrera(auth.user.token).then((data) => {
         setCarreras([
@@ -73,19 +73,19 @@ export const Home2 = () => {
             Nombre_Carrera: "",
           },
           ...data,
-        ]);
-      });
-    };
+        ])
+      })
+    }
 
-    getInforUser();
-    obtenerCarrera();
-    obtenerMateria();
+    getInforUser()
+    obtenerCarrera()
+    obtenerMateria()
     return () => {
-      setCarreras([]);
-      setallmaterias([]);
-      setInfoUser([]);
-    };
-  }, []);
+      setCarreras([])
+      setallmaterias([])
+      setInfoUser([])
+    }
+  }, [])
 
   useEffect(() => {
     //getAsignan();
@@ -95,18 +95,18 @@ export const Home2 = () => {
         // ID_Materia seria el pik
         await asignanCNames_allpk(auth.user.token, infoUser.PK)
           .then((data) => {
-            setAsignanMaterias(data);
+            setAsignanMaterias(data)
           })
           .catch((err) => {
             //console.log(err);
-          });
+          })
       }
-    };
-    pinga2();
+    }
+    pinga2()
     return () => {
-      setAsignanMaterias([]);
-    };
-  }, [infoUser]);
+      setAsignanMaterias([])
+    }
+  }, [infoUser])
 
   useEffect(() => {
     if (asignanMaterias.length > 0) {
@@ -123,11 +123,11 @@ export const Home2 = () => {
             Nombre_Carrera: data.Carrera,
             Nombre_Materia: data.Nombre_Materia,
           },
-        ];
-        setDataTable((oldArray) => [...oldArray, ...data2]);
-      });
+        ]
+        setDataTable((oldArray) => [...oldArray, ...data2])
+      })
     }
-  }, [asignanMaterias]);
+  }, [asignanMaterias])
   /**
    * Funcion para obtener los asignan del docente
    */
@@ -135,36 +135,36 @@ export const Home2 = () => {
     if (infoUser.PK !== undefined) {
       await getAllAsignanUser(auth.user.token, infoUser.PK)
         .then((data) => {
-          console.log(data);
-          setAsignanMaterias(data);
+          console.log(data)
+          setAsignanMaterias(data)
         })
         .catch((err) => {
           //console.log(err);
-        });
+        })
     }
-  }, [infoUser]);
+  }, [infoUser])
   /**
    * Funcion para obtener los datos del usuario
    */
   const getInforUser = useCallback(async () => {
     await getInfoUser(auth.user.token)
       .then((data) => {
-        setInfoUser(data);
+        setInfoUser(data)
       })
       .catch((err) => {
         //console.log(err);
-      });
-  }, []);
+      })
+  }, [])
 
   const deleteAsignan = async (PK) => {
     await deleteAsignacion(auth.user.token, PK)
       .then(() => {
-        console.log("Se elimino correctamente");
+        console.log("Se elimino correctamente")
       })
       .catch((err) => {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
 
   /**
    * Metodo para obtener los datos que se selecciones de los inputs
@@ -177,23 +177,23 @@ export const Home2 = () => {
           ...selectedData,
           [e.target.name]: e.target.value,
           Nombre_Carrera: getCarreraName(e.target.value),
-        });
+        })
       } else if (e.target.name === "Clave_reticula") {
-        let ayuda = getMateriaName(e.target.value);
+        let ayuda = getMateriaName(e.target.value)
         setSelectedData({
           ...selectedData,
           [e.target.name]: e.target.value,
           Nombre_Materia: ayuda[0],
           pik: ayuda[1],
-        });
+        })
       } else {
         setSelectedData({
           ...selectedData,
           [e.target.name]: e.target.value,
-        });
+        })
       }
     }
-  };
+  }
 
   /**
    * Metodo para obtener los datos que se selecciones de los inputs
@@ -201,7 +201,7 @@ export const Home2 = () => {
    * @returns null
    */
   const agregarTabla = () => {
-    let yaEsta = false;
+    let yaEsta = false
     // Por si hace falta, poner en el if de abajo || selectedData.Clave_reticula === ''
     if (
       selectedData.carrera_ID === "" ||
@@ -212,9 +212,9 @@ export const Home2 = () => {
       selectedData.hora === "" ||
       selectedData.Clave_reticula === ""
     ) {
-      setShowModalAlert(true);
-      setMensajeAlerta("Todos los campos son obligatorios");
-      return;
+      setShowModalAlert(true)
+      setMensajeAlerta("Todos los campos son obligatorios")
+      return
     }
 
     dataTable.map((data) => {
@@ -228,33 +228,33 @@ export const Home2 = () => {
         data.dia === selectedData.dia &&
         data.Clave_reticula === selectedData.Clave_reticula
       ) {
-        yaEsta = true;
-        setShowModalAlert(true);
-        setMensajeAlerta("Ya se a asignaron esos datos");
-        return;
+        yaEsta = true
+        setShowModalAlert(true)
+        setMensajeAlerta("Ya se a asignaron esos datos")
+        return
       }
-    });
+    })
     if (!yaEsta) {
-      setDataTable([...dataTable, selectedData]);
+      setDataTable([...dataTable, selectedData])
     }
-  };
+  }
   /**
    * Metodo para hacer la confirmacion de los datos
    * No envia nada aunque se llame sendData
    */
   const sendData = () => {
     if (dataTable.length > 0) {
-      setShowModalConfirm(true);
+      setShowModalConfirm(true)
     } else {
-      setShowModalAlert(true);
-      setMensajeAlerta("No hay datos para enviar");
+      setShowModalAlert(true)
+      setMensajeAlerta("No hay datos para enviar")
     }
-  };
+  }
   /**
    * Metodo para iniciar el filtado de los datos y enviar/borrar datos en la base de datos
    */
   const pinga = async () => {
-    let aux = aBorrar;
+    let aux = aBorrar
     dataTable.map(async (data) => {
       aux.map((auxiliar) => {
         if (
@@ -266,19 +266,19 @@ export const Home2 = () => {
           auxiliar.aula === data.aula &&
           auxiliar.hora === data.hora
         ) {
-          aux.splice(aux.indexOf(auxiliar), 1);
+          aux.splice(aux.indexOf(auxiliar), 1)
         }
-      });
-    });
-    setABorrar(aux);
-    setBoraccion(Math.random());
-    setSend(true);
-  };
+      })
+    })
+    setABorrar(aux)
+    setBoraccion(Math.random())
+    setSend(true)
+  }
 
   const borrar = async () => {
     if (aBorrar.length > 0) {
       aBorrar.map(async (data) => {
-        let a;
+        let a
         try {
           a = asignanMaterias.filter(
             (datos) =>
@@ -289,20 +289,20 @@ export const Home2 = () => {
               data.aula === datos.aula &&
               data.hora === datos.hora &&
               data.dia === datos.dia
-          )[0].ID_Asignan;
-          deleteAsignan(a);
+          )[0].ID_Asignan
+          deleteAsignan(a)
         } catch (error) {
-          console.log(error);
+          console.log(error)
         }
-      });
+      })
     }
-  };
+  }
   useEffect(() => {
     if (aBorrar.length > 0 && send) {
-      borrar();
+      borrar()
     }
-    setContinuacion(Math.random());
-  }, [aBorrar, boraccion]);
+    setContinuacion(Math.random())
+  }, [aBorrar, boraccion])
 
   /**
    * useEffect para actualizar el selector de materia dependiendo de la carrera elegida
@@ -313,32 +313,32 @@ export const Home2 = () => {
       if (selectedData.carrera_ID !== "") {
         await getMateriaXCarrera(auth.user.token, selectedData.carrera_ID)
           .then((data) => {
-            setMaterias(data);
-            let ayuda = getMateriaName(data[0].Clave_reticula);
+            setMaterias(data)
+            let ayuda = getMateriaName(data[0].Clave_reticula)
             setSelectedData({
               ...selectedData,
               Clave_reticula: data[0].Clave_reticula,
               Nombre_Materia: ayuda[0],
               pik: ayuda[1],
-            });
+            })
           })
           .catch((err) => {
-            console.log(err);
-          });
+            console.log(err)
+          })
       } else {
-        setMaterias([]);
+        setMaterias([])
       }
-    };
+    }
 
-    getMateria();
-  }, [selectedData.carrera_ID]);
+    getMateria()
+  }, [selectedData.carrera_ID])
 
   useEffect(() => {
     if (continuacion !== 0 && send) {
       if (asignanMaterias.length > 0) {
-        let aguardar = false;
+        let aguardar = false
         dataTable.map(async (data) => {
-          aguardar = false;
+          aguardar = false
           asignanMaterias.map(async (data2) => {
             if (
               data.carrera_ID === data2.ID_Carrera &&
@@ -349,83 +349,83 @@ export const Home2 = () => {
               data.aula === data2.aula &&
               data.hora === data2.hora
             ) {
-              console.log("No hacer nada porque ya esta asignado");
-              aguardar = false;
+              console.log("No hacer nada porque ya esta asignado")
+              aguardar = false
             } else {
-              aguardar = true;
-              console.log("mandar a guardar");
+              aguardar = true
+              console.log("mandar a guardar")
             }
-          });
+          })
           if (aguardar) {
-            await postAsigna(data, auth.user.token, infoUser.PK);
+            await postAsigna(data, auth.user.token, infoUser.PK)
           }
-        });
+        })
       } else {
         dataTable.map(async (data) => {
-          await postAsigna(data, auth.user.token, infoUser.PK);
-        });
+          await postAsigna(data, auth.user.token, infoUser.PK)
+        })
       }
-      setShowModalDatosEnviados(true);
+      setShowModalDatosEnviados(true)
     }
-  }, [continuacion]);
+  }, [continuacion])
   /**
    * Metodo para enviar los datos a la base de datos
    */
   const mandarDatos = async () => {
-    await pinga();
-  };
+    await pinga()
+  }
   /**
    * Metodo para finalizar el proceso de seleccion de materias
    */
   const todoListo = () => {
-    setShowModalDatosEnviados(false);
-    setDisponible(false);
-  };
+    setShowModalDatosEnviados(false)
+    setDisponible(false)
+  }
   /**
    * Metodo para conseguir la fecha y mandar el saludo
    * @returns {JSX}
    */
   const Saludo = () => {
-    let saludo;
+    let saludo
     if (hour >= 6 && hour < 12) {
       saludo = (
         <>
           <h1>Buenos días {infoUser.Nombre_Usuario}</h1>
         </>
-      );
+      )
     } else if (hour >= 12 && hour < 18) {
       saludo = (
         <>
           <h1>Buenas tardes {infoUser.Nombre_Usuario}</h1>
         </>
-      );
+      )
     } else {
       saludo = (
         <>
           <h1>Buenas noches {infoUser.Nombre_Usuario}</h1>
         </>
-      );
+      )
     }
-    return saludo;
-  };
+    return saludo
+  }
 
   const getMateriaName = (data) => {
-    let si = allmaterias.filter((materia) => materia.Clave_reticula === data);
+    let si = allmaterias.filter((materia) => materia.Clave_reticula === data)
     if (si.length !== 0) {
-      return [si[0].Nombre_Materia, si[0].pik];
+      return [si[0].Nombre_Materia, si[0].pik]
     } else {
-      return "";
+      return ""
     }
-  };
+  }
 
   const getCarreraName = (data) => {
-    let si = carreras.filter((carrera) => carrera.ID_Carrera === data);
+    let si = carreras.filter((carrera) => carrera.ID_Carrera === data)
     if (si.length !== 0) {
-      return si[0].Nombre_Carrera;
+      return si[0].Nombre_Carrera
     } else {
-      return "";
+      return ""
     }
-  };
+  }
 
   return (
     <div className="usuario-container-parent">
@@ -478,14 +478,14 @@ export const Home2 = () => {
                                         data2.semestre === data.semestre
                                     ).length === 0
                                   ) {
-                                    setABorrar([...aBorrar, data]);
+                                    setABorrar([...aBorrar, data])
                                   }
                                   //setABorrar(oldArray => [...oldArray, data]);
                                   setDataTable(
                                     dataTable.filter(
                                       (data) => dataTable[index] !== data
                                     )
-                                  );
+                                  )
                                 }}
                               >
                                 Eliminar
@@ -516,7 +516,7 @@ export const Home2 = () => {
                             >
                               {carrera.Nombre_Carrera}
                             </option>
-                          );
+                          )
                         })
                       ) : (
                         <></>
@@ -543,7 +543,7 @@ export const Home2 = () => {
                             >
                               {materia.Nombre_Materia}
                             </option>
-                          );
+                          )
                         })
                       ) : (
                         <></>
@@ -661,6 +661,7 @@ export const Home2 = () => {
                   <button onClick={agregarTabla}>Agregar</button>
                 </div>
               </div>
+
               <Modal
                 show={showModalAlert}
                 setShow={setShowModalAlert}
@@ -725,7 +726,7 @@ export const Home2 = () => {
         )
       }
     </div>
-  );
-};
+  )
+}
 
-export default Home2;
+export default Home2
