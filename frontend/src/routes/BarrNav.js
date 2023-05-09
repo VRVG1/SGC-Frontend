@@ -112,6 +112,9 @@ export default class Nav extends Component {
                                 <Link className='link' to="/admin/reportes/estadisticas">
                                     <li className='li'>Estadísticas</li>
                                 </Link>
+                                <Link className='link' to="/admin/reportes/pnc">
+                                    <li className='li'>PNC</li>
+                                </Link>
                             </ul>
                         </li>
 

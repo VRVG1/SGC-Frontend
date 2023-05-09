@@ -40,6 +40,7 @@ import BarNavS from "./routes/Supervisor/BarNavS.js";
 import UMaterias from "./routes/usuario/Materias";
 import ReportesMaterias from './routes/RepostesMaterias';
 import ReportesEstadisticas from './routes/ReportesEstadisticas';
+import ReportesProductosNoConformes from './routes/ReportesProductosNoConformes';
 
 import "./styles/style.css";
 import "./styles/BarrNav.css"
@@ -227,6 +228,7 @@ function Application() {
             <Route path="reportes/check" element={<ReportesCheck />} />
             <Route path="reportes/materias" element={<ReportesMaterias />} />
             <Route path="reportes/estadisticas" element={<ReportesEstadisticas />} />
+            <Route path="reportes/pnc" element={<ReportesProductosNoConformes />} />
             <Route path="exportardatos" element={<ExportData />} />
             <Route path="Respaldoyrestauraciones" element={<BackUpRestore />} />
             <Route path='ajustes' element={<SysSettings />} />

@@ -1,21 +1,39 @@
 import AuthPostBasis from "../Auth/AuthPostBasis.js"
 
 const urls = {
-    Carrera: "usuarios/p2MaeXC/", // Obtiene los maestros que tienen materias
-                                  // asignadas en la carrera X.
+    // Listas de datos para ultimo filtro
+    maestro: "usuario/p2MaeXC/",    // Obtiene los maestros que tienen materias
+                                    // asignadas en la carrera X.
+
+    reportes: "reporte/reportes",   // Obtiene todos los reportes registrados
+                                    // en la DB.
+
+    materia: "materia/p2MatXC/",    // Obtiene las materias que tiene la carrera
+                                    // X.
+    grupo: "materia/getGrupos/",    // Obtiene todos los grupos que pueden ser
+                                    // registrados en la DB.
     // Indice reprobación
-    IndMaestro: "", // Obtiene una lista con todas las materias y sus indices
-                    // de reprobación del maestro X.
-    IndMateria: "", // Obtiene una lista con todos los maestros y sus indices
-                    // de reprobación relacionados con la materia X.
-    IndGrupo: "",   // Obtiene una lista de todos los maestros y sus indices
-                    // de reprobación relacionados con el grupo X.
+    IndMaestro: "reporte/p3IndXMae/",   // Obtiene una lista con todas las 
+                                        // materias y sus indices
+                                        // de reprobación del maestro X.
+
+    IndMateria: "reporte/p3IndXMat/",   // Obtiene una lista con todos los
+                                        // maestros y sus indices de
+                                        // reprobación relacionados con la
+                                        // materia X.
+
+    IndGrupo: "reporte/p3IndXGrp/",     // Obtiene una lista de todos los
+                                        // maestros y sus indices de
+                                        // reprobación relacionados con el
+                                        // grupo X.
     // Entrega de reportes
-    Puntual: "",    // Obtiene una lista con todos los reportes que fueron
-                    // entregados puntualmente por el maestro X.
-    Puntual: "",    // Obtiene una lista con todos los reportes que fueron
-                    // entregados de forma inpuntual por el maestro X.
-}
+    IndEntregaReportes: "reporte/p3IndEntRepoXC/",   // Obtiene una lista con
+                                                    // el numero de profesores
+                                                    // que entregaron a tiempo
+                                                    // y tarde el reporte X de
+                                                    // la carrera Y.
+
+};
 
 /**
     * La función filtroEstadistico se encarga de realizar un llamado a la
@@ -37,13 +55,18 @@ const filtroEstadistico = async (token, dato, filtro) => {
     get = AuthPostBasis(token, get);
     const jsonData = require("../../../variables.json");
     let url = "";
-    if (filtro === "Carrera") {
+    if (filtro === "maestro" ||
+        filtro === "materia" ||
+        filtro === "grupo" ||
+        filtro === "IndMaestro" ||
+        filtro === "IndMateria" ||
+        filtro === "IndGrupo" ||
+        filtro === "IndEntregaReportes" ) {
         url = jsonData.host + urls[filtro] + dato;
-    } else if (filtro === "IndMaestro" ||
-               filtro === "IndMateria" ||
-               filtro === "IndGrupo") {
-        //TODO: Estilizar la variable url para estos tipos de filtro
+    } else if (filtro === "reportes") {
+        url = jsonData.host + urls[filtro];
     }
+    console.log(`URL Filtro: ${url}`);
 
     const res = await fetch(url,get);
     return res;
