@@ -5,6 +5,7 @@ import filtroEstadistico from "./helpers/Reportes/filtroEstadistica";
 import { EstadisticaContext } from './helpers/Reportes/EstadisticaContext';
 import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js'
 import { Pie, Bar } from 'react-chartjs-2';
+import Menu from '../componentes/Menu';
 
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -22,51 +23,6 @@ const dataMenuMostrarPor = [
     },
 
 ];
-
-function Option({value, txt}) {
-    return (
-        <option value={value}>
-            {txt}
-        </option>
-    );
-}
-
-function Menu({
-               labelTxt,
-               selectId,
-               selectName,
-               selectFn,
-               selectValue,
-               defaultOptionTxt,
-               optionsList,
-               optKey,
-               optValue,
-               optTxt,
-               hidden = true
-              }) {
-    return hidden ? "" : (
-        <div>
-            <label htmlFor={selectId}>
-                { labelTxt }
-            </label>
-            <select
-                name={ selectName }
-                id={ selectId }
-                onChange={ selectFn }
-                value={ selectValue }
-            >
-                <option value="">{ defaultOptionTxt }</option>
-                {
-                    optionsList.length === 0 ? "" : optionsList.map(option => (
-                        <Option
-                            key={ option[optKey] }
-                            value={ option[optValue] }
-                            txt={ option[optTxt] } />
-                ))}
-            </select>
-        </div>
-    );
-}
 
 /**
     * React Component which represent the view of ReportesEstadisticas.
