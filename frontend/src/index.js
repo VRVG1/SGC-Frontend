@@ -59,6 +59,7 @@ import "./styles/sysSettings.scss"
 import "./styles/usuario/Materias.scss"
 import "./styles/ReportesMaterias.scss"
 import "./styles/ReportesEstadisticas.css"
+import "./styles/ReportesPNC.css"
 
 /**
   * Funcion que facilita el acceso al contexto 'AuthContext'.
