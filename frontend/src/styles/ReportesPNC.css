@@ -14,6 +14,14 @@
   overflow-y: auto;
 }
 
+.data__body__reportes_display {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .reporte__tabla {
   width: 100%;
 }

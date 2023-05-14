@@ -10,20 +10,42 @@ const checkStateRadioInput = {
     "radio-no": false
 };
 
-function Reporte({ nombreReporte, registros }) {
-    const tableBody = registros.length === 0 ? (
-        <h3>
-            No se tiene ningún registro PNC registrado para el reporte
-            "{nombreReporte}".
-        </h3>
+function Reporte({
+    nombreReporte,
+    registros,
+    callbackBtnModificar,
+    callbackBtnEliminar
+}) {
+
+    function handleBtnModificar(idRegistro, registro) {
+        callbackBtnModificar(nombreReporte, idRegistro, registro);
+    }
+
+    function handleBtnEliminar(idRegistro, registro) {
+        callbackBtnEliminar(nombreReporte, idRegistro, registro);
+    }
+
+    const idsRegistros = Object.keys(registros);
+    const tableBody = idsRegistros.length === 0 ? (
+        <div className="data__header">
+            <h3>
+                No se tiene ningún registro PNC registrado para el reporte
+                "{nombreReporte}".
+            </h3>
+        </div>
     ) :
-        registros.map((registro, idx) => {
-            return <PNCFila key={`PNC_${idx}`} registro={registro}/>
+        idsRegistros.map(idRegistro => {
+            return <PNCFila
+                        key={`PNC_${idRegistro}`}
+                        idRegistro={parseInt(idRegistro)}
+                        registro={registros[idRegistro]}
+                        callbackModificar={handleBtnModificar}
+                        callbackEliminar={handleBtnEliminar}
+                   />
         });
     return (
         <div className="reporte__tabla">
             <table>
-                <col className="reporte__tabla__empty_header"/>
                 <thead>
                     <tr>
                         <th colSpan={7}>{nombreReporte}</th>
@@ -54,19 +76,21 @@ function Reporte({ nombreReporte, registros }) {
     );
 }
 
-function PNCFila({ registro }) {
+function PNCFila({
+    idRegistro,
+    registro,
+    callbackModificar,
+    callbackEliminar
+}) {
     const {
         numeroPNC,
         folio,
         fechaRegistro,
-        fechaRepoEntrega,
         especIncumplida,
         accionImplantada,
         eliminaPNC
     } = registro;
 
-    // TODO: Agregar dos botones al final de cada fila; Uno para modificar y
-    //       otro para eliminar.
     return (
         <tr>
             <td>{numeroPNC}</td>
@@ -76,8 +100,30 @@ function PNCFila({ registro }) {
             <td>{accionImplantada}</td>
             <td>{ eliminaPNC["radio-si"] ? "X" : " " }</td>
             <td>{ eliminaPNC["radio-no"] ? "X" : " " }</td>
-            <td><button>Modificar</button></td>
-            <td><button>Eliminar</button></td>
+            <td>
+                <button
+                    onClick={(e) => {
+                        // TODO: Llamar a una funcion que asigne los datos en
+                        //       los estados de 'ReportesProductosNoConformes'
+                        callbackModificar(idRegistro, registro);
+                    }}
+                >
+                    Modificar
+                </button>
+            </td>
+            <td>
+                <button
+                    onClick={(e) => {
+                        // TODO: Llamar a una función que agregue el
+                        //       parametro registro al estado
+                        //      'registrosEliminados' de 
+                        //      'ReportesProductosNoConformes'
+                        callbackEliminar(idRegistro, registro);
+                    }}
+                >
+                    Eliminar
+                </button>
+            </td>
         </tr>
     );
 }
@@ -92,86 +138,77 @@ export default function ReportesProductosNoConformes() {
                 la DB.
 
         registroServidor:
-            --> Objeto de arreglos. Almacena un objeto que puede contener
+            --> Objeto de arreglos. Almacena un arreglo que puede contener
                 multiples objetos, estos representan el registro de reportes
                 PNC que tiene el servidor.
                 
                 La estructura del objeto será la siguiente:
                 
                 {
-                    <NOMBRE_DEL_REPORTE>: <REGISTROS>
-                        "NOMBRE_DEL_REPORTE_1": [
-                            {
+                    <ID_REPORTE>:{<ID_REGISTRO>: {<REGISTROS>}} 
+                        "ID_REPORTE": {
+                            "ID_REGISTRO_1": {
                                 "numeroPNC": numero,
                                 "folio": string,
                                 "fechaRegistro": string date ("yyyy-mm-dd"),
-                                "fechaRepoEntrega": string date ("yyyy-mm-dd"),
-                                "especInc": string,
-                                "accImp": string,
-                                "eliminaPNC": {
-                                    "radio-si": booleano.
-                                    "radio-no": booleano.
-                                }
-                            },
-                            ...,
-                            {
-                                ...
-                            }
-                        ],
-
-                        ...,
-
-                        "NOMBRE_DEL_REPORTE_n" : [
-                            ...
-                        ]
-                }
-
-        registroFrontend:
-            --> Objeto de arreglos. Almacena un objeto que puede contener 
-                multiples objetos, estos representan los registros de reportes
-                que serán agregados en el registro del servidor. (es el
-                registro que se sube al momento de guardar).
-
-                La estructura del objeto será la siguiente:
-                
-                {
-                    <NOMBRE_DEL_REPORTE>: <REGISTROS>
-                        "NOMBRE_DEL_REPORTE_1": [
-                            {
-                                "numeroPNC": numero,
-                                "folio": string,
-                                "fechaRegistro": string date ("yyyy-mm-dd"),
-                                "fechaRepoEntrega": string date ("yyyy-mm-dd"),
                                 "especIncumplida": string,
                                 "accionImplantada": string,
-                                "eliminaPNC": {
-                                    "radio-si": booleano.
-                                    "radio-no": booleano.
-                                }
+                                "eliminaPNC": { "radio-si": booleano. "radio-no": booleano. }
                             },
                             ...,
-                            {
+                            "ID_REGISTRO_n": {
                                 ...
                             }
-                        ],
+                        },
 
                         ...,
 
-                        "NOMBRE_DEL_REPORTE_n" : [
+                        "NOMBRE_DEL_REPORTE_n" : {
                             ...
-                        ]
+                        }
                 }
+
+        registrosAgregados:
+            --> Objeto de arreglos. Almacena un arreglo que puede contener 
+                multiples objetos, estos representan los registros de reportes
+                que serán agregados en el registro del servidor. (es uno de los
+                registro que se suben al momento de guardar).
+
+                La estructura del objeto es igual a la de 'registroServidor'.
+
+        registrosModificados:
+            --> Objeto de arreglos. Almacena un arreglo que puede contener
+                multiples objetos, estos representan los registros de reportes
+                que serán modificados en el registro del servidor. (es uno de
+                los registros que se suben al momento de guardar)
+
+                La estructura del objeto es igual a la de 'registroServidor'.
+
+        registrosEliminados:
+            --> Objeto de arreglos. Almacena un arreglo que puede contener
+                multiples objetos, estos representan los registros de reportes
+                que serán eliminados en el registro del servidor. (es uno de
+                los registros que se suben al momento de guardar).
+
+                La estructura del objeto es igual a la de 'registroServidor'.
 
         isDownloadable:
             --> Booleano. Cambia su valor cuando se obtiene el arreglo de
                           registroServidor, si el servidor retorna un arreglo
                           vacío este permanece en false, de lo contrario true.
         
+        isAdding:
+            --> Booleano. Cambia su valor cuando se presiona el boton de
+                          Agregar.
+        isUpdating:
+            --> Booleano. Cambia su valor cuando se presiona el boton 
+                          "Modificar" de alguno de los registros 
+                          (registroServidor, registrosAgregados,
+                          registrosModificados).
         hasChanges:
-            --> Booleano. Cambia su valor cuando se modifica un objeto dentro
-                          de los registros (registroServidor, registroFrontend)
-                          o cuando se agrega un nuevo objeto a
-                          registroFrontend.
+            --> Booleano. Cambia su valor cuando se efectúa algún cambio en los
+                          registros (registroServidor, registrosAgregados,
+                          registrosModificados, registrosEliminados).
 
         showModal:
             --> Booleano. Cambia su valor cuando se presiona el boton de
@@ -179,20 +216,32 @@ export default function ReportesProductosNoConformes() {
     **/
     const [reportes, setReportes] = useState([]);
     const [registroServidor, setRegistroServidor] = useState({});
-    const [registroFrontend, setRegistroFrontend] = useState({});
+    const [registrosAgregados, setRegistroAgregados] = useState({});
+    const [registrosModificados, setRegistrosModificados] = useState({});
+    const [registrosEliminados, setRegistrosEliminados] = useState({});
     const [isDownloadable, setIsDownloadable] = useState(false);
+    const [isAdding, setIsAdding] = useState(false)
+    const [isUpdating, setIsUpdating] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
     const [showModal, setShowModal] = useState(false);
     /**
         Estados para registrar/modificar PNC:
 
-        actualPNCCounter:
-            --> Contador de registros agregados.
+        actualPNCID:
+            --> Int. Contador de registros agregados, representa el último ID
+                registrado.
 
-        pncCounter:
-            --> Contador espejo de actualPNCCounter, pero este puede ser
-                modificado para contener un contador pasado (de un objeto en
-                algun registro).
+        pncID:
+            --> Int. Contador espejo de actualPNCID, pero este puede ser
+                modificado para contener el ID de un PNC que va a ser
+                modificado o eliminado. El valor que contenga va a ser igual
+                al de 'actualPNCID' cuando se va a agregar un nuevo PNC.
+
+        noPNC:
+            --> String|Int. Representa el número que le corresponde al PNC de 
+                un Reporte. El número que contendrá cambiará según el reporte
+                que se seleccione, mientras no sea seleccionado ningún reporte
+                esta variable permanecerá como un string vacío ("").
 
         fechaRegistro:
             --> String. Almacena la fecha (en formato string) del día en el que
@@ -252,8 +301,9 @@ export default function ReportesProductosNoConformes() {
                 atributos booleanos, estos definen que input de tipo radio
                 fue seleccionado por el usuario.
     **/
-    const [actualPNCCounter, setActualPNCCounter] = useState(1);
-    const [pncCounter, setPNCCounter] = useState(1);
+    const [actualPNCID, setActualPNCID] = useState(1);
+    const [pncID, setPncId] = useState(1);
+    const [noPNC, setNoPNC] = useState("");
     const [fechaRegistro, setFechaRegistro] = useState(new Date().toISOString().split('T')[0]);
     const [reporte, setReporte] = useState({});
     const [folio, setFolio] = useState("");
@@ -269,6 +319,24 @@ export default function ReportesProductosNoConformes() {
 
     useEffect(obtenerReportes, [setReportes]);
 
+    function setAddingModal(change) {
+        setIsAdding(change);
+        setShowModal(change);
+    }
+    function setUpdatingModal(change) {
+        setIsUpdating(change);
+        setShowModal(change);
+    }
+
+    function setFlagsModal(change) {
+        if (isAdding) {
+            setAddingModal(change);
+        }
+        if (isUpdating) {
+            setUpdatingModal(change);
+        }
+    }
+
     function handleFormFieldset(event) {
         const {name, value} = event.target;
 
@@ -279,6 +347,64 @@ export default function ReportesProductosNoConformes() {
         setEliminaPNC(eliminaPNCAux);
     }
 
+    function updatingEstadosRegistro({
+        newReporte = {},
+        pncID = actualPNCID,
+        numeroPNC = "",
+        folio = "",
+        fechaRegistro = new Date().toISOString().split('T')[0],
+        especIncumplida = "",
+        accionImplantada = "",
+        eliminaPNC = {...checkStateRadioInput}
+    } = {}) {
+        console.log("UpdatingEstadosRegistro...");
+        console.log(newReporte);
+        setReporte(newReporte);
+        // TODO: Revisar como se va a manejar la asignación de pncID
+        setPncId(pncID);
+        setNoPNC(numeroPNC);
+        setFolio(folio);
+        setFechaRegistro(fechaRegistro);
+        setEspecIncumplida(especIncumplida);
+        setAccionImplantada(accionImplantada);
+        setEliminaPNC(eliminaPNC);
+    }
+
+    function modificarEstadosRegistro(nombreReporte, idRegistro, registro) {
+        const {
+            numeroPNC,
+            folio,
+            fechaRegistro,
+            espInc,
+            accionImp,
+            eliminaPNC
+        } = registro;
+        const reporteAux = reportes.find(reporteObj => {
+            return reporteObj['Nombre_Reporte'] === nombreReporte
+        });
+        console.log(reporteAux);
+
+        updatingEstadosRegistro({newReporte: reporteAux, pncID: idRegistro, ...registro});
+        // setPncId(idRegistro);
+        // setNoPNC(numeroPNC);
+        // setFechaRegistro(fechaRegistro);
+        // setReporte(reporteAux);
+        // setFolio(folio);
+        // setEspecIncumplida(espInc);
+        // setAccionImplantada(accionImp);
+        // setEliminaPNC({...eliminaPNC});
+
+        // Activa el componente Modal y activa la flag isUpdating
+        setUpdatingModal(true);
+    }
+
+    function agregarRegistroEliminado(nombreReporte, idRegistro, registro) {
+        // TODO: Al momento de agregar un elemento a 'registrosEliminados'
+        //       se debe tener especial cuidado de revisar los estados de
+        //       registros (registroServidor, registrosAgregados,
+        //       registrosModificados).
+    }
+
     const formulario = (
         <form>
             <div className="form__menu_reportes">
@@ -287,11 +413,25 @@ export default function ReportesProductosNoConformes() {
                     selectId="menu-reportes"
                     selectName="lista-reportes"
                     selectFn={(event) => {
-                        let value = parseInt(event.target.value);
-                        const reporteAux = reportes.find(reporteObj => {
-                            return reporteObj["ID_Reporte"] === value;
-                        })
-                        setReporte(reporteAux);
+                        let value = event.target.value;
+                        if (value !== "") {
+                            let idReporte = parseInt(value);
+                            const reporteAux = reportes.find(reporteObj => {
+                                return reporteObj["ID_Reporte"] === idReporte;
+                            });
+                            setReporte(reporteAux);
+                            if (isAdding) {
+                                const registrosReporte = registrosAgregados[idReporte];
+                                let numeroPNC = 1;
+                                if (registrosReporte !== undefined) {
+                                    numeroPNC = Object.keys(registrosReporte).length + 1;
+                                }
+                                setNoPNC(numeroPNC);
+                            }
+                        } else {
+                            setReporte({});
+                            setNoPNC("");
+                        }
                     }}
                     selectValue={Object.keys(reporte).length === 0 ? "" : reporte['ID_Reporte']}
                     defaultOptionTxt="--Elija un reporte--"
@@ -310,7 +450,7 @@ export default function ReportesProductosNoConformes() {
                     <input
                         type={"number"}
                         name={"input-pnc-num"}
-                        value={pncCounter}
+                        value={noPNC}
                         disabled={true}
                     />
                 </label>
@@ -398,22 +538,34 @@ export default function ReportesProductosNoConformes() {
     );
 
     const BloqueRegistros = () => {
-        let contenido = <h3>Todavía no hay ningún PNC registrado.</h3>;
-        // TODO: Hacer merge de los estados 'registroFrontend' y
+        let contenido = (
+            <div className="data__body__reportes_display">
+                <h3>Todavía no hay ningún PNC registrado.</h3>
+            </div>
+        );
+        // TODO: Hacer merge de los estados 'registrosAgregados' y
         //       'registroServidor', asegurar que no haya colisión de
         //       registros (repetición por modificación o por
         //       eliminación).
-        if (Object.keys(registroFrontend).length !== 0) {
-            console.log(Object.keys(registroFrontend));
-            contenido = Object.keys(registroFrontend).map((nombreReporte, idx) => {
-                console.log(nombreReporte);
+        const idsReportes = Object.keys(registrosAgregados);
+        if (idsReportes !== undefined && idsReportes.length !== 0) {
+            console.log(idsReportes);
+            // TODO: Cambiar el nombreReporte por ID_Reporte y obtener el
+            //       nombreReporte con Array.find();
+            contenido = idsReportes.map((idReporte, idx) => {
+                console.log(idReporte);
+                const reporteAux = reportes.find(obj => obj.ID_Reporte === parseInt(idReporte));
+                console.log(reporteAux);
                 return <Reporte
                     key={`ReporteTabla__${idx}`}
-                    nombreReporte={nombreReporte}
-                    registros={registroFrontend[nombreReporte]}
+                    nombreReporte={reporteAux.Nombre_Reporte}
+                    registros={registrosAgregados[idReporte]}
+                    callbackBtnModificar={modificarEstadosRegistro}
+                    callbackBtnEliminar={agregarRegistroEliminado}
                 />
             });
         }
+
         return (
             <div className="data__body__reportes">
                 {contenido}
@@ -424,7 +576,8 @@ export default function ReportesProductosNoConformes() {
         <div className="data__body__buttons">
             <button
                 onClick={() => {
-                    setShowModal(true);
+                    // Activa el componente Modal y la flag isAdding
+                    setAddingModal(true);
                 }}
             >
                 <span>Agregar</span>
@@ -461,7 +614,7 @@ export default function ReportesProductosNoConformes() {
     const modal = (
         <Modal
             show={showModal}
-            setShow={setShowModal}
+            setShow={setFlagsModal}
             title={"Agregar PNC"}
         >
             <div className="modal__content">
@@ -478,88 +631,88 @@ export default function ReportesProductosNoConformes() {
                             //       estructura de los estados o incorporar
                             //       alguna funcion que facilite el borrar
                             //       aquellos PNC modificados a otro reporte.
-
-                            const nombre_reporte = reporte["Nombre_Reporte"];
+                            const idReporte = reporte["ID_Reporte"];
+                            let registrosReporte = {};
+                            let newPncID = actualPNCID;
                             let newPNC = {
-                                "numeroPNC": pncCounter,
-                                "folio": folio,
-                                "fechaRegistro": fechaRegistro,
-                                "fechaEntrega": reporte["Fecha_Entrega"],
-                                "especIncumplida": especIncumplida,
-                                "accionImplantada": accionImplantada,
-                                "eliminaPNC": {...eliminaPNC}
-                            };
-                            // Si el pncCounter es igual al actualPNCCounter quiere
+                                    "numeroPNC": noPNC,
+                                    "folio": folio,
+                                    "fechaRegistro": fechaRegistro,
+                                    "especIncumplida": especIncumplida,
+                                    "accionImplantada": accionImplantada,
+                                    "eliminaPNC": {...eliminaPNC}
+                                };
+
+                            if (isAdding) {
+                                // El usuario esta agregando un PNC
+                                registrosReporte = registrosAgregados[idReporte];
+                                if (registrosReporte !== undefined) {
+                                    // Si el registro del reporte no es undefined
+                                    // quiere decir que existe algun PNC para dicho
+                                    // reporte.
+                                    setRegistroAgregados({
+                                        ...registrosAgregados,
+                                        [idReporte]: {
+                                            ...registrosAgregados[idReporte],
+                                            [pncID]: newPNC
+                                        }
+                                    });
+                                } else {
+                                    // Si el registro del reporte es undefined quiere
+                                    // decir que no ha sido creado algun PNC para dicho
+                                    // reporte
+                                    setRegistroAgregados({
+                                        [idReporte]: {
+                                            [pncID]: newPNC
+                                        }
+                                    });
+                                }
+                                setActualPNCID(actualPNCID + 1);
+                                // setPncId(pncID + 1);
+                                newPncID = pncID + 1;
+                            } else if (isUpdating) {
+                                // El usuario esta modificando un PNC existente
+                                registrosReporte = registrosModificados[idReporte];
+                                if (registrosReporte !== undefined) {
+                                    setRegistrosModificados({
+                                        ...registrosModificados,
+                                        [idReporte]: {
+                                            ...registrosModificados[idReporte],
+                                            [pncID]: newPNC
+                                        }
+                                    });
+                                } else {
+                                    setRegistrosModificados({
+                                        [idReporte]: {
+                                            [pncID]: newPNC
+                                        }
+                                    });
+                                }
+                                // setPncId(actualPNCID);
+                                newPncID = actualPNCID;
+                                setUpdatingModal(false);
+                            }
+                            updatingEstadosRegistro({pncID: newPncID});
+                            // setNoPNC("");
+                            // setFechaRegistro(new Date().toISOString().split('T')[0]);
+                            // setReporte({});
+                            // setFolio("");
+                            // setEspecIncumplida("");
+                            // setAccionImplantada("");
+                            // setEliminaPNC({...checkStateRadioInput});
+
+                            // Si el pncID es igual al actualPNCID quiere
                             // decir que se esta agregando un nuevo PNC a la lista
-                            // (ya que pncCounter no puede estar modificando un PNC
-                            // con un número mayor al del actualPNCCounter) por lo
+                            // (ya que pncID no puede estar modificando un PNC
+                            // con un número mayor al del actualPNCID) por lo
                             // que ambos contadores se incrementan.
                             //
                             // En cambio, si resultan ser distintos, entonces
                             // quiere decir que se esta modificando un PNC, por lo
                             // tanto no se requiere incrementar el
-                            // actualPNCCounter, en su lugar, el pncCounter debera
+                            // actualPNCID, en su lugar, el pncID debera
                             // adoptar de nueva cuenta el valor almacenado en
-                            // actualPNCCounter.
-                            if (actualPNCCounter === pncCounter) {
-                                if (Object.keys(registroFrontend).length !== 0) {
-                                    if (registroFrontend[nombre_reporte] !== undefined) {
-                                        setRegistroFrontend({
-                                            ...registroFrontend,
-                                            [nombre_reporte]: [
-                                                ...registroFrontend[nombre_reporte],
-                                                newPNC
-                                            ]
-                                        });
-                                    } else {
-                                        setRegistroFrontend({
-                                            ...registroFrontend,
-                                            [nombre_reporte]: [newPNC]
-                                        })
-                                    }
-                                } else {
-                                    setRegistroFrontend({
-                                        [nombre_reporte]: [newPNC]
-                                    });
-                                }
-                                setActualPNCCounter(actualPNCCounter + 1);
-
-                                // Se deben resetear todos los estados que se
-                                // modificaron con el nuevo PNC.
-                                setPNCCounter(pncCounter + 1);
-                                // TODO: Ver si puedo usar un useRef para
-                                //       mantener el string de la fecha actual,
-                                //       para no tener que llamar a esta
-                                //       funcion.
-                                setFechaRegistro(new Date().toISOString().split('T')[0]);
-                                setReporte({});
-                                setFolio("");
-                                setEspecIncumplida("");
-                                setAccionImplantada("");
-                                setEliminaPNC(checkStateRadioInput);
-                            } else {
-                                setRegistroFrontend({
-                                    ...registroFrontend,
-                                    [nombre_reporte]: registroFrontend[nombre_reporte].map(objeto => {
-                                        if (objeto["numeroPNC"] === newPNC["numeroPNC"]) {
-                                            return newPNC;
-                                        } else {
-                                            return objeto;
-                                        }
-                                    })
-                                });
-                                setPNCCounter(actualPNCCounter);
-                                // TODO: Ver si puedo usar un useRef para
-                                //       mantener el string de la fecha actual,
-                                //       para no tener que llamar a esta
-                                //       funcion.
-                                setFechaRegistro(new Date().toISOString().split('T')[0]);
-                                setReporte({});
-                                setFolio("");
-                                setEspecIncumplida("");
-                                setAccionImplantada("");
-                                setEliminaPNC(checkStateRadioInput);
-                            }
+                            // actualPNCID.
                         }}
                     >
                         <span>Guardar</span>
