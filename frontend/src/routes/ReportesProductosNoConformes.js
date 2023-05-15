@@ -10,6 +10,11 @@ const checkStateRadioInput = {
     "radio-no": false
 };
 
+const defaultFormEmptyFields = {
+        "lista-reportes": false,
+        "input-pnc-folio": false,
+    };
+
 function Reporte({
     nombreReporte,
     registros,
@@ -102,9 +107,9 @@ function PNCFila({
             <td>{ eliminaPNC["radio-no"] ? "X" : " " }</td>
             <td>
                 <button
-                    onClick={(e) => {
-                        // TODO: Llamar a una funcion que asigne los datos en
-                        //       los estados de 'ReportesProductosNoConformes'
+                    onClick={() => {
+                        // Llamar a una funcion que asigne los datos en
+                        // los estados de 'ReportesProductosNoConformes'
                         callbackModificar(idRegistro, registro);
                     }}
                 >
@@ -113,11 +118,11 @@ function PNCFila({
             </td>
             <td>
                 <button
-                    onClick={(e) => {
-                        // TODO: Llamar a una función que agregue el
-                        //       parametro registro al estado
-                        //      'registrosEliminados' de 
-                        //      'ReportesProductosNoConformes'
+                    onClick={() => {
+                        // Llamar a una función que agregue el
+                        // parametro registro al estado
+                        // 'registrosEliminados' de 
+                        // 'ReportesProductosNoConformes'
                         callbackEliminar(idRegistro, registro);
                     }}
                 >
@@ -224,6 +229,9 @@ export default function ReportesProductosNoConformes() {
     const [isUpdating, setIsUpdating] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [formEmptyFields, setFormEmptyFields] = useState(defaultFormEmptyFields);
+    const [isFolioBadFormat, setIsFolioBadFormat] = useState(false);
+    const [folioNotifyMsg, setFolioNotifyMsg] = useState("");
     /**
         Estados para registrar/modificar PNC:
 
@@ -335,10 +343,21 @@ export default function ReportesProductosNoConformes() {
         if (isUpdating) {
             setUpdatingModal(change);
         }
+
+        if (!change) {
+            // Si change es false quiere decir que el usuario esta cerrando el
+            // componente <Modal/> (ya sea por el boton de cancelar o por
+            // terminar de hacer una modificación), no importa el motivo, se
+            // tiene que dejar todos los campos del estado de registro vacios
+            // y las flags de los campos en su estado default.
+            updatingEstadosRegistro();
+            setIsFolioBadFormat(false);
+            setFormEmptyFields(defaultFormEmptyFields);
+        }
     }
 
     function handleFormFieldset(event) {
-        const {name, value} = event.target;
+        const {name} = event.target;
 
         let eliminaPNCAux = {};
         Object.keys(eliminaPNC).forEach(key => {
@@ -360,7 +379,6 @@ export default function ReportesProductosNoConformes() {
         console.log("UpdatingEstadosRegistro...");
         console.log(newReporte);
         setReporte(newReporte);
-        // TODO: Revisar como se va a manejar la asignación de pncID
         setPncId(pncID);
         setNoPNC(numeroPNC);
         setFolio(folio);
@@ -385,15 +403,6 @@ export default function ReportesProductosNoConformes() {
         console.log(reporteAux);
 
         updatingEstadosRegistro({newReporte: reporteAux, pncID: idRegistro, ...registro});
-        // setPncId(idRegistro);
-        // setNoPNC(numeroPNC);
-        // setFechaRegistro(fechaRegistro);
-        // setReporte(reporteAux);
-        // setFolio(folio);
-        // setEspecIncumplida(espInc);
-        // setAccionImplantada(accionImp);
-        // setEliminaPNC({...eliminaPNC});
-
         // Activa el componente Modal y activa la flag isUpdating
         setUpdatingModal(true);
     }
@@ -405,16 +414,23 @@ export default function ReportesProductosNoConformes() {
         //       registrosModificados).
     }
 
+    const flagErrorWarnMsg = !formEmptyFields["input-pnc-folio"] && !isFolioBadFormat;
     const formulario = (
         <form>
-            <div className="form__menu_reportes">
+            <div className={`form__menu_reportes ${formEmptyFields["lista-reportes"] ? "form__field_error" : ""}`}>
                 <Menu
-                    labelTxt="Reportes:"
+                    labelTxt="*Reportes:"
                     selectId="menu-reportes"
                     selectName="lista-reportes"
                     selectFn={(event) => {
                         let value = event.target.value;
                         if (value !== "") {
+                            if (formEmptyFields["lista-reportes"]) {
+                                setFormEmptyFields({
+                                    ...formEmptyFields,
+                                    "lista-reportes": false
+                                });
+                            }
                             let idReporte = parseInt(value);
                             const reporteAux = reportes.find(reporteObj => {
                                 return reporteObj["ID_Reporte"] === idReporte;
@@ -441,6 +457,11 @@ export default function ReportesProductosNoConformes() {
                     optTxt="Nombre_Reporte"
                     hidden={false}
                 />
+                <div className={"form__error_message"} hidden={!formEmptyFields["lista-reportes"]}>
+                    <h5 hidden={!formEmptyFields["lista-reportes"]}>
+                        Debe seleccionar un reporte antes de guardar
+                    </h5>
+                </div>
             </div>
             <div className="form__short_inputs">
                 <label>
@@ -463,18 +484,59 @@ export default function ReportesProductosNoConformes() {
                         name={"input-pnc-fecha"}
                         value={fechaRegistro}
                         onChange={(e) => setFechaRegistro(e.target.value)}
+                        onKeyDown={(e) => e.preventDefault()}
+                        min={"2000-01-01"}
                     />
                 </label>
-                <label>
+                <label className={`${formEmptyFields["input-pnc-folio"] ?
+                        "form__field_error" : ""} ${isFolioBadFormat ? "form__field_warn" : ""}`}>
                     <span>
-                        Folio:
+                        *Folio:
                     </span>
                     <input
                         type={"text"}
                         name={"input-pnc-folio"}
                         value={folio}
-                        onChange={(e) => setFolio(e.target.value)}
+                        onChange={(e) => {
+                            let newFolio = e.target.value;
+                            if (formEmptyFields["input-pnc-folio"]) {
+                                if (newFolio !== "") {
+                                    setFormEmptyFields({
+                                        ...formEmptyFields,
+                                        "input-pnc-folio": false
+                                    });
+                                }
+                            } 
+                            if (newFolio !== "") {
+                                newFolio = newFolio.toUpperCase();
+                                let rg = newFolio.length <= 3 ?
+                                    /(?:^[A-Z]{1,3}$)/ :
+                                    /(?:^[A-Z]{3}[0-9]{1,3}$)/
+                                // TODO: Hacer que, si newFolio.match(rg) es null,
+                                //       notifique al usuario sobre el formato del
+                                //       folio.
+                                if (newFolio.match(rg) !== null) {
+                                    newFolio = newFolio;
+                                    setIsFolioBadFormat(false);
+                                } else {
+                                    newFolio = folio;
+                                    setIsFolioBadFormat(true);
+                                }
+                                // newFolio = newFolio.match(rg) !== null ? newFolio : folio;
+                            }
+                            setFolio(newFolio)
+                        }}
+                        maxLength={6}
                     />
+                    <div
+                        className={`${formEmptyFields["input-pnc-folio"] ?
+                                "form__error_message": ""} ${isFolioBadFormat ? "form__warn_message" : ""}`}
+                        hidden={flagErrorWarnMsg}
+                    >
+                        <h5 hidden={flagErrorWarnMsg}>
+                            {folioNotifyMsg}
+                        </h5>
+                    </div>
                 </label>
             </div>
             <div className="form__large_inputs">
@@ -547,11 +609,15 @@ export default function ReportesProductosNoConformes() {
         //       'registroServidor', asegurar que no haya colisión de
         //       registros (repetición por modificación o por
         //       eliminación).
+        const registros = {};
+        const registroServidorKeys = Object.keys(registroServidor);
+        const registroAgregadosKeys = Object.keys(registrosAgregados);
+        const registroModificadosKeys = Object.keys(registrosModificados);
+        const registroEliminadosKeys = Object.keys(registrosEliminados);
+
         const idsReportes = Object.keys(registrosAgregados);
         if (idsReportes !== undefined && idsReportes.length !== 0) {
             console.log(idsReportes);
-            // TODO: Cambiar el nombreReporte por ID_Reporte y obtener el
-            //       nombreReporte con Array.find();
             contenido = idsReportes.map((idReporte, idx) => {
                 console.log(idReporte);
                 const reporteAux = reportes.find(obj => obj.ID_Reporte === parseInt(idReporte));
@@ -622,15 +688,33 @@ export default function ReportesProductosNoConformes() {
                 <div className="modal__content__buttons">
                     <button
                         onClick={() => {
-                            // TODO: Hacer que detecte si un campo hizo falta
-                            //       de llenar y agregue una etiqueta que haga
-                            //       notar dicho campo.
-                            //
-                            // TODO: ¿Cómo saber si un PNC de un reporte X es
-                            //       cambiado a ser de un reporte Y? Cambiar la
-                            //       estructura de los estados o incorporar
-                            //       alguna funcion que facilite el borrar
-                            //       aquellos PNC modificados a otro reporte.
+                            if (Object.keys(reporte).length === 0 || folio === "") {
+                                let flagMenuReportes = Object.keys(reporte).length === 0;
+                                let flagFolioInput = folio === "";
+
+                                if (flagFolioInput) {
+                                    setFolioNotifyMsg("Debe proporcionar un Folio antes de guardar");
+                                }
+                                if (isFolioBadFormat) {
+                                    setIsFolioBadFormat(false);
+                                }
+                                setFormEmptyFields({
+                                    ["lista-reportes"]: flagMenuReportes,
+                                    ["input-pnc-folio"]: flagFolioInput
+                                });
+                                return;
+                            } else {
+                                setFormEmptyFields(defaultFormEmptyFields);
+                            }
+
+                            let folioRgExp = /(?:^[A-Z]{3}[0-9]{3}$)/;
+                            if (folio.match(folioRgExp) === null) {
+                                setFolioNotifyMsg("Folio no valido. Debe contener por lo menos 3 letras y 3 números.")
+                                setIsFolioBadFormat(true);
+                                return;
+                            } else {
+                                setIsFolioBadFormat(false);
+                            }
                             const idReporte = reporte["ID_Reporte"];
                             let registrosReporte = {};
                             let newPncID = actualPNCID;
@@ -693,13 +777,6 @@ export default function ReportesProductosNoConformes() {
                                 setUpdatingModal(false);
                             }
                             updatingEstadosRegistro({pncID: newPncID});
-                            // setNoPNC("");
-                            // setFechaRegistro(new Date().toISOString().split('T')[0]);
-                            // setReporte({});
-                            // setFolio("");
-                            // setEspecIncumplida("");
-                            // setAccionImplantada("");
-                            // setEliminaPNC({...checkStateRadioInput});
 
                             // Si el pncID es igual al actualPNCID quiere
                             // decir que se esta agregando un nuevo PNC a la lista

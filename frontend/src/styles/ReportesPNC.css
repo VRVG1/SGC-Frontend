@@ -168,3 +168,38 @@
     justify-content: center;
     flex-direction: column;
 }
+
+.form__field_error {
+    display: flex;
+    flex-direction: column;
+}
+
+.form__field_error select {
+    border: 1px solid rgb(255, 0, 0);
+}
+
+.modal__content form label.form__field_error input[type="text"] {
+    border: 1px solid rgb(255, 0, 0);
+}
+
+.modal__content form label.form__field_warn input[type="text"] {
+    border: 1px solid rgb(240, 182, 0);
+}
+
+.form__error_message, .form__warn_message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form__error_message  h5 {
+    font-size: 0.5rem;
+    color: rgb(255, 0, 0);
+    align-content: center;
+}
+
+.form__warn_message h5 {
+    font-size: 0.5rem;
+    color: rgb(240, 182, 0);
+    align-content: center;
+}
