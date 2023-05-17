@@ -658,7 +658,7 @@ function Grafico() {
                             </div>
                             <div>
                                 <strong>Limite de Entrega: </strong>
-                                <span>{estatContext.graphicDataList["Nombre_Reporte"]}</span>
+                                <span>{estatContext.graphicDataList["Entrega_Limite"]}</span>
                             </div>
                         </div>
                     </div>
