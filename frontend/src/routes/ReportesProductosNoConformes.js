@@ -426,27 +426,37 @@ export default function ReportesProductosNoConformes() {
             return res.json();
         }).then(rcvData => {
             // Se reciben todos los registros PNC en el servidor
-            const lastPNCID = rcvData.lastPNCID;
-            const registro = rcvData.registro;
-            setActualPNCID(lastPNCID);
-            setPncId(`pnc_${lastPNCID}`);
+            if (rcvData !== null) {
+                const lastPNCID = rcvData.lastPNCID;
+                const registro = rcvData.registro;
+                setActualPNCID(lastPNCID);
+                setPncId(`pnc_${lastPNCID}`);
 
-            setRegistroGeneral(registro);
+                setRegistroGeneral(registro);
+            }
+        }).catch(error => {
+            console.log("ERROR");
+            console.log(error.message);
         });
     };
 
     useEffect(obtenerReportes, [setReportes]);
-    useEffect(obtenerRegistroPNC, [useUser, setActualPNCID, setPncId, setRegistroGeneral]);
+    useEffect(obtenerRegistroPNC, [reportes, setActualPNCID, setPncId, setRegistroGeneral]);
 
     function addPNC(registro) {
+        console.log("ADD PNC");
         filtroPNC(auth.user.token, registro, "agregar").then(res => {
+            console.log(`RES OK? ${res.ok}`);
+            console.log(`RES STATUS: ${res.status}`);
             if (!res.ok) {
                 return null;
             }
             return res.json();
         }).then(registro => {
+            console.log("Received Data:");
             console.log(registro);
         }).catch(error => {
+            console.log("ERROR");
             console.log(error.message);
         });
     }
@@ -516,8 +526,6 @@ export default function ReportesProductosNoConformes() {
         accionImplantada = "",
         isEliminaPNC = true
     } = {}) {
-        console.log("UpdatingEstadosRegistro...");
-        console.log(newReporte);
         setOldReporte(newReporte);
         setReporte(newReporte);
         setPncId(pncID);
@@ -570,10 +578,11 @@ export default function ReportesProductosNoConformes() {
                             });
                             setReporte(reporteAux);
                             if (isAdding) {
-                                const registrosReporte = registrosAgregados[idReporte];
+                                const registrosReporte = registroGeneral[`reporte_${idReporte}`];
+                                console.log(registrosReporte)
                                 let numeroPNC = 1;
                                 if (registrosReporte !== undefined) {
-                                    numeroPNC = Object.keys(registrosReporte).length + 1;
+                                    numeroPNC = registrosReporte["linkedPNCs"].length + 1;
                                 }
                                 setNoPNC(numeroPNC);
                             }
@@ -737,38 +746,35 @@ export default function ReportesProductosNoConformes() {
     );
 
     const BloqueRegistros = () => {
-        let contenido = (
-            <div className="data__body__reportes_display">
-                <h3>Todavía no hay ningún PNC registrado.</h3>
-            </div>
-        );
-        // TODO: Hacer merge de los estados 'registrosAgregados' y
-        //       'registroServidor', asegurar que no haya colisión de
-        //       registros (repetición por modificación o por
-        //       eliminación).
+        let contenido
 
         const idsReportes = registroGeneral["reportesRegistrados"]["idsReportes"];
         if (idsReportes !== undefined && idsReportes.length !== 0) {
-            console.log(idsReportes);
             contenido = idsReportes.map((formatIdReporte, idx) => {
                 const idReporte = parseInt(formatIdReporte.split('_')[1]);
                 const reporteAux = reportes.find(obj => obj.ID_Reporte === idReporte);
-                const linkedPNCsIds = registroGeneral[formatIdReporte]["linkedPNCs"];
-                const pncs = {};
-                linkedPNCsIds.forEach(idPNC => {
-                    pncs[idPNC] = registroGeneral[idPNC];
-                });
-                console.log(`Format ID Reporte: ${formatIdReporte}`);
-                console.log(`ID Reporte: ${idReporte}`);
-                console.log(reporteAux);
-                return <Reporte
-                    key={`ReporteTabla__${idx}`}
-                    nombreReporte={reporteAux["Nombre_Reporte"]}
-                    fechaRepoEntrega={reporteAux["fecha_Entrega"]}
-                    registros={pncs}
-                    callbackBtnModificar={modificarEstadosRegistro}
-                    callbackBtnEliminar={agregarRegistroEliminado}
-                />
+                if (reporteAux !== undefined) {
+                    console.log("Reporte Aux:");
+                    console.log(reporteAux);
+                    const linkedPNCsIds = registroGeneral[formatIdReporte]["linkedPNCs"];
+                    const pncs = {};
+                    linkedPNCsIds.forEach(idPNC => {
+                        pncs[idPNC] = registroGeneral[idPNC];
+                    });
+                    return <Reporte
+                        key={`ReporteTabla__${idx}`}
+                        nombreReporte={reporteAux["Nombre_Reporte"]}
+                        fechaRepoEntrega={reporteAux["Fecha_Entrega"]}
+                        registros={pncs}
+                        callbackBtnModificar={modificarEstadosRegistro}
+                        callbackBtnEliminar={agregarRegistroEliminado}
+                    />
+                }
+                return (
+                    <div key={`ReporteTabla_${idx}`} className="data__body__reportes_display">
+                        <h3>Todavía no hay ningún PNC registrado.</h3>
+                    </div>
+                );
             });
         }
 
