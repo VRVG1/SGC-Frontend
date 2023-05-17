@@ -1,4 +1,4 @@
-import AuthPostBasis from "../Auth/AuthProvider.js"
+import AuthPostBasis from "../Auth/AuthPostBasis.js"
 
 const urls = {
     getRegistro: "reporte/getPNC",
