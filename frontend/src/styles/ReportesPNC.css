@@ -28,10 +28,64 @@
 
 .reporte__tabla table {
   border-spacing: 2px;
+  width: 100%;
+}
+
+.reporte__tabla__col_small {
+    width: 3%;
+}
+
+.reporte__tabla__col_relevant {
+    width: 27%;
+}
+
+.reporte__tabla__col_folio {
+    width: 5%;
+}
+
+.reporte__tabla__col_fecha_registro {
+    width: 12%;
+}
+
+.reporte__tabla__col_elimina_pnc {
+    width: 6%;
 }
 
 .reporte__tabla__empty_header {
   background-color: #F3F3F3;
+  width: 20%;
+}
+
+.reporte__tabla__info {
+    max-height: 30vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.reporte__tabla__info_to_left {
+    text-align: left;
+}
+
+.reporte__tabla__info button {
+    padding: 1rem 0.5rem;
+    transform: none;
+    width: 100%;
+}
+
+.reporte__tabla__info button.button__eliminar {
+    background-color: rgb(168, 0, 0);
+}
+
+.reporte__tabla__info button.button__eliminar:hover {
+    background-color: rgb(240, 0, 0);
+}
+
+.reporte__tabla__info_td_hover{
+    width: 10%;
+}
+
+.reporte__tabla__info_td_hover:hover {
+    background-color: transparent;
 }
 
 .data__body__buttons {

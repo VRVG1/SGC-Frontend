@@ -4,7 +4,6 @@ import { AuthContext } from "./helpers/Auth/auth-context";
 import getAllReportes from "./helpers/Reportes/getAllReportes";
 import filtroPNC from "./helpers/Reportes/filtroPNC";
 import Modal from "./modal/Modal";
-import useUser from "./helpers/Auth/useUser";
 
 
 const objDefaultRegistro = {
@@ -70,12 +69,12 @@ function Reporte({
                         <th colSpan={7}>{tituloTabla}</th>
                     </tr>
                     <tr>
-                        <th rowSpan={2}>No.</th>
-                        <th rowSpan={2}>Folio</th>
-                        <th rowSpan={2}>Fecha de Registro</th>
-                        <th rowSpan={2}>Especificación Incumplida</th>
-                        <th rowSpan={2}>Acción Implantada</th>
-                        <th colSpan={2}>Elimina PNC</th>
+                        <th className="reporte__tabla__col_small" rowSpan={2}>No.</th>
+                        <th className="reporte__tabla__col_folio" rowSpan={2}>Folio</th>
+                        <th className="reporte__tabla__col_fecha_registro" rowSpan={2}>Fecha de Registro</th>
+                        <th className="reporte__tabla__col_relevant" rowSpan={2}>Especificación Incumplida</th>
+                        <th className="reporte__tabla__col_relevant" rowSpan={2}>Acción Implantada</th>
+                        <th className="reporte__tabla__col_elimina_pnc" colSpan={2}>Elimina PNC</th>
                         <th
                             colSpan={2}
                             rowSpan={2}
@@ -83,8 +82,8 @@ function Reporte({
                         ></th>
                     </tr>
                     <tr>
-                        <th>Si</th>
-                        <th>No</th>
+                        <th className="reporte__tabla__col_small">Si</th>
+                        <th className="reporte__tabla__col_small">No</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -110,16 +109,40 @@ function PNCFila({
         isEliminaPNC
     } = registro;
 
+    function TableData({customClassName="", children}) {
+        return (
+            <td className={customClassName}>
+                <div className={`reporte__tabla__info`}>
+                    {children}
+                </div>
+            </td>
+        );
+    }
+
     return (
         <tr>
-            <td>{numeroPNC}</td>
-            <td>{folio}</td>
-            <td>{fechaRegistro}</td>
-            <td>{especIncumplida}</td>
-            <td>{accionImplantada}</td>
-            <td>{ isEliminaPNC ? "X" : " " }</td>
-            <td>{ !isEliminaPNC ? "X" : " " }</td>
-            <td>
+            <TableData customClassName="reporte__tabla__col_small">
+                {numeroPNC}
+            </TableData>
+            <TableData customClassName="reporte__tabla__col_folio">
+                {folio}
+            </TableData>
+            <TableData customClassName="reporte__tabla__col_fecha_registro">
+                {fechaRegistro}
+            </TableData>
+            <TableData customClassName="reporte__tabla__col_relevant reporte__tabla__info_to_left">
+                {especIncumplida}
+            </TableData>
+            <TableData customClassName="reporte__tabla__col_relevant reporte__tabla__info_to_left">
+                {accionImplantada}
+            </TableData>
+            <TableData customClassName="reporte__tabla__col_small">
+                { isEliminaPNC ? "X" : " "}
+            </TableData>
+            <TableData customClassName="reporte__tabla__col_small">
+                { !isEliminaPNC ? "X" : " "}
+            </TableData>
+            <TableData customClassName="reporte__tabla__info_td_hover">
                 <button
                     onClick={() => {
                         // Llamar a una funcion que asigne los datos en
@@ -129,9 +152,10 @@ function PNCFila({
                 >
                     Modificar
                 </button>
-            </td>
-            <td>
+            </TableData>
+            <TableData customClassName="reporte__tabla__info_td_hover">
                 <button
+                    className="button__eliminar"
                     onClick={() => {
                         // Llamar a una función que agregue el
                         // parametro registro al estado
@@ -142,7 +166,7 @@ function PNCFila({
                 >
                     Eliminar
                 </button>
-            </td>
+            </TableData>
         </tr>
     );
 }
@@ -156,7 +180,7 @@ export default function ReportesProductosNoConformes() {
             --> Arreglo de objetos. Almacena todos los reportes existentes en
                 la DB.
 
-        registroServidor:
+        registroGeneral:
             --> Objeto de objetos. Almacena un objeto que contiene multiples
                 objetos, estos tienen distintas estructuras. Como tal, se
                 tendran 3 objetos con estructuras distintas:
@@ -244,22 +268,6 @@ export default function ReportesProductosNoConformes() {
                     "pnc_n": { ... }
                 }
 
-        registrosAgregados:
-            --> Objeto de objetos. Objeto que almacena todos los registros PNCs
-                agregados por el usuario.
-
-                Almacena un objeto que contiene multiples objetos, estos tienen
-                distintas estructuras. Como tal, la estructura del objeto es
-                igual a la de 'registroServidor'.
-
-        registrosModificados:
-            --> Objeto de objetos. Objeto que almacena todos los registros PNCs
-                modificados por el usuario.
-
-                Almacena un objeto que contiene multiples objetos, estos tienen
-                distintas estructuras. Como tal, la estructura del objeto es
-                igual a la de 'registroServidor'.
-
         registrosEliminados:
             --> Objeto de objetos. Objeto que almacena el ID de los registros
                 PNCs eliminados por el usuario.
@@ -298,7 +306,7 @@ export default function ReportesProductosNoConformes() {
                           "Modificar" de alguno de los registros 
                           (registroServidor, registrosAgregados,
                           registrosModificados).
-        hasChanges:
+        isNeededUpdate:
             --> Booleano. Cambia su valor cuando se efectúa algún cambio en los
                           registros (registroServidor, registrosAgregados,
                           registrosModificados, registrosEliminados).
@@ -310,15 +318,11 @@ export default function ReportesProductosNoConformes() {
     const [reportes, setReportes] = useState([]);
     // registros
     const [registroGeneral, setRegistroGeneral] = useState(objDefaultRegistro);
-    const [registroServidor, setRegistroServidor] = useState(objDefaultRegistro);
-    const [registrosAgregados, setRegistroAgregados] = useState(objDefaultRegistro);
-    const [registrosModificados, setRegistrosModificados] = useState(objDefaultRegistro);
-    const [registrosEliminados, setRegistrosEliminados] = useState(objDefaultRegistrosEliminados);
     // flags
     const [isDownloadable, setIsDownloadable] = useState(false);
     const [isAdding, setIsAdding] = useState(false)
     const [isUpdating, setIsUpdating] = useState(false);
-    const [hasChanges, setHasChanges] = useState(false);
+    const [isNeededUpdate, setIsNeededUpdate] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [isFolioBadFormat, setIsFolioBadFormat] = useState(false);
     const [formEmptyFields, setFormEmptyFields] = useState(defaultFormEmptyFields);
@@ -441,7 +445,7 @@ export default function ReportesProductosNoConformes() {
     };
 
     useEffect(obtenerReportes, [setReportes]);
-    useEffect(obtenerRegistroPNC, [reportes, setActualPNCID, setPncId, setRegistroGeneral]);
+    useEffect(obtenerRegistroPNC, [isNeededUpdate, setActualPNCID, setPncId, setRegistroGeneral]);
 
     function addPNC(registro) {
         console.log("ADD PNC");
@@ -459,6 +463,7 @@ export default function ReportesProductosNoConformes() {
             console.log("ERROR");
             console.log(error.message);
         });
+        setIsNeededUpdate(!isNeededUpdate);
     }
 
     function updatePNC(registro) {
@@ -746,7 +751,11 @@ export default function ReportesProductosNoConformes() {
     );
 
     const BloqueRegistros = () => {
-        let contenido
+        let contenido = (
+            <div className="data__body__reportes_display">
+                <h3>Todavía no hay ningún PNC registrado.</h3>
+            </div>
+        );
 
         const idsReportes = registroGeneral["reportesRegistrados"]["idsReportes"];
         if (idsReportes !== undefined && idsReportes.length !== 0) {
@@ -770,11 +779,7 @@ export default function ReportesProductosNoConformes() {
                         callbackBtnEliminar={agregarRegistroEliminado}
                     />
                 }
-                return (
-                    <div key={`ReporteTabla_${idx}`} className="data__body__reportes_display">
-                        <h3>Todavía no hay ningún PNC registrado.</h3>
-                    </div>
-                );
+                return <></>;
             });
         }
 
@@ -796,26 +801,14 @@ export default function ReportesProductosNoConformes() {
             </button>
             <button
                 onClick={() => {
-                    // TODO: Al hacer clic hacer que mande el objeto con todos
-                    //       los nuevos registros al backend.
-                }}
-                disabled={
-                    // TODO: Mantener desactivado si no hay cambios en el
-                    //       reporte.
-                    hasChanges
-                }
-            >
-                <span>Guardar</span>
-            </button>
-            <button
-                onClick={() => {
                     // TODO: Al hacer clic que permita descargar el registro
                     //       del reporte en formato PDF.
                 }}
                 disabled={
-                    // TODO: Mantener desactivado si no se tienen datos en el
-                    //       backend
-                    Object.keys(registroServidor).length === 0
+                    // Por defecto el registro General contiene
+                    // "reportesRegistrados" por lo que un registro general
+                    // vacío contendría unicamente 1 key
+                    Object.keys(registroGeneral).length === 1
                 }
             >
                 <span>Descargar</span>
@@ -834,12 +827,6 @@ export default function ReportesProductosNoConformes() {
                 <div className="modal__content__buttons">
                     <button
                         onClick={() => {
-                            // TODO: ¿Cómo saber si un PNC de un reporte X es
-                            //       cambiado a ser de un reporte Y? Cambiar la
-                            //       estructura de los estados o incorporar
-                            //       alguna funcion que facilite el borrar
-                            //       aquellos PNC modificados a otro reporte.
-                            
                             if (Object.keys(reporte).length === 0 || folio === "") {
                                 let flagMenuReportes = Object.keys(reporte).length === 0;
                                 let flagFolioInput = folio === "";
@@ -898,7 +885,6 @@ export default function ReportesProductosNoConformes() {
                                         idReporte
                                     ];
                                     nextReporteRegistros = {
-                                        //...registrosAgregados,
                                         "reportesRegistrados": {
                                             "idsReportes": [...idsReportes]
                                         },
@@ -912,7 +898,6 @@ export default function ReportesProductosNoConformes() {
                                     // quiere decir que existe algun PNC para dicho
                                     // reporte.
                                     nextReporteRegistros = {
-                                        //...registrosAgregados,
                                         [idReporte]: {
                                             "linkedPNCs": [
                                                 ...registrosReporte["linkedPNCs"],
@@ -923,14 +908,11 @@ export default function ReportesProductosNoConformes() {
                                     };
                                 }
                                 //setRegistroAgregados(nextReporteRegistros);
-                                // TODO: Llamar fillRegistros y pasar por
-                                //       parametro nextReporteRegistros
 
                                 data2Send.lastPNCID = actualPNCID + 1;
                                 data2Send.registro = nextReporteRegistros;
                                 addPNC(data2Send);
                                 setActualPNCID(actualPNCID + 1);
-                                // setPncId(pncID + 1);
                                 newPncID = actualPNCID + 1;
                             } else if (isUpdating) {
                                 // El usuario esta modificando un PNC existente
@@ -959,47 +941,13 @@ export default function ReportesProductosNoConformes() {
                                     // Se declara un arreglo nuevo para contener la versión
                                     // actualizada del linkedPNCs del oldReporte
                                     let oldReporteIdPNC = [];
-                                    // Función que asigna a oldReporteIdPNC un nuevo
+                                    // Se asigna a oldReporteIdPNC un nuevo
                                     // arreglo con todos los linkedPNCs del oldReporte
                                     // cuyos ids no sean iguales a pncID
-                                    const getOldReporteIdPNC = () => {
-                                        oldReporteIdPNC = oldReporteRegistro["linkedPNCs"].filter(idPNC => {
-                                            return idPNC !== pncID;
-                                        });
-                                    }
-                                    // TODO: Considerar en eliminar este bloque
-                                    //       de codigo.
-                                    //
-                                    // Si oldReporteRegistro es undefined quiere decir
-                                    // que oldReporte no esta definido en registrosModificados
-                                    if (oldReporteRegistro === undefined) {
-                                        // Se agrega el id de oldReporte a
-                                        // idsReportes en reportesRegistrados del proximo
-                                        // registrosModificados
-                                        const idReportes = [
-                                            ...registrosModificados["reportesRegistrados"]["idsReportes"],
-                                            idOldReporte
-                                        ];
-                                        nextReporteRegistros["reportesRegistrados"] = {
-                                            "idsReportes": [...idReportes]
-                                        };
-                                        // Al no estar registrado el oldReporte
-                                        // en registrosModificados se procede a
-                                        // buscar en los otros registros
-                                        if (registrosAgregados[idOldReporte] !== undefined) {
-                                            // Se asigna el oldReporte a oldReporteRegistro
-                                            oldReporteRegistro = registrosAgregados[idOldReporte];
-                                            // Se obtienen los linkedPNCs de oldReporte
-                                            getOldReporteIdPNC();
-                                        } else if (registroServidor !== undefined) {
-                                            // Se asigna el oldReporte a oldReporteRegistro
-                                            oldReporteRegistro = registroServidor[idOldReporte];
-                                            // Se obtienen los linkedPNCs de oldReporte
-                                            getOldReporteIdPNC();
-                                        }
-                                    } else {
-                                        getOldReporteIdPNC();
-                                    }
+                                    oldReporteIdPNC = oldReporteRegistro["linkedPNCs"].filter(idPNC => {
+                                        return idPNC !== pncID;
+                                    });
+
                                     nextReporteRegistros[idOldReporte] = {
                                         "linkedPNCs": [...oldReporteIdPNC]
                                     };
