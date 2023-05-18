@@ -114,7 +114,7 @@ export const Home2 = () => {
         const data2 = [
           {
             carrera_ID: data.ID_Carrera,
-            Clave_reticula: data.ID_Materia,
+            pik: data.ID_Materia,
             grupo: data.Grupo,
             semestre: data.Semestre,
             dia: data.Dia,
@@ -226,7 +226,7 @@ export const Home2 = () => {
         data.aula === selectedData.aula &&
         data.hora === selectedData.hora &&
         data.dia === selectedData.dia &&
-        data.Clave_reticula === selectedData.Clave_reticula
+        data.pik === selectedData.Clave_reticula
       ) {
         yaEsta = true
         setShowModalAlert(true)
@@ -259,7 +259,7 @@ export const Home2 = () => {
       aux.map((auxiliar) => {
         if (
           auxiliar.carrera_ID === data.carrera_ID &&
-          auxiliar.Clave_reticula === data.Clave_reticula &&
+          auxiliar.pik === data.Clave_reticula &&
           auxiliar.grupo === data.grupo &&
           auxiliar.semestre === data.semestre &&
           auxiliar.dia === data.dia &&
@@ -282,13 +282,15 @@ export const Home2 = () => {
         try {
           a = asignanMaterias.filter(
             (datos) =>
-              datos.ID_Carrera === data.carrera_ID &&
-              datos.Clave_reticula === data.Clave_reticula &&
-              datos.Grupo === data.grupo &&
-              datos.Grado.toString() === data.semestre &&
-              data.aula === datos.aula &&
-              data.hora === datos.hora &&
-              data.dia === datos.dia
+              data.pik === datos.ID_Materia &&
+              data.Nombre_Carrera === datos.Carrera &&
+              data.Nombre_Materia === datos.Nombre_Materia &&
+              data.aula === datos.Aula &&
+              data.carrera_ID === datos.ID_Carrera &&
+              data.dia === datos.Dia &&
+              data.grupo === datos.Grupo &&
+              data.hora === datos.Hora &&
+              data.semestre === datos.Semestre
           )[0].ID_Asignan
           deleteAsignan(a)
         } catch (error) {
@@ -332,7 +334,6 @@ export const Home2 = () => {
 
     getMateria()
   }, [selectedData.carrera_ID])
-
   useEffect(() => {
     if (continuacion !== 0 && send) {
       if (asignanMaterias.length > 0) {
@@ -342,18 +343,16 @@ export const Home2 = () => {
           asignanMaterias.map(async (data2) => {
             if (
               data.carrera_ID === data2.ID_Carrera &&
-              data.Clave_reticula === data2.Clave_reticula &&
+              data.pik === data2.Clave_reticula &&
               data.grupo === data2.Grupo &&
               data.semestre === data2.Grado.toString() &&
               data.dia === data2.dia &&
               data.aula === data2.aula &&
               data.hora === data2.hora
             ) {
-              console.log("No hacer nada porque ya esta asignado")
               aguardar = false
             } else {
               aguardar = true
-              console.log("mandar a guardar")
             }
           })
           if (aguardar) {

@@ -389,7 +389,6 @@ export const Reportes = () => {
       date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
     let dots = []
     let si = new Date(hoy).getTime()
-
     if (
       reporteName.filter(
         (reporte) => reporte.ID_Reporte === selMateria.ID_Reporte
@@ -650,10 +649,10 @@ export const Reportes = () => {
           ) : (
             <>
               <div className="Sin_Resultados img">
-                <img
+                {/* <img
                   src={"/static/media/kana-buscar.7a7b8c78c2c4aaec2dd5.png"}
                   alt="Sin resultados"
-                />
+                /> */}
                 <h3 className="pito">
                   No hay reportes por el momento hasta que se seleccionen
                   materias y se asginen por el administrador
