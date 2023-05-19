@@ -18,6 +18,7 @@ const urls = {
  * @param {string} filtro
  */
 const pdfCarrera = async (token, txt, filtro) => {
+  txt = txt.replace(/\s+/g, "%20")
   let get = {
     method: "GET",
     headers: {},
