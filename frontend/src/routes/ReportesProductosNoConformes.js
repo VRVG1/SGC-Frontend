@@ -410,6 +410,7 @@ export default function ReportesProductosNoConformes() {
     const [noPNC, setNoPNC] = useState("");
     const [fechaRegistro, setFechaRegistro] = useState(new Date().toISOString().split('T')[0]);
     const [oldReporte, setOldReporte] = useState({});
+    const [oldNoPNC, setOldNoPNC] = useState("");
     const [reporte, setReporte] = useState({});
     const [folio, setFolio] = useState("");
     const [especIncumplida, setEspecIncumplida] = useState("");
@@ -423,6 +424,7 @@ export default function ReportesProductosNoConformes() {
     }, [setReportes]);
 
     const obtenerRegistroPNC = () => {
+        console.log("ObtenerRegistroPNC...")
         filtroPNC(auth.user.token, "", "getRegistro").then(res => {
             if (!res.ok) {
                 return null;
@@ -447,33 +449,40 @@ export default function ReportesProductosNoConformes() {
     useEffect(obtenerReportes, [setReportes]);
     useEffect(obtenerRegistroPNC, [isNeededUpdate, setActualPNCID, setPncId, setRegistroGeneral]);
 
-    function addPNC(registro) {
-        console.log("ADD PNC");
+    function addPNC(registro, newPncID) {
         filtroPNC(auth.user.token, registro, "agregar").then(res => {
-            console.log(`RES OK? ${res.ok}`);
-            console.log(`RES STATUS: ${res.status}`);
-            if (!res.ok) {
-                return null;
+            if (res.ok) {
+                updatingEstadosRegistro({pncID: newPncID});
+                setActualPNCID(actualPNCID + 1)
             }
             return res.json();
         }).then(registro => {
-            console.log("Received Data:");
-            console.log(registro);
+            if (registro['Error'] !== undefined) {
+                console.log("Error");
+                console.log(registro['Error']);
+            } else {
+                setIsNeededUpdate(!isNeededUpdate);
+            }
         }).catch(error => {
             console.log("ERROR");
             console.log(error.message);
         });
-        setIsNeededUpdate(!isNeededUpdate);
     }
 
-    function updatePNC(registro) {
+    function updatePNC(registro, newPncID) {
         filtroPNC(auth.user.token, registro, "modificar").then(res => {
-            if (!res.ok) {
-                return null;
+            if (res.ok) {
+                updatingEstadosRegistro({pncID: newPncID});
+                setUpdatingModal(false);
             }
             return res.json();
         }).then(registro => {
-            console.log(registro);
+            if (registro['Error'] !== undefined) {
+                console.log("Error");
+                console.log(registro['Error']);
+            } else {
+                setIsNeededUpdate(!isNeededUpdate);
+            }
         }).catch(error => {
             console.log(error.message);
         });
@@ -531,9 +540,11 @@ export default function ReportesProductosNoConformes() {
         accionImplantada = "",
         isEliminaPNC = true
     } = {}) {
+        const formatPncID = `pnc_${pncID}`;
+        setOldNoPNC(numeroPNC);
         setOldReporte(newReporte);
         setReporte(newReporte);
-        setPncId(pncID);
+        setPncId(formatPncID);
         setNoPNC(numeroPNC);
         setFolio(folio);
         setFechaRegistro(fechaRegistro);
@@ -546,9 +557,13 @@ export default function ReportesProductosNoConformes() {
         const reporteAux = reportes.find(reporteObj => {
             return reporteObj['Nombre_Reporte'] === nombreReporte
         });
-        console.log(reporteAux);
 
-        updatingEstadosRegistro({newReporte: reporteAux, pncID: idRegistro, ...registro});
+        const numIdRegistro = idRegistro.split('_')[1];
+        updatingEstadosRegistro({
+            newReporte: reporteAux,
+            pncID: numIdRegistro,
+            ...registro
+        });
         // Activa el componente Modal y activa la flag isUpdating
         setUpdatingModal(true);
     }
@@ -582,15 +597,39 @@ export default function ReportesProductosNoConformes() {
                                 return reporteObj["ID_Reporte"] === idReporte;
                             });
                             setReporte(reporteAux);
-                            if (isAdding) {
-                                const registrosReporte = registroGeneral[`reporte_${idReporte}`];
-                                console.log(registrosReporte)
-                                let numeroPNC = 1;
-                                if (registrosReporte !== undefined) {
-                                    numeroPNC = registrosReporte["linkedPNCs"].length + 1;
-                                }
-                                setNoPNC(numeroPNC);
+
+                            // En base al reporte seleccionado se selecciona un
+                            // nuevo NoPNC (Número de registro del PNC).
+                            //
+                            // Se obtiene del registroGeneral el registro del
+                            // reporte que concuerde con el ID del reporte
+                            // seleccionado
+                            const registrosReporte = registroGeneral[`reporte_${idReporte}`];
+                            // Se crea la variable auxiliar 'numeroPNC'
+                            // inicializada en 1 para, en caso de que no exista
+                            // el reporte en registroGeneral, que este sea su
+                            // primer reporte PNC.
+                            let numeroPNC = 1;
+                            // Se verifica si el registro de reporte obtenido
+                            // de registroGeneral existe
+                            if (registrosReporte !== undefined) {
+                                // Si existe, se toma el número de elementos
+                                // presentes en su linkedPNCs y se le agrega
+                                // uno (ya que va a haber un nuevo elemento)
+                                numeroPNC = registrosReporte["linkedPNCs"].length + 1;
                             }
+                            // En caso de que se este modificando un PNC
+                            // se debe considerar si el ID_Reporte del
+                            // reporteAux es igual al de oldReporte
+                            if (isUpdating) {
+                                if (reporteAux["ID_Reporte"] === oldReporte["ID_Reporte"]) {
+                                    // Al ser identicos, quiere decir que el
+                                    // usuario selecciono el reporte original por
+                                    // lo que vuelve a tener su viejo numeroPNC
+                                    numeroPNC = oldNoPNC;
+                                }
+                            }
+                            setNoPNC(numeroPNC);
                         } else {
                             setReporte({});
                             setNoPNC("");
@@ -763,8 +802,6 @@ export default function ReportesProductosNoConformes() {
                 const idReporte = parseInt(formatIdReporte.split('_')[1]);
                 const reporteAux = reportes.find(obj => obj.ID_Reporte === idReporte);
                 if (reporteAux !== undefined) {
-                    console.log("Reporte Aux:");
-                    console.log(reporteAux);
                     const linkedPNCsIds = registroGeneral[formatIdReporte]["linkedPNCs"];
                     const pncs = {};
                     linkedPNCsIds.forEach(idPNC => {
@@ -779,7 +816,6 @@ export default function ReportesProductosNoConformes() {
                         callbackBtnEliminar={agregarRegistroEliminado}
                     />
                 }
-                return <></>;
             });
         }
 
@@ -911,9 +947,11 @@ export default function ReportesProductosNoConformes() {
 
                                 data2Send.lastPNCID = actualPNCID + 1;
                                 data2Send.registro = nextReporteRegistros;
-                                addPNC(data2Send);
-                                setActualPNCID(actualPNCID + 1);
+                                // setActualPNCID(actualPNCID + 1);
                                 newPncID = actualPNCID + 1;
+                                // Se envían el registro PNC a agregar al
+                                // servidor.
+                                addPNC(data2Send, newPncID);
                             } else if (isUpdating) {
                                 // El usuario esta modificando un PNC existente
                                 
@@ -932,8 +970,7 @@ export default function ReportesProductosNoConformes() {
                                     
                                     // Se obtiene el objeto relacionado al 'idOldReporte'
                                     // Se sabe que este no puede estar vacío porque
-                                    // ya existía en algun registro (registroServidor,
-                                    // registrosAgregados o registrosModificados).
+                                    // ya existía en el registroGeneral
 
                                     // Se obtiene el objeto relacionado al 'idOldReporte'
                                     // del 'registrosModificados'
@@ -986,7 +1023,7 @@ export default function ReportesProductosNoConformes() {
                                     if (hasPncId === undefined) {
                                         nextReporteRegistros[idReporte] = {
                                             "linkedPNCs": [
-                                                ...nextReporteRegistros[idReporte]["linkedPNCs"],
+                                                ...registroGeneral[idReporte]["linkedPNCs"],
                                                 pncID
                                             ]
                                         }
@@ -1001,14 +1038,12 @@ export default function ReportesProductosNoConformes() {
                                 data2Send.lastPNCID = actualPNCID;
                                 data2Send.registro = nextReporteRegistros;
 
-                                updatePNC(data2Send);
-                                //setRegistrosModificados(nextReporteRegistros);
-                                // setPncId(actualPNCID);
                                 newPncID = actualPNCID;
-                                setUpdatingModal(false);
+                                updatePNC(data2Send, newPncID);
+                                // setUpdatingModal(false);
                             }
-                            newPncID = `pnc_${newPncID}`;
-                            updatingEstadosRegistro({pncID: newPncID});
+                            //newPncID = `pnc_${newPncID}`;
+                            //updatingEstadosRegistro({pncID: newPncID});
                         }}
                     >
                         <span>Guardar</span>
