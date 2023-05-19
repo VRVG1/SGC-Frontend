@@ -12,15 +12,6 @@ const objDefaultRegistro = {
     }
 };
 
-const objDefaultRegistrosEliminados = {
-    ...objDefaultRegistro,
-    "deletePNCs": []
-}
-
-const objDefaultReporte = {
-    "linkedPNCs": []
-}
-
 const defaultFormEmptyFields = {
         "lista-reportes": false,
         "input-pnc-folio": false,
@@ -324,6 +315,7 @@ export default function ReportesProductosNoConformes() {
     const [isUpdating, setIsUpdating] = useState(false);
     const [isNeededUpdate, setIsNeededUpdate] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [showModalEliminar, setShowModalEliminar] = useState(false)
     const [isFolioBadFormat, setIsFolioBadFormat] = useState(false);
     const [formEmptyFields, setFormEmptyFields] = useState(defaultFormEmptyFields);
     // String
@@ -490,12 +482,18 @@ export default function ReportesProductosNoConformes() {
 
     function deletePNC(registro) {
         filtroPNC(auth.user.token, registro, "eliminar").then(res => {
-            if (!res.ok) {
-                return null;
+            if (res.ok) {
+                setFlagModalEliminar(false);
             }
             return res.json();
         }).then(registro => {
             console.log(registro);
+            if (registro['Error'] !== undefined) {
+                console.log("Error");
+                console.log(registro['Error']);
+            } else {
+                setIsNeededUpdate(!isNeededUpdate);
+            }
         }).catch(error => {
             console.log(error.message);
         });
@@ -527,6 +525,13 @@ export default function ReportesProductosNoConformes() {
             updatingEstadosRegistro();
             setIsFolioBadFormat(false);
             setFormEmptyFields(defaultFormEmptyFields);
+        }
+    }
+
+    function setFlagModalEliminar(change) {
+        setShowModalEliminar(change);
+        if (!change) {
+            updatingEstadosRegistro();
         }
     }
 
@@ -569,10 +574,16 @@ export default function ReportesProductosNoConformes() {
     }
 
     function agregarRegistroEliminado(nombreReporte, idRegistro, registro) {
-        // TODO: Al momento de agregar un elemento a 'registrosEliminados'
-        //       se debe tener especial cuidado de revisar los estados de
-        //       registros (registroServidor, registrosAgregados,
-        //       registrosModificados).
+        const reporteAux = reportes.find(reporteObj => {
+            return reporteObj['Nombre_Reporte'] === nombreReporte;
+        });
+        const numIdRegistro = idRegistro.split('_')[1];
+        updatingEstadosRegistro({
+            newReporte: reporteAux,
+            pncID: numIdRegistro,
+            ...registro
+        });
+        setFlagModalEliminar(true);
     }
 
     const flagErrorWarnMsg = !formEmptyFields["input-pnc-folio"] && !isFolioBadFormat;
@@ -852,7 +863,7 @@ export default function ReportesProductosNoConformes() {
         </div>
     );
 
-    const modal = (
+    const modalPNC = (
         <Modal
             show={showModal}
             setShow={setFlagsModal}
@@ -1053,6 +1064,60 @@ export default function ReportesProductosNoConformes() {
         </Modal>
     );
 
+    const modalEliminar = (
+        <Modal
+            show={showModalEliminar}
+            setShow={setFlagModalEliminar}
+            title={"¿Desea eliminar el PNC?"}
+        >
+            <div className="modal__content">
+                <div className="modal__content__buttons">
+                    <button
+                        className="button__eliminar"
+                        onClick={() => {
+                            // TODO: En caso de eliminar el PNC la ejecución
+                            //       para llevar a cabo esta acción será desde
+                            //       este onClick
+                            
+                            // Estructura del nextRegistroEliminar:
+                            // {
+                            //      "reporte_<ID>": {
+                            //          "linkedPNCs": [
+                            //              contendrá todos los pnc's menos
+                            //              el del pnc que se eliminará
+                            //          ]
+                            //      },
+                            //      "pnc_<ID>": "pnc_id" <- El id del pnc a eliminar
+                            // }
+                            const idReporte = `reporte_${reporte["ID_Reporte"]}`;
+                            let registroReporte = registroGeneral[idReporte];
+                            
+                            const newLinkedPNCs = registroReporte["linkedPNCs"].filter(idPNC => {
+                                return idPNC !== pncID;
+                            });
+                            const data2Send = {
+                                [idReporte]: {
+                                    "linkedPNCs": [...newLinkedPNCs]
+                                },
+                                [pncID]: pncID
+                            };
+                            deletePNC(data2Send);
+                        }}
+                    >
+                        <span>Eliminar</span>
+                    </button>
+                    <button
+                        onClick={() => {
+                            setFlagModalEliminar(false);
+                        }}
+                    >
+                        <span>Cancelar</span>
+                    </button>
+                </div>
+            </div>
+        </Modal>
+    )
+
     return (
         <>
             <div className="data">
@@ -1064,7 +1129,10 @@ export default function ReportesProductosNoConformes() {
                     {botones}
                 </div>
             </div>
-            {modal}
+            {modalPNC}
+            <div className="pnc__modal">
+                {modalEliminar}
+            </div>
         </>
     );
 }

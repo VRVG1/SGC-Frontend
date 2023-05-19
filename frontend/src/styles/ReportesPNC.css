@@ -2,6 +2,10 @@
   margin-top: 4rem;
 }
 
+.pnc__modal .content.modal {
+    margin-top: 40vh;
+}
+
 .data__body {
     width: 97%;
     height: 90%;
@@ -72,11 +76,11 @@
     width: 100%;
 }
 
-.reporte__tabla__info button.button__eliminar {
+button.button__eliminar {
     background-color: rgb(168, 0, 0);
 }
 
-.reporte__tabla__info button.button__eliminar:hover {
+button.button__eliminar:hover {
     background-color: rgb(240, 0, 0);
 }
 
@@ -257,3 +261,15 @@
     color: rgb(240, 182, 0);
     align-content: center;
 }
+
+.pnc__modal .modal__content {
+    height: auto;
+}
+
+.pnc__modal .modal__content__buttons {
+    justify-content: space-around;
+}
+.pnc__modal .modal__content__buttons button {
+    width: 40%;
+}
+
