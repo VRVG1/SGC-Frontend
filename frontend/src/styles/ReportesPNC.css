@@ -100,6 +100,12 @@ button.button__eliminar:hover {
   align-items: center;
 }
 
+.data__body__buttons button:disabled {
+    transition: none;
+    transform: none;
+    background-color: rgba(170, 170, 170, 1);
+}
+
 .modal__content {
     display: flex;
     flex-direction: column;
