@@ -423,6 +423,7 @@ export default function ReportesProductosNoConformes() {
             }
             return res.json();
         }).then(rcvData => {
+            console.log(rcvData);
             // Se reciben todos los registros PNC en el servidor
             if (rcvData !== null) {
                 const lastPNCID = rcvData.lastPNCID;
@@ -497,6 +498,28 @@ export default function ReportesProductosNoConformes() {
         }).catch(error => {
             console.log(error.message);
         });
+    }
+
+    function downloadPDF() {
+        filtroPNC(auth.user.token, "", "descargar").then(res => {
+            console.log(res);
+            if (res.ok) {
+                console.log("descargando");
+                return res.blob();
+            } else {
+                return res.json();
+            }
+        }).then(rcvData => {
+            console.log(rcvData);
+            if (rcvData instanceof Blob) {
+                const objectURL = URL.createObjectURL(rcvData);
+                window.open(objectURL, "_blank");
+            } else if (rcvData instanceof Object) {
+                console.log(rcvData["Error"]);
+            }
+        }).catch(error => {
+            console.log(error);
+        })
     }
 
     function setAddingModal(change) {
@@ -847,10 +870,7 @@ export default function ReportesProductosNoConformes() {
                 <span>Agregar</span>
             </button>
             <button
-                onClick={() => {
-                    // TODO: Al hacer clic que permita descargar el registro
-                    //       del reporte en formato PDF.
-                }}
+                onClick={downloadPDF}
                 disabled={
                     // Por defecto el registro General contiene
                     // "reportesRegistrados" por lo que un registro general
