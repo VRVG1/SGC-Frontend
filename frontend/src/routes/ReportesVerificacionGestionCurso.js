@@ -21,6 +21,8 @@ export default function ReportesVerificacionGestionCurso() {
     const [isAdding, setIsAdding] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [formEmptyFields, setFormEmptyFields] = useState(defaultFormEmptyFields);
+    const [isGradoGrupoBadFormat, setIsGradoGrupoBadFormat] = useState(false);
+    const [gradoGrupoNotifyMsg, setGradpoGrupoNotifyMsg] = useState("");
 
     const [academias, setAcademias] = useState([]);
     const [profesores, setProfesores] = useState([]);
@@ -32,6 +34,26 @@ export default function ReportesVerificacionGestionCurso() {
 
     const [lastReporteID, setLastReporteID] = useState(1);
     const [reporteID, setReporteID] = useState("");
+    const [gradoGrupo, setGradoGrupo] = useState("");
+    const [indReprobacion, setIndReprobacion] = useState("");
+    const [semanaProgramada, setSemanaProgramada] = useState("");
+    const [tema, setTema] = useState("");
+    const [isVerificado, setIsVerificado] = useState(true);
+    // Registró
+    // Calificaciones en
+    // Mindbox y
+    // Realiza la
+    // Retroalimentación
+    // Correspondiente
+    const [isRCMRRC, setIsRCMRRC] = useState(true);
+    // Cumple con los
+    // Criterios de
+    // Evaluación
+    // Establecidos en la
+    // Instrumentación
+    // Didactica
+    const [isCCEEID, setIsCCEEID] = useState(true);
+    const [observaciones, setObservaciones] = useState("");
 
     const obtenerAcademias = useCallback(() => {
         getAllCarrera(auth.user.token).then(data => {
@@ -143,6 +165,7 @@ export default function ReportesVerificacionGestionCurso() {
 
     function handleBtnAgregar() {
         console.log("handleBtnAgregar");
+        setAddingModal(true);
     }
 
     function downloadExcel() {
@@ -181,8 +204,33 @@ export default function ReportesVerificacionGestionCurso() {
         return contenido;
     }
 
+    const flagErrorWarnMsg = !formEmptyFields["lista-grado-grupo"] && !isGradoGrupoBadFormat;
     const formulario = (
         <form>
+            <div className="form__short_inputs">
+                <label>
+                    <span>
+                        No.
+                    </span>
+                    <input
+                        type={"number"}
+                        name={"input-vgc-num"}
+                        value={reporteID}
+                        disabled={true}
+                    />
+                </label>
+                <label>
+                    <span>
+                        % de reprobación
+                    </span>
+                    <input
+                        type={"number"}
+                        name={"input-vgc-ind-reprobacion"}
+                        value={indReprobacion}
+                        disabled={true}
+                    />
+                </label>
+            </div>
             <div className={`form__menu_reportes ${formEmptyFields["lista-profesores"] ? "form__field_error" : ""}`}>
                 <Menu
                     labelTxt="*Profesor:"
@@ -255,17 +303,220 @@ export default function ReportesVerificacionGestionCurso() {
                 />
             </div>
             <div className="form__short_inputs">
-                <label>
+                <label className={`${formEmptyFields["lista-grado-grupo"] ?
+                        "form__field_error" : ""} ${isGradoGrupoBadFormat ?
+                        "form__field_warn" : ""}`}
+                >
                     <span>
-                        No.
+                        Grado y Grupo:
                     </span>
                     <input
-                        type={"number"}
-                        name={"input-vgc-num"}
-                        value={reporteID}
-                        disabled={true}
+                        type={"text"}
+                        name={"input-vgc-grado-grupo"}
+                        value={gradoGrupo}
+                        onChange={event => {
+                            let newGradoGrupo = event.target.value;
+                            if (formEmptyFields["lista-grado-grupo"]) {
+                                setFormEmptyFields({
+                                    ...formEmptyFields,
+                                    "lista-grado-grupo": false
+                                });
+                            }
+                            if (newGradoGrupo !== "") {
+                                newGradoGrupo = newGradoGrupo.toUpperCase();
+                                let rg = newGradoGrupo.length == 1 ?
+                                    /(?:^[A-Z]{1}$)/ : newGradoGrupo.length <= 2 ?
+                                    /(?:^[A-Z]{1}[0-9]{1}$)/ :
+                                    /(?:^[A-Z]{1}[0-9]{1}[A-Z]{1}$)/;
+
+                                if (newGradoGrupo.match(rg) !== null) {
+                                    setIsGradoGrupoBadFormat(false);
+                                } else {
+                                    newGradoGrupo = gradoGrupo;
+                                    setIsGradoGrupoBadFormat(true);
+                                }
+                            }
+                            setGradoGrupo(newGradoGrupo);
+                        }}
+                        maxLength={3}
+                    />
+                    <div className={`${formEmptyFields["lista-grado-grupo"] ?
+                        "form__error_message" : ""} ${isGradoGrupoBadFormat ?
+                        "form__warn_message" : ""}`}
+                        hidden={flagErrorWarnMsg}
+                    >
+                        <h5 hidden={flagErrorWarnMsg}>
+                            {gradoGrupoNotifyMsg}
+                        </h5>
+                    </div>
+                </label>
+                <label className={`${formEmptyFields["lista-grado-grupo"] ?
+                        "form__field_error" : ""} ${isGradoGrupoBadFormat ?
+                        "form__field_warn" : ""}`}
+                >
+                    <span>
+                        Semana Programada:
+                    </span>
+                    <input
+                        type={"week"}
+                        name={"input-vgc-semana-programada"}
+                        value={semanaProgramada}
+                        onChange={e => {
+                            let value = e.target.value;
+                            console.log(`Semana Programada: ${value}`);
+                            setSemanaProgramada(e.target.value)
+                        }}
+                        onKeyDown={e => e.preventDefault()}
+                        min={"2000-01-01"}
+                    />
+                    <div className={`${formEmptyFields["lista-grado-grupo"] ?
+                        "form__error_message" : ""} ${isGradoGrupoBadFormat ?
+                        "form__warn_message" : ""}`}
+                        hidden={flagErrorWarnMsg}
+                    >
+                        <h5 hidden={flagErrorWarnMsg}>
+                            {gradoGrupoNotifyMsg}
+                        </h5>
+                    </div>
+                </label>
+            </div>
+            <div className="form__short_inputs">
+                <label>
+                    <span>
+                        Tema:
+                    </span>
+                    <input
+                        type={"text"}
+                        name={"input-vgc-tema"}
+                        value={tema}
+                        onChange={e => {
+                            let value = e.target.value;
+                            setTema(value);
+                        }}
+                        maxLength={60}
                     />
                 </label>
+            </div>
+            <div className="form__short_inputs">
+                <fieldset>
+                    <legend>
+                        Verificación:
+                    </legend>
+                    <div>
+                        <label htmlFor={"verificacion-rSi"}>
+                            Si
+                        </label>
+                        <input
+                            type={"radio"}
+                            id={"verificacion-rSi"}
+                            name={"verify-radio-si"}
+                            value={"Si"}
+                            checked={isVerificado}
+                            onChange={() => {
+                                setIsVerificado(true);
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor={"verificacion-rNo"}>
+                            No
+                        </label>
+                        <input
+                            type={"radio"}
+                            id={"verificacion-rNo"}
+                            name={"verify-radio-no"}
+                            value={"No"}
+                            checked={!isVerificado}
+                            onChange={() => {
+                                setIsVerificado(false);
+                            }}
+                        />
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>
+                        RCMRRC
+                    </legend>
+                    <div>
+                        <label htmlFor={"RCMRRC-rSi"}>
+                            Si
+                        </label>
+                        <input
+                            type={"radio"}
+                            id={"RCMRRC-rSi"}
+                            name={"RCMRRC-radio-si"}
+                            value={"Si"}
+                            checked={isRCMRRC}
+                            onChange={() => {
+                                setIsRCMRRC(true);
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor={"RCMRRC-rNo"}>
+                            No
+                        </label>
+                        <input
+                            type={"radio"}
+                            id={"RCMRRC-rNo"}
+                            name={"RCMRRC-radio-no"}
+                            value={"No"}
+                            checked={!isRCMRRC}
+                            onChange={() => {
+                                setIsRCMRRC(false);
+                            }}
+                        />
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>
+                        CCEEID
+                    </legend>
+                    <div>
+                        <label htmlFor={"CCEEID-rSi"}>
+                            Si
+                        </label>
+                        <input
+                            type={"radio"}
+                            id={"CCEEID-rSi"}
+                            name={"CCEEID-radio-si"}
+                            value={"Si"}
+                            checked={isCCEEID}
+                            onChange={() => {
+                                setIsCCEEID(true);
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor={"CCEEID-rNo"}>
+                            No
+                        </label>
+                        <input
+                            type={"radio"}
+                            id={"CCEEID-rNo"}
+                            name={"CCEEID-radio-no"}
+                            value={"No"}
+                            checked={!isCCEEID}
+                            onChange={() => {
+                                setIsCCEEID(false);
+                            }}
+                        />
+                    </div>
+                </fieldset>
+            </div>
+            <div className="form__large_inputs">
+                <div className="form__large_inputs__textarea">
+                    <label>
+                        <span>
+                            Observaciones:
+                        </span>
+                        <textarea
+                            name={"input-pnc-observaciones"}
+                            value={observaciones}
+                            onChange={(e) => setObservaciones(e.target.value)}
+                        />
+                    </label>
+                </div>
             </div>
         </form>
     );

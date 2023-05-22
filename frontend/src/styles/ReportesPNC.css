@@ -199,6 +199,9 @@ button.button__eliminar:hover {
 
 .form__large_inputs__textarea {
     width: 49%;
+    width: -webkit-fill-available;
+    width: -moz-available;
+    padding: 0 0.3rem;
 }
 
 .form__large_inputs__textarea label {
