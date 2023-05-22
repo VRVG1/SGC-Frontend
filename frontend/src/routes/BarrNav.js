@@ -115,6 +115,9 @@ export default class Nav extends Component {
                                 <Link className='link' to="/admin/reportes/pnc">
                                     <li className='li'>PNC</li>
                                 </Link>
+                                <Link className='link' to="/admin/reportes/verificacion_gestion_curso">
+                                    <li className='li'>Verificación</li>
+                                </Link>
                             </ul>
                         </li>
 
