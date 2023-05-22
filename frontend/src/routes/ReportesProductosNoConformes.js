@@ -3,7 +3,7 @@ import Menu from "../componentes/Menu";
 import { AuthContext } from "./helpers/Auth/auth-context";
 import getAllReportes from "./helpers/Reportes/getAllReportes";
 import filtroPNC from "./helpers/Reportes/filtroPNC";
-import Modal from "./modal/Modal";
+import InterfazRegistros from "../componentes/InterfazRegistros";
 
 
 const objDefaultRegistro = {
@@ -859,300 +859,292 @@ export default function ReportesProductosNoConformes() {
             </div>
         );
     }
-    const botones = (
-        <div className="data__body__buttons">
-            <button
-                onClick={() => {
-                    // Activa el componente Modal y la flag isAdding
-                    setAddingModal(true);
-                }}
-            >
-                <span>Agregar</span>
-            </button>
-            <button
-                onClick={downloadPDF}
-                disabled={
-                    // Por defecto el registro General contiene
-                    // "reportesRegistrados" por lo que un registro general
-                    // vacío contendría unicamente 1 key
-                    Object.keys(registroGeneral).length === 1
+
+    function handleBtnAgregar() {
+        setAddingModal(true);
+    }
+
+    function handleBtnGuardarModal() {
+        if (Object.keys(reporte).length === 0 || folio === "") {
+            let flagMenuReportes = Object.keys(reporte).length === 0;
+            let flagFolioInput = folio === "";
+
+            if (flagFolioInput) {
+                setFolioNotifyMsg("Debe proporcionar un Folio antes de guardar");
+            }
+            if (isFolioBadFormat) {
+                setIsFolioBadFormat(false);
+            }
+            setFormEmptyFields({
+                ["lista-reportes"]: flagMenuReportes,
+                ["input-pnc-folio"]: flagFolioInput
+            });
+            return;
+        } else {
+            setFormEmptyFields(defaultFormEmptyFields);
+        }
+
+        let folioRgExp = /(?:^[A-Z]{3}[0-9]{3}$)/;
+        if (folio.match(folioRgExp) === null) {
+            setFolioNotifyMsg("Folio no valido. Debe contener por lo menos 3 letras y 3 números.")
+            setIsFolioBadFormat(true);
+            return;
+        } else {
+            setIsFolioBadFormat(false);
+        }
+        const idReporte = `reporte_${reporte["ID_Reporte"]}`;
+        let registrosReporte = {};
+        let newPncID = actualPNCID;
+        let newPNC = {
+            "numeroPNC": noPNC,
+            "folio": folio,
+            "fechaRegistro": fechaRegistro,
+            "especIncumplida": especIncumplida,
+            "accionImplantada": accionImplantada,
+            "isEliminaPNC": isEliminaPNC
+        };
+
+        const data2Send = {
+            lastPNCID: actualPNCID,
+            registro: {}
+        }
+        let nextReporteRegistros = {};
+        if (isAdding) {
+            // El usuario esta agregando un PNC
+
+            // Se obtiene el objeto relacionado a idReporte
+            registrosReporte = registroGeneral[idReporte];
+            if (registrosReporte === undefined) {
+                // Si el registro del reporte es undefined quiere
+                // decir que no ha sido creado algun PNC para dicho
+                // reporte en 'registroGeneral'
+                const idsReportes = [
+                    ...registroGeneral["reportesRegistrados"]["idsReportes"],
+                    idReporte
+                ];
+                nextReporteRegistros = {
+                    "reportesRegistrados": {
+                        "idsReportes": [...idsReportes]
+                    },
+                    [idReporte]: {
+                        "linkedPNCs": [pncID]
+                    },
+                    [pncID]: newPNC
+                };
+            } else {
+                // Si el registro del reporte no es undefined
+                // quiere decir que existe algun PNC para dicho
+                // reporte.
+                nextReporteRegistros = {
+                    [idReporte]: {
+                        "linkedPNCs": [
+                            ...registrosReporte["linkedPNCs"],
+                            pncID
+                        ]
+                    },
+                    [pncID]: newPNC
+                };
+            }
+            //setRegistroAgregados(nextReporteRegistros);
+
+            data2Send.lastPNCID = actualPNCID + 1;
+            data2Send.registro = nextReporteRegistros;
+            // setActualPNCID(actualPNCID + 1);
+            newPncID = actualPNCID + 1;
+            // Se envían el registro PNC a agregar al
+            // servidor.
+            addPNC(data2Send, newPncID);
+        } else if (isUpdating) {
+            // El usuario esta modificando un PNC existente
+            
+            // Se obtiene el id del reporte espejo
+            const idOldReporte = `reporte_${oldReporte["ID_Reporte"]}`;
+            // Se obtiene el objeto relacionado al
+            // 'idReporte' en registrosModificados
+            registrosReporte = registroGeneral[idReporte];
+
+            // Si el idReporte es distinto al idOldReporte
+            // quiere decir que el PNC que se esta modificando
+            // fue cambiado a otro reporte
+            if (idReporte !== idOldReporte) {
+                // El PNC en modificación fue cambiado a
+                // otro reporte
+                
+                // Se obtiene el objeto relacionado al 'idOldReporte'
+                // Se sabe que este no puede estar vacío porque
+                // ya existía en el registroGeneral
+
+                // Se obtiene el objeto relacionado al 'idOldReporte'
+                // del 'registrosModificados'
+                let oldReporteRegistro = registroGeneral[idOldReporte];
+                // Se declara un arreglo nuevo para contener la versión
+                // actualizada del linkedPNCs del oldReporte
+                let oldReporteIdPNC = [];
+                // Se asigna a oldReporteIdPNC un nuevo
+                // arreglo con todos los linkedPNCs del oldReporte
+                // cuyos ids no sean iguales a pncID
+                oldReporteIdPNC = oldReporteRegistro["linkedPNCs"].filter(idPNC => {
+                    return idPNC !== pncID;
+                });
+
+                nextReporteRegistros[idOldReporte] = {
+                    "linkedPNCs": [...oldReporteIdPNC]
+                };
+            }
+            // Si no, significa que el PNC sigue estando
+            // relacionado con el oldReporte, por lo que no
+            // se hace ningun cambio en el oldReporte.
+
+            // Si registrosReporte es undefined quiere decir
+            // que idReporte no esta definido en registrosModificados
+            if (registrosReporte === undefined) {
+                // Se agrega el idReporte a idsReportes en
+                // reportesRegistrados del proximo
+                // registrosModificados
+                const idReportes = [
+                    ...registroGeneral["reportesRegistrados"]["idsReportes"],
+                    idReporte
+                ];
+                nextReporteRegistros["reportesRegistrados"] = {
+                    "idsReportes": [...idReportes]
+                };
+                // Se agrega dentro del atributo idReporte
+                // un arreglo con el pncID del PNC modificado
+                nextReporteRegistros[idReporte] = {
+                    "linkedPNCs": [pncID]
+                };
+            } else {
+                // Si registrosReporte no es undefined quiere decir
+                // que idReporte esta definido en registrosModificados
+                // Solo faltaría checar si en el atributo linkedPNCs
+                // existe el pncID
+                const hasPncId = registrosReporte["linkedPNCs"].find(idPNC => idPNC === pncID);
+                // Si hasPncId es undefined quiere decir
+                // que no existe pncID dentro de los linkedPNCs
+                // de idReporte
+                if (hasPncId === undefined) {
+                    nextReporteRegistros[idReporte] = {
+                        "linkedPNCs": [
+                            ...registroGeneral[idReporte]["linkedPNCs"],
+                            pncID
+                        ]
+                    }
                 }
-            >
-                <span>Descargar</span>
-            </button>
-        </div>
-    );
+                // Si hasPncId es distinto a undefined
+                // quiere decir que pncID existe dentro de
+                // los linkedPNCs de idReporte
+            }
+            // Por ultimo, se agrega en el atributo pncID
+            // el newPNC
+            nextReporteRegistros[pncID] = newPNC;
+            data2Send.lastPNCID = actualPNCID;
+            data2Send.registro = nextReporteRegistros;
 
-    const modalPNC = (
-        <Modal
-            show={showModal}
-            setShow={setFlagsModal}
-            title={"Agregar PNC"}
-        >
-            <div className="modal__content">
-                {formulario}
-                <div className="modal__content__buttons">
-                    <button
-                        onClick={() => {
-                            if (Object.keys(reporte).length === 0 || folio === "") {
-                                let flagMenuReportes = Object.keys(reporte).length === 0;
-                                let flagFolioInput = folio === "";
+            newPncID = actualPNCID;
+            updatePNC(data2Send, newPncID);
+            // setUpdatingModal(false);
+        }
+        //newPncID = `pnc_${newPncID}`;
+        //updatingEstadosRegistro({pncID: newPncID});
+    }
 
-                                if (flagFolioInput) {
-                                    setFolioNotifyMsg("Debe proporcionar un Folio antes de guardar");
-                                }
-                                if (isFolioBadFormat) {
-                                    setIsFolioBadFormat(false);
-                                }
-                                setFormEmptyFields({
-                                    ["lista-reportes"]: flagMenuReportes,
-                                    ["input-pnc-folio"]: flagFolioInput
-                                });
-                                return;
-                            } else {
-                                setFormEmptyFields(defaultFormEmptyFields);
-                            }
+    function handleBtnEliminarModal() {
+        // Estructura del nextRegistroEliminar:
+        // {
+        //      "reporte_<ID>": {
+        //          "linkedPNCs": [
+        //              contendrá todos los pnc's menos
+        //              el del pnc que se eliminará
+        //          ]
+        //      },
+        //      "pnc_<ID>": "pnc_id" <- El id del pnc a eliminar
+        // }
+        const idReporte = `reporte_${reporte["ID_Reporte"]}`;
+        let registroReporte = registroGeneral[idReporte];
+        
+        const newLinkedPNCs = registroReporte["linkedPNCs"].filter(idPNC => {
+            return idPNC !== pncID;
+        });
+        const data2Send = {
+            [idReporte]: {
+                "linkedPNCs": [...newLinkedPNCs]
+            },
+            [pncID]: pncID
+        };
+        deletePNC(data2Send);
+    }
 
-                            let folioRgExp = /(?:^[A-Z]{3}[0-9]{3}$)/;
-                            if (folio.match(folioRgExp) === null) {
-                                setFolioNotifyMsg("Folio no valido. Debe contener por lo menos 3 letras y 3 números.")
-                                setIsFolioBadFormat(true);
-                                return;
-                            } else {
-                                setIsFolioBadFormat(false);
-                            }
-                            const idReporte = `reporte_${reporte["ID_Reporte"]}`;
-                            let registrosReporte = {};
-                            let newPncID = actualPNCID;
-                            let newPNC = {
-                                    "numeroPNC": noPNC,
-                                    "folio": folio,
-                                    "fechaRegistro": fechaRegistro,
-                                    "especIncumplida": especIncumplida,
-                                    "accionImplantada": accionImplantada,
-                                    "isEliminaPNC": isEliminaPNC
-                                };
+    function handleBtnCancelarModal() {
+        setFlagModalEliminar(false);
+    }
 
-                            const data2Send = {
-                                lastPNCID: actualPNCID,
-                                registro: {}
-                            }
-                            let nextReporteRegistros = {};
-                            if (isAdding) {
-                                // El usuario esta agregando un PNC
+    const guiTitle = "Productos No Conformes";
 
-                                // Se obtiene el objeto relacionado a idReporte
-                                registrosReporte = registroGeneral[idReporte];
-                                if (registrosReporte === undefined) {
-                                    // Si el registro del reporte es undefined quiere
-                                    // decir que no ha sido creado algun PNC para dicho
-                                    // reporte en 'registroGeneral'
-                                    const idsReportes = [
-                                        ...registroGeneral["reportesRegistrados"]["idsReportes"],
-                                        idReporte
-                                    ];
-                                    nextReporteRegistros = {
-                                        "reportesRegistrados": {
-                                            "idsReportes": [...idsReportes]
-                                        },
-                                        [idReporte]: {
-                                            "linkedPNCs": [pncID]
-                                        },
-                                        [pncID]: newPNC
-                                    };
-                                } else {
-                                    // Si el registro del reporte no es undefined
-                                    // quiere decir que existe algun PNC para dicho
-                                    // reporte.
-                                    nextReporteRegistros = {
-                                        [idReporte]: {
-                                            "linkedPNCs": [
-                                                ...registrosReporte["linkedPNCs"],
-                                                pncID
-                                            ]
-                                        },
-                                        [pncID]: newPNC
-                                    };
-                                }
-                                //setRegistroAgregados(nextReporteRegistros);
+    const bloqueRegistros = <BloqueRegistros/>
 
-                                data2Send.lastPNCID = actualPNCID + 1;
-                                data2Send.registro = nextReporteRegistros;
-                                // setActualPNCID(actualPNCID + 1);
-                                newPncID = actualPNCID + 1;
-                                // Se envían el registro PNC a agregar al
-                                // servidor.
-                                addPNC(data2Send, newPncID);
-                            } else if (isUpdating) {
-                                // El usuario esta modificando un PNC existente
-                                
-                                // Se obtiene el id del reporte espejo
-                                const idOldReporte = `reporte_${oldReporte["ID_Reporte"]}`;
-                                // Se obtiene el objeto relacionado al
-                                // 'idReporte' en registrosModificados
-                                registrosReporte = registroGeneral[idReporte];
+    const buttonsDataBody = [
+        {
+            "type": "button",
+            "id": "btnAgregar",
+            "handler": handleBtnAgregar,
+            "btnTxt": "Agregar"
+        },
+        {
+            "type": "button",
+            "id": "btnDescargar",
+            "handler": downloadPDF,
+            "btnTxt": "Descargar",
+            // Por defecto el registro General contiene
+            // "reportesRegistrados" por lo que un registro general
+            // vacío contendría unicamente 1 key
+            "disabled": Object.keys(registroGeneral).length === 1
+        }
+    ];
+    const modalAgregarModificar = {
+        "show": showModal,
+        "setShow": setFlagsModal,
+        "title": "Agregar PNC"
+    };
+    const buttonsModalAgregarModificar = [
+        {
+            "type": "button",
+            "id": "btnModalGuardar",
+            "handler": handleBtnGuardarModal,
+            "btnTxt": "Guardar"
+        }
+    ];
+    const modalEliminar = {
+        "show": showModalEliminar,
+        "setShow": setFlagModalEliminar,
+        "title": "¿Desea eliminar el PNC?"
+    };
 
-                                // Si el idReporte es distinto al idOldReporte
-                                // quiere decir que el PNC que se esta modificando
-                                // fue cambiado a otro reporte
-                                if (idReporte !== idOldReporte) {
-                                    // El PNC en modificación fue cambiado a
-                                    // otro reporte
-                                    
-                                    // Se obtiene el objeto relacionado al 'idOldReporte'
-                                    // Se sabe que este no puede estar vacío porque
-                                    // ya existía en el registroGeneral
-
-                                    // Se obtiene el objeto relacionado al 'idOldReporte'
-                                    // del 'registrosModificados'
-                                    let oldReporteRegistro = registroGeneral[idOldReporte];
-                                    // Se declara un arreglo nuevo para contener la versión
-                                    // actualizada del linkedPNCs del oldReporte
-                                    let oldReporteIdPNC = [];
-                                    // Se asigna a oldReporteIdPNC un nuevo
-                                    // arreglo con todos los linkedPNCs del oldReporte
-                                    // cuyos ids no sean iguales a pncID
-                                    oldReporteIdPNC = oldReporteRegistro["linkedPNCs"].filter(idPNC => {
-                                        return idPNC !== pncID;
-                                    });
-
-                                    nextReporteRegistros[idOldReporte] = {
-                                        "linkedPNCs": [...oldReporteIdPNC]
-                                    };
-                                }
-                                // Si no, significa que el PNC sigue estando
-                                // relacionado con el oldReporte, por lo que no
-                                // se hace ningun cambio en el oldReporte.
-
-                                // Si registrosReporte es undefined quiere decir
-                                // que idReporte no esta definido en registrosModificados
-                                if (registrosReporte === undefined) {
-                                    // Se agrega el idReporte a idsReportes en
-                                    // reportesRegistrados del proximo
-                                    // registrosModificados
-                                    const idReportes = [
-                                        ...registroGeneral["reportesRegistrados"]["idsReportes"],
-                                        idReporte
-                                    ];
-                                    nextReporteRegistros["reportesRegistrados"] = {
-                                        "idsReportes": [...idReportes]
-                                    };
-                                    // Se agrega dentro del atributo idReporte
-                                    // un arreglo con el pncID del PNC modificado
-                                    nextReporteRegistros[idReporte] = {
-                                        "linkedPNCs": [pncID]
-                                    };
-                                } else {
-                                    // Si registrosReporte no es undefined quiere decir
-                                    // que idReporte esta definido en registrosModificados
-                                    // Solo faltaría checar si en el atributo linkedPNCs
-                                    // existe el pncID
-                                    const hasPncId = registrosReporte["linkedPNCs"].find(idPNC => idPNC === pncID);
-                                    // Si hasPncId es undefined quiere decir
-                                    // que no existe pncID dentro de los linkedPNCs
-                                    // de idReporte
-                                    if (hasPncId === undefined) {
-                                        nextReporteRegistros[idReporte] = {
-                                            "linkedPNCs": [
-                                                ...registroGeneral[idReporte]["linkedPNCs"],
-                                                pncID
-                                            ]
-                                        }
-                                    }
-                                    // Si hasPncId es distinto a undefined
-                                    // quiere decir que pncID existe dentro de
-                                    // los linkedPNCs de idReporte
-                                }
-                                // Por ultimo, se agrega en el atributo pncID
-                                // el newPNC
-                                nextReporteRegistros[pncID] = newPNC;
-                                data2Send.lastPNCID = actualPNCID;
-                                data2Send.registro = nextReporteRegistros;
-
-                                newPncID = actualPNCID;
-                                updatePNC(data2Send, newPncID);
-                                // setUpdatingModal(false);
-                            }
-                            //newPncID = `pnc_${newPncID}`;
-                            //updatingEstadosRegistro({pncID: newPncID});
-                        }}
-                    >
-                        <span>Guardar</span>
-                    </button>
-                </div>
-            </div>
-        </Modal>
-    );
-
-    const modalEliminar = (
-        <Modal
-            show={showModalEliminar}
-            setShow={setFlagModalEliminar}
-            title={"¿Desea eliminar el PNC?"}
-        >
-            <div className="modal__content">
-                <div className="modal__content__buttons">
-                    <button
-                        className="button__eliminar"
-                        onClick={() => {
-                            // TODO: En caso de eliminar el PNC la ejecución
-                            //       para llevar a cabo esta acción será desde
-                            //       este onClick
-                            
-                            // Estructura del nextRegistroEliminar:
-                            // {
-                            //      "reporte_<ID>": {
-                            //          "linkedPNCs": [
-                            //              contendrá todos los pnc's menos
-                            //              el del pnc que se eliminará
-                            //          ]
-                            //      },
-                            //      "pnc_<ID>": "pnc_id" <- El id del pnc a eliminar
-                            // }
-                            const idReporte = `reporte_${reporte["ID_Reporte"]}`;
-                            let registroReporte = registroGeneral[idReporte];
-                            
-                            const newLinkedPNCs = registroReporte["linkedPNCs"].filter(idPNC => {
-                                return idPNC !== pncID;
-                            });
-                            const data2Send = {
-                                [idReporte]: {
-                                    "linkedPNCs": [...newLinkedPNCs]
-                                },
-                                [pncID]: pncID
-                            };
-                            deletePNC(data2Send);
-                        }}
-                    >
-                        <span>Eliminar</span>
-                    </button>
-                    <button
-                        onClick={() => {
-                            setFlagModalEliminar(false);
-                        }}
-                    >
-                        <span>Cancelar</span>
-                    </button>
-                </div>
-            </div>
-        </Modal>
-    )
+    const buttonsModalEliminar = [
+        {
+            "type": "button",
+            "id": "btnModalEliminar",
+            "className": "button__eliminar",
+            "handler": handleBtnEliminarModal,
+            "btnTxt": "Eliminar"
+        },
+        {
+            "type": "button",
+            "id": "btnModalCancelar",
+            "handler": handleBtnCancelarModal,
+            "btnTxt": "Cancelar"
+        }
+    ];
 
     return (
-        <>
-            <div className="data">
-                <div className="data__header">
-                    <h1>Productos No Conformes</h1>
-                </div>
-                <div className="data__body container">
-                    <BloqueRegistros/>
-                    {botones}
-                </div>
-            </div>
-            {modalPNC}
-            <div className="pnc__modal">
-                {modalEliminar}
-            </div>
-        </>
+        <InterfazRegistros 
+            guiTitle={guiTitle}
+            bloqueRegistros={bloqueRegistros}
+            buttonsDataBody={buttonsDataBody}
+            modalAgregarModificar={modalAgregarModificar}
+            buttonsModalAgregarModificar={buttonsModalAgregarModificar}
+            formulario={formulario}
+            modalEliminar={modalEliminar}
+            buttonsModalEliminar={buttonsModalEliminar}
+        />
     );
 }
