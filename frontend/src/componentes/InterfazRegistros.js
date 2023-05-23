@@ -62,22 +62,29 @@ const BloqueBotones = ({buttons}) => {
     );
 }
 
-const ModalContent = ({buttons, children}) => {
+const ModalContent = ({
+    buttons,
+    classForModalContent="",
+    classForModalContentButtons="",
+    children
+}) => {
     return (
-        <div className="modal__content">
+        <div className={`${classForModalContent} modal__content`}>
             {children}
-            <div className="modal__content__buttons">
+            <div className={`${classForModalContentButtons} modal__content__buttons`}>
                 <ButtonList buttons={buttons} />
             </div>
         </div>
     )
 }
 
-export default function InterfazRegistros({
+function InterfazRegistros({
     guiTitle,
     bloqueRegistros,
     buttonsDataBody,
     modalAgregarModificar,
+    classForModalContent="",
+    classForModalContentButtons="",
     buttonsModalAgregarModificar,
     formulario,
     modalEliminar,
@@ -102,6 +109,8 @@ export default function InterfazRegistros({
                 title={modalAgregarModificar.title}
             >
                 <ModalContent
+                    classForModalContent={classForModalContent}
+                    classForModalContentButtons={classForModalContentButtons}
                     buttons={buttonsModalAgregarModificar}
                 >
                     {formulario}
@@ -123,3 +132,5 @@ export default function InterfazRegistros({
         </>
     );
 }
+
+export {InterfazRegistros as default, Button};
