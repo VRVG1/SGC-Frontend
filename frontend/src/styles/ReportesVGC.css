@@ -6,6 +6,12 @@
     width: 100%;
 }
 
+.modal__content form label input[type="text"]:disabled {
+    background-color: rgba(239, 239, 239, 0.3);
+    color: rgb(84, 84, 84);
+    border-color: rgba(118, 118, 118, 0.3);
+}
+
 .modal__content form .vgc.form__short_inputs label input[type="week"] {
     padding: 0;
     border: 1px solid rgb(118, 118, 118);
@@ -58,4 +64,19 @@
 
 .vgc.tooltiptext span, .vgc.tooltiptext strong {
     font-size: 1rem;
+}
+
+.vgc.reporte__tabla__col_small {
+    width: 3%;
+}
+
+.vgc.reporte__tabla__col_medium {
+    width: 8%;
+}
+
+.vgc.reporte__tabla__col_tema {
+    width: 6%;
+}
+.vgc.reporte__tabla__col_relevant {
+    width: 24%
 }

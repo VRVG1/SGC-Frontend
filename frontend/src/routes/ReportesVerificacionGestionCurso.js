@@ -9,7 +9,7 @@ const defaultFormEmptyFields = {
     "lista-profesores": false,
     "lista-asignaturas": false,
     "lista-grado-grupo": false,
-    "lista-tema": false,
+    "lista-temas": false,
 }
 
 function TableCell({customClassName="", children}) {
@@ -40,8 +40,8 @@ function TableRow({rowInfo}) {
 }
 
 function TableRowList({rows}) {
-    return rows.map(row => {
-        return <TableRow rowInfo={row} />
+    return rows.map((row, idx) => {
+        return <TableRow key={`tr_${idx}`} rowInfo={row} />
     })
 }
 
@@ -73,33 +73,14 @@ function TableHeaderList({rowInfo}) {
 
 function TableReporte({headersInfo, children}) {
     return (
-        <div className="reporte__tabla">
-            <table>
-                <thead>
-                    {headersInfo.map(rowInfo => <TableHeaderList key={rowInfo.id} rowInfo={rowInfo.info} />)}
-                    <tr>
-                        <th colSpan={11}>{tituloTabla}</th>
-                    </tr>
-                    <tr>
-                        <th>No.</th>
-                        <th>Docente</th>
-                        <th>Asignatura</th>
-                        <th>Grado y Grupo</th>
-                        <th>Tema</th>
-                        <th>Semana programada</th>
-                        <th>Verificación</th>
-                        <th>RCMRRC</th>
-                        <th>% de Reprobación</th>
-                        <th>CCEEID</th>
-                        <th>Observaciones</th>
-                        <th colSpan={2} className="reporte__tabla__empty_header"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {children}
-                </tbody>
-            </table>
-        </div>
+        <table>
+            <thead>
+                {headersInfo.map(rowInfo => <TableHeaderList key={rowInfo.id} rowInfo={rowInfo.info} />)}
+            </thead>
+            <tbody>
+                {children}
+            </tbody>
+        </table>
     );
 }
 
@@ -119,6 +100,7 @@ export default function ReportesVerificacionGestionCurso() {
     const [academias, setAcademias] = useState([]);
     const [profesores, setProfesores] = useState([]);
     const [asignaturas, setAsignaturas] = useState([]);
+    const [temas, setTemas] = useState([]);
 
     const [academia, setAcademia] = useState({});
     const [profesor, setProfesor] = useState({});
@@ -129,7 +111,7 @@ export default function ReportesVerificacionGestionCurso() {
     const [gradoGrupo, setGradoGrupo] = useState("");
     const [indReprobacion, setIndReprobacion] = useState("");
     const [semanaProgramada, setSemanaProgramada] = useState("");
-    const [tema, setTema] = useState("");
+    const [tema, setTema] = useState({});
     const [isVerificado, setIsVerificado] = useState(true);
     // Registró
     // Calificaciones en
@@ -179,7 +161,7 @@ export default function ReportesVerificacionGestionCurso() {
 
     const obtenerRegistro = () => {
         if (academia instanceof Object && Object.keys(academia).length !== 0) {
-            let idCarrera = academia["ID_Carrera"];
+            const idCarrera = academia["ID_Carrera"];
             filtroVerificacionGC(
                 auth.user.token,
                 idCarrera,
@@ -223,6 +205,34 @@ export default function ReportesVerificacionGestionCurso() {
     useEffect(obtenerProfesores, [academia, setProfesores]);
     useEffect(obtenerAsignaturasProfesor, [profesor, setAsignaturas]);
 
+    const obtenerTemas = (grado, grupo) => {
+        const data = {
+            "ID_Carrera": academia["ID_Carrera"],
+            "Nombre_Maestro": profesor["Nombre_Usuario"],
+            "ID_Materia": asignatura["pik"],
+            "Grado": grado,
+            "Grupo": grupo
+        };
+        console.log(`Grado: "${grado}" Grupo "${grupo}"`);
+        filtroVerificacionGC(
+            auth.user.token,
+            data,
+            "getTemas"
+        ).then(res => {
+            if (res.ok) {
+                console.log("Encontrados temas relacionados con el profesor");
+            }
+            return res.json();
+        }).then(rcvData => {
+            if (rcvData["Error"] !== undefined) {
+                console.log("Error");
+                console.log(rcvData["Error"]);
+            } else {
+                setTemas(rcvData);
+            }
+        })
+    }
+
     function updateEstadosReporte({
         profesor = {},
         asignatura = {},
@@ -230,11 +240,11 @@ export default function ReportesVerificacionGestionCurso() {
         gradoGrupo = "",
         indReprobacion = "",
         semanaProgramada = "",
-        tema = "",
+        tema = {},
         isVerificado = true,
         isRCMRRC = true,
         isCCEEID = true,
-        observaciones = true
+        observaciones = ""
     } = {}) {
         setProfesor(profesor);
         setAsignatura(asignatura);
@@ -291,14 +301,15 @@ export default function ReportesVerificacionGestionCurso() {
         }).catch(error => console.log(error));
     }
 
-    function deleteReporte(numeroReporte2Delete) {
+    function deleteReporte() {
         const data = {
             "academia": academia["ID_Carrera"],
-            "dato": modifiedReporte
+            "dato": numeroReporte
         }
         filtroVerificacionGC(auth.user.token, data, "eliminar").then(res => {
             if (res.ok) {
                 updateEstadosReporte();
+                setFlagModalEliminar(false);
             }
             return res.json();
         }).then(rcvData => {
@@ -310,6 +321,32 @@ export default function ReportesVerificacionGestionCurso() {
             }
         }).catch(error => console.log(error));
     }
+
+    function downloadExcel() {
+        // TODO: Descargar Excel
+        if (academia instanceof Object && Object.keys(academia).length !== 0) {
+            const idCarrera = academia["ID_Carrera"]
+            console.log("Download Excel");
+            filtroVerificacionGC(auth.user.token, idCarrera, "descargar").then(res => {
+                console.log("DownloadExcel");
+                console.log(res);
+                console.log(res.headers.get('content-disposition'));
+
+                if (res.ok) {
+                    console.log("Debería estar descargando...");
+                }
+                return res.blob();
+            }).then(blob => {
+                console.log(blob);
+                const filename = "Formato para la Verificación de la Gestión del Curso.xlsx";
+                let a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.setAttribute("download", filename);
+                a.click();
+            });
+        }
+    }
+
 
     function setAddingModal(change) {
         setShowModal(change);
@@ -345,66 +382,120 @@ export default function ReportesVerificacionGestionCurso() {
         if (!change) {
             // TODO: Llamar a todas las funciones que sean necesarias para
             //       limpiar las acciones realizadas dentro de modalEliminar
+            updateEstadosReporte();
         }
     }
 
     function handleBtnAgregar() {
         console.log("handleBtnAgregar");
         setAddingModal(true);
-        setNumeroReporte(lastNoReporte);
+    }
+
+    const getRelatedData = async (reporte) => {
+        const gradoGrupoAux = reporte.GradoGrupo;
+        const rgGradoGrupo = /(?:^(?<carrera_code>[A-Z]{1})(?<grado>[0-9]{1})(?<grupo>[A-Z]{1})$)/;
+        const resMatch = gradoGrupoAux.match(rgGradoGrupo);
+        if (resMatch === null) {
+            return undefined;
+        }
+        const grado = resMatch.groups.grado;
+        const grupo = resMatch.groups.grupo;
+
+        const rcvDataAsignatura = await filtroVerificacionGC(
+            auth.user.token,
+            reporte.nombreProfesor,
+            "getAsignaturas"
+        ).then(res => res.json());
+
+        const asignaturaAux = rcvDataAsignatura.find(asignaturaObj => {
+            return asignaturaObj["Nombre_Materia"] === reporte.asignatura;
+        });
+        const idMateria = await asignaturaAux.pik;
+        const dato = {
+            "ID_Carrera": academia["ID_Carrera"],
+            "Nombre_Maestro": reporte.nombreProfesor,
+            "ID_Materia": idMateria,
+            "Grado": grado,
+            "Grupo": grupo
+        };
+        const rcvDataTemas = await filtroVerificacionGC(
+            auth.user.token,
+            dato,
+            "getTemas"
+        ).then(res => res.json());
+
+        const temaAux = rcvDataTemas.find(temaObj => {
+            return temaObj["Nombre_Reporte"] === reporte.tema;
+        });
+
+        return [asignaturaAux, rcvDataTemas, temaAux];
     }
 
     function handleBtnModificar(reporte) {
-        // TODO: Activar el modalAgregarModificar con isUpdating y actualizar
-        //       los datos del formulario con los del argumento 'reporte'
         console.log("handleBtnModificar");
+        console.log(reporte);
+        const profesorAux = profesores.find(profesorObj => {
+            return profesorObj["Nombre_Usuario"] === reporte.nombreProfesor;
+        });
+        getRelatedData(reporte).then(response => {
+            const [asignaturaAux, rcvDataTemas, temaAux] = response;
+            console.log("AsignaturaAux:");
+            console.log(asignaturaAux);
+            console.log("TemaAux:");
+            console.log(temaAux);
+
+            setTemas(rcvDataTemas);
+            updateEstadosReporte({
+                profesor: profesorAux,
+                asignatura: asignaturaAux,
+                numeroReporte: reporte.numeroReporte,
+                gradoGrupo: reporte.GradoGrupo,
+                indReprobacion: reporte.indReprobacion,
+                semanaProgramada: reporte.semanaProgramada,
+                tema: temaAux,
+                isVerificado: reporte.verificacion,
+                isRCMRRC: reporte.RCMRRC,
+                isCCEEID: reporte.CCEEID,
+                observaciones: reporte.observaciones
+            });
+            setUpdatingModal(true);
+        });
+        console.log(reporte);
     }
 
     function handleBtnEliminar(reporte) {
         // TODO: Activar el modalEliminar y hacer todo lo necesario para que
         //       suceda la eliminación del reporte
         console.log("handleBtnEliminar");
-    }
-
-    function downloadExcel() {
-        // TODO: Descargar Excel
-        console.log("Download Excel");
+        setNumeroReporte(reporte["numeroReporte"]);
+        setFlagModalEliminar(true);
     }
 
     function handleBtnGuardarModal() {
         console.log("handleBtnGuardarModal");
         let hasEmptyFields = false;
+        const nextFormEmptyFields = {...formEmptyFields};
         if (Object.keys(profesor).length === 0) {
-            setFormEmptyFields({
-                ...formEmptyFields,
-                "lista-profesores": true
-            });
+            nextFormEmptyFields["lista-profesores"] = true;
             hasEmptyFields = true;
         }
         if (Object.keys(asignatura).length === 0) {
-            setFormEmptyFields({
-                ...formEmptyFields,
-                "lista-asignaturas": true
-            });
+            nextFormEmptyFields["lista-asignaturas"] = true;
             hasEmptyFields = true;
         }
         if (gradoGrupo === "") {
-            setFormEmptyFields({
-                ...formEmptyFields,
-                "lista-grado-grupo": true
-            });
+            nextFormEmptyFields["lista-grado-grupo"] = true;                
+            setGradoGrupoNotifyMsg("Debe proporcionar un grado y grupo antes de guardar");
             hasEmptyFields = true;
         }
         if (Object.keys(tema).length === 0) {
-            setFormEmptyFields({
-                ...formEmptyFields,
-                "lista-tema": true
-            });
+            nextFormEmptyFields["lista-temas"] = true
             hasEmptyFields = true;
         }
 
         // Si hay campos vacios no procede con el guardado
         if (hasEmptyFields) {
+            setFormEmptyFields(nextFormEmptyFields);
             return;
         }
 
@@ -419,7 +510,7 @@ export default function ReportesVerificacionGestionCurso() {
             "nombreProfesor": profesor.Nombre_Usuario,
             "asignatura": asignatura.Nombre_Materia,
             "GradoGrupo": gradoGrupo,
-            "tema": tema,
+            "tema": tema["Nombre_Reporte"],
             "semanaProgramada": semanaProgramada,
             "verificacion": isVerificado,
             "RCMRRC": isRCMRRC,
@@ -438,12 +529,14 @@ export default function ReportesVerificacionGestionCurso() {
     function handleBtnEliminarModal() {
         console.log("handleBtnEliminarModal");
         // TODO: Eliminar el reporte seleccionado en el servidor
+        deleteReporte();
     }
 
     function handleBtnCancelarModal() {
         console.log("handleBtnCancelarModal");
         // TODO: Limpiar la información de los estados y desactivar las
         //       banderas relacionadas al modalEliminar
+        setFlagModalEliminar(false);
     }
 
     function handleMenuAcademia(event) {
@@ -455,6 +548,27 @@ export default function ReportesVerificacionGestionCurso() {
             });
             setAcademia(academiaAux);
         }
+    }
+
+    function cleanProfesorField() {
+        setAsignatura({});
+        cleanAsignaturaField();
+    }
+
+    function cleanAsignaturaField() {
+        setGradoGrupo("");
+        cleanGradoGrupoField();
+    }
+
+    function cleanGradoGrupoField() {
+        setTemas([]);
+        cleanTemaField();
+    }
+
+    function cleanTemaField() {
+        setTema({});
+        setSemanaProgramada("");
+        setIndReprobacion("");
     }
 
     const BloqueRegistros = () => {
@@ -474,64 +588,68 @@ export default function ReportesVerificacionGestionCurso() {
                 </div>
             ); 
         }
-        return contenido;
+        return (
+            <div className="data__body__reportes">
+                {contenido} 
+            </div>
+        );
     }
 
     const getTableRows = () => {
         return registroGeneral.map((reporte, idx) => {
             return [{
                     "id": `numeroReporte_${idx}`,
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_small",
                     "children": reporte["numeroReporte"]
                 },
                 {
                     "id": `nombreProfesor_${idx}`,
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_relevant",
                     "children": reporte["nombreProfesor"]
                 },
                 {
                     "id": `asignatura_${idx}`,
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_medium",
                     "children": reporte["asignatura"]
                 },
                 {
                     "id": `GradoGrupo_${idx}`,
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_small",
                     "children": reporte["GradoGrupo"]
                 },
                 {
                     "id": `tema_${idx}`,
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_tema",
                     "children": reporte["tema"]
                 },
                 {
                     "id": `semanaProgramada_${idx}`,
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_medium",
                     "children": reporte["semanaProgramada"]
                 },
                 {
                     "id": `verificacion_${idx}`,
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_small",
                     "children": reporte["verificacion"] ? "SI" : "NO"
                 },
                 {
                     "id": `RCMRRC_${idx}`,
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_small",
                     "children": reporte["RCMRRC"] ? "SI" : "NO"
                 },
                 {
                     "id": `indReprobacion_${idx}`,
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_small",
                     "children": reporte["indReprobacion"]
                 },
                 {
                     "id": `CCEEID_${idx}`,
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_small",
                     "children": reporte["CCEEID"] ? "SI" : "NO"
                 },
                 {
                     "id": `observaciones_${idx}`,
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_relevant",
                     "children": reporte["observaciones"]
                 },
                 {
@@ -560,7 +678,7 @@ export default function ReportesVerificacionGestionCurso() {
                             }}
                             disabled={false}
                         >
-                            Modificar
+                            Eliminar
                         </Button>
                     )
                 },
@@ -586,56 +704,56 @@ export default function ReportesVerificacionGestionCurso() {
             info: [     // Columnas
                 {
                     id: "th_1",
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_small",
                     "colSpan": 1,
                     "rowSpan": 1,
                     "children": "No."
                 },
                 {
                     id: "th_2",
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_relevant",
                     "colSpan": 1,
                     "rowSpan": 1,
                     "children": "Docente"
                 },
                 {
                     id: "th_3",
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_medium",
                     "colSpan": 1,
                     "rowSpan": 1,
                     "children": "Asignatura"
                 },
                 {
                     id: "th_4",
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_small",
                     "colSpan": 1,
                     "rowSpan": 1,
                     "children": "Grado y Grupo"
                 },
                 {
                     id: "th_5",
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_tema",
                     "colSpan": 1,
                     "rowSpan": 1,
                     "children": "Tema"
                 },
                 {
                     id: "th_6",
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_medium",
                     "colSpan": 1,
                     "rowSpan": 1,
                     "children": "Semana programada"
                 },
                 {
                     id: "th_7",
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_small",
                     "colSpan": 1,
                     "rowSpan": 1,
                     "children": "Verificación"
                 },
                 {
                     id: "th_8",
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_small",
                     "colSpan": 1,
                     "rowSpan": 1,
                     // TODO: Agregar el tooltip (no va a ser texto, va a ser un
@@ -644,14 +762,14 @@ export default function ReportesVerificacionGestionCurso() {
                 },
                 {
                     id: "th_9",
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_small",
                     "colSpan": 1,
                     "rowSpan": 1,
                     "children": "% de Reprobación"
                 },
                 {
                     id: "th_10",
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_small",
                     "colSpan": 1,
                     "rowSpan": 1,
                     // TODO: Agregar el tooltip (no va a ser texto, va a ser un
@@ -660,7 +778,7 @@ export default function ReportesVerificacionGestionCurso() {
                 },
                 {
                     id: "th_11",
-                    "class": "",
+                    "class": "vgc reporte__tabla__col_relevant",
                     "colSpan": 1,
                     "rowSpan": 1,
                     "children": "Observaciones"
@@ -695,15 +813,12 @@ export default function ReportesVerificacionGestionCurso() {
                         disabled={true}
                     />
                 </label>
-                <label className={`${formEmptyFields["lista-grado-grupo"] ?
-                        "form__field_error" : ""} ${isGradoGrupoBadFormat ?
-                        "form__field_warn" : ""}`}
-                >
+                <label>
                     <span>
                         Semana Programada:
                     </span>
                     <input
-                        type={"week"}
+                        type={"date"}
                         name={"input-vgc-semana-programada"}
                         value={semanaProgramada}
                         onChange={e => {
@@ -713,16 +828,8 @@ export default function ReportesVerificacionGestionCurso() {
                         }}
                         onKeyDown={e => e.preventDefault()}
                         min={"2000-01-01"}
+                        disabled={true}
                     />
-                    <div className={`${formEmptyFields["lista-grado-grupo"] ?
-                        "form__error_message" : ""} ${isGradoGrupoBadFormat ?
-                        "form__warn_message" : ""}`}
-                        hidden={flagErrorWarnMsg}
-                    >
-                        <h5 hidden={flagErrorWarnMsg}>
-                            {gradoGrupoNotifyMsg}
-                        </h5>
-                    </div>
                 </label>
             </div>
             <div className={`form__menu_reportes ${formEmptyFields["lista-profesores"] ? "form__field_error" : ""}`}>
@@ -746,9 +853,9 @@ export default function ReportesVerificacionGestionCurso() {
                             setProfesor(profesorAux);
                         } else {
                             setProfesor({});
-                            setAsignatura({});
-                            setNumeroReporte("");
+                            setAsignaturas([]);
                         }
+                        cleanProfesorField();
                     }}
                     selectValue={Object.keys(profesor).length === 0 ? "" : profesor['PK']}
                     defaultOptionTxt="--Elija un profesor--"
@@ -786,6 +893,7 @@ export default function ReportesVerificacionGestionCurso() {
                         } else {
                             setAsignatura({});
                         }
+                        cleanAsignaturaField();
                     }}
                     selectValue={Object.keys(asignatura).length === 0 ? "" : asignatura["Clave_reticula"]}
                     defaultOptionTxt="--Elija una asignatura--"
@@ -794,7 +902,13 @@ export default function ReportesVerificacionGestionCurso() {
                     optValue="Clave_reticula"
                     optTxt="Nombre_Materia"
                     hidden={false}
+                    disabled={Object.keys(profesor).length === 0}
                 />
+                <div className={"form__error_message"} hidden={!formEmptyFields["lista-profesores"]}>
+                    <h5 hidden={!formEmptyFields["lista-profesores"]}>
+                        Debe seleccionar una asignatura antes de guardar
+                    </h5>
+                </div>
             </div>
             <div className="vgc form__short_inputs">
                 <label className={`${formEmptyFields["lista-grado-grupo"] ?
@@ -821,18 +935,27 @@ export default function ReportesVerificacionGestionCurso() {
                                 let rg = newGradoGrupo.length == 1 ?
                                     /(?:^[A-Z]{1}$)/ : newGradoGrupo.length <= 2 ?
                                     /(?:^[A-Z]{1}[0-9]{1}$)/ :
-                                    /(?:^[A-Z]{1}[0-9]{1}[A-Z]{1}$)/;
+                                    /(?:^(?<carrera_code>[A-Z]{1})(?<grado>[0-9]{1})(?<grupo>[A-Z]{1})$)/;
 
-                                if (newGradoGrupo.match(rg) !== null) {
+                                const resMatch = newGradoGrupo.match(rg);
+                                if (resMatch !== null) {
+                                    if (newGradoGrupo.length > 2) {
+                                        obtenerTemas(resMatch.groups.grado,
+                                                     resMatch.groups.grupo);
+                                    } else {
+                                        cleanGradoGrupoField();
+                                    }
                                     setIsGradoGrupoBadFormat(false);
                                 } else {
                                     newGradoGrupo = gradoGrupo;
                                     setIsGradoGrupoBadFormat(true);
+                                    setGradoGrupoNotifyMsg("El formato de Grado y Grupo debe ser: La letra de la carrera, el numero de semestre y la letra del grupo");
                                 }
                             }
                             setGradoGrupo(newGradoGrupo);
                         }}
                         maxLength={3}
+                        disabled={Object.keys(asignatura).length === 0}
                     />
                     <div className={`${formEmptyFields["lista-grado-grupo"] ?
                         "form__error_message" : ""} ${isGradoGrupoBadFormat ?
@@ -844,21 +967,46 @@ export default function ReportesVerificacionGestionCurso() {
                         </h5>
                     </div>
                 </label>
-                <label>
-                    <span>
-                        Tema:
-                    </span>
-                    <input
-                        type={"text"}
-                        name={"input-vgc-tema"}
-                        value={tema}
-                        onChange={e => {
-                            let value = e.target.value;
-                            setTema(value);
+                <div className={`form__menu_reportes ${formEmptyFields["lista-temas"] ? "form__field_error" : ""}`}>
+                    <Menu
+                        labelTxt="*Tema:"
+                        selectId="menu-temas"
+                        selectName="lista-temas"
+                        selectFn={(event) => {
+                            let value = event.target.value;
+                            if (value !== "") {
+                                if (formEmptyFields["lista-temas"]) {
+                                    setFormEmptyFields({
+                                        ...formEmptyFields,
+                                        "lista-temas": false
+                                    });
+                                }
+                                let idTema = parseInt(value);
+                                const temaAux = temas.find(temaObj => {
+                                    return temaObj["ID_Reporte"] === idTema;
+                                });
+                                setTema(temaAux);
+                                setSemanaProgramada(temaAux["Fecha_Especificada_Entrega"]);
+                                setIndReprobacion(temaAux["Reprobados"]);
+                            } else {
+                                cleanTemaField();
+                            }
                         }}
-                        maxLength={60}
+                        selectValue={Object.keys(tema).length === 0 ? "" : tema['ID_Reporte']}
+                        defaultOptionTxt="--Elija un tema--"
+                        optionsList={temas}
+                        optKey={'ID_Reporte'}
+                        optValue={'ID_Reporte'}
+                        optTxt={"Nombre_Reporte"}
+                        hidden={false}
+                        disabled={temas.length === 0}
                     />
-                </label>
+                    <div className={"form__error_message"} hidden={!formEmptyFields["lista-temas"]}>
+                        <h5 hidden={!formEmptyFields["lista-profesores"]}>
+                            Debe seleccionar un tema antes de guardar
+                        </h5>
+                    </div>
+                </div>
             </div>
             <div className="vgc form__large_input">
             </div>

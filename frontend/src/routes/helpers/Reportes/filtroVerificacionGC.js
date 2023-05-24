@@ -1,7 +1,7 @@
 import AuthPostBasis from "../Auth/AuthPostBasis.js"
 
 const urls = {
-    "getTemas": "reporte/p3RepUXCXMaeXGraXGrp/",
+    "getTemas": "reporte/p3RepUXCXMaeXMatXGraXGrp/",
     "getProfesores": "usuario/p2MaeXC/",
     "getRegistro": "reporte/getVGC/",
     "getAsignaturas": "materia/p2MatXM/",
@@ -30,10 +30,10 @@ const filtroVerificacionGC = async(token, dato, filtro) => {
     } else if (filtro === "getTemas") {
         const atributoIdCarrera = `ID_Carrera=${dato["ID_Carrera"]}`;
         const atributoNombreMaestro = `Nombre_Maestro=${dato["Nombre_Maestro"]}`;
+        const atributoIdMateria = `ID_Materia=${dato["ID_Materia"]}`;
         const atributoGrado = `Grado=${dato["Grado"]}`;
         const atributoGrupo = `Grupo=${dato["Grupo"]}`;
-        const cuerpoUrlGet = `${atributoIdCarrera}&${atributoNombreMaestro}&
-            ${atributoGrado}&${atributoGrupo}`;
+        const cuerpoUrlGet = `${atributoIdCarrera}&${atributoNombreMaestro}&${atributoIdMateria}&${atributoGrado}&${atributoGrupo}`;
 
         url = `${jsonData.host}${urls[filtro]}${cuerpoUrlGet}`
     } else if (filtro === "agregar" ||
