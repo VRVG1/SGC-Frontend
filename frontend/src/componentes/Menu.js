@@ -7,18 +7,19 @@ function Option({value, txt}) {
 }
 
 export default function Menu({
-               labelTxt,
-               selectId,
-               selectName,
-               selectFn,
-               selectValue,
-               defaultOptionTxt,
-               optionsList,
-               optKey,
-               optValue,
-               optTxt,
-               hidden = true
-              }) {
+    labelTxt,
+    selectId,
+    selectName,
+    selectFn,
+    selectValue,
+    defaultOptionTxt,
+    optionsList,
+    optKey,
+    optValue,
+    optTxt,
+    hidden = true,
+    disabled = false
+}) {
     return hidden ? "" : (
         <div>
             <label htmlFor={selectId}>
@@ -29,6 +30,7 @@ export default function Menu({
                 id={ selectId }
                 onChange={ selectFn }
                 value={ selectValue }
+                disabled={ disabled }
             >
                 <option value="">{ defaultOptionTxt }</option>
                 {
