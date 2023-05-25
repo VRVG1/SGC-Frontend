@@ -1084,13 +1084,11 @@ export default function ReportesProductosNoConformes() {
 
     const buttonsDataBody = [
         {
-            "type": "button",
             "id": "btnAgregar",
             "handler": handleBtnAgregar,
             "btnTxt": "Agregar"
         },
         {
-            "type": "button",
             "id": "btnDescargar",
             "handler": downloadPDF,
             "btnTxt": "Descargar",
@@ -1138,13 +1136,14 @@ export default function ReportesProductosNoConformes() {
     return (
         <InterfazRegistros 
             guiTitle={guiTitle}
-            bloqueRegistros={bloqueRegistros}
             buttonsDataBody={buttonsDataBody}
             modalAgregarModificar={modalAgregarModificar}
             buttonsModalAgregarModificar={buttonsModalAgregarModificar}
             formulario={formulario}
             modalEliminar={modalEliminar}
             buttonsModalEliminar={buttonsModalEliminar}
-        />
+        >
+            {bloqueRegistros}
+        </InterfazRegistros>
     );
 }

@@ -102,6 +102,8 @@ export default function ReportesVerificacionGestionCurso() {
     const [asignaturas, setAsignaturas] = useState([]);
     const [temas, setTemas] = useState([]);
 
+    const [noSeguimiento, setNoSeguimiento] = useState(1);
+    const [semanaDel, setSemanaDel] = useState("");
     const [academia, setAcademia] = useState({});
     const [profesor, setProfesor] = useState({});
     const [asignatura, setAsignatura] = useState({});
@@ -589,8 +591,48 @@ export default function ReportesVerificacionGestionCurso() {
             ); 
         }
         return (
-            <div className="data__body__reportes">
+            <div className="vgc data__body__reportes">
                 {contenido} 
+                <div className="vgc data__body__reportes__inputs">
+                    <form>
+                        <label>
+                            <span>
+                                Seguimiento No. :
+                            </span>
+                            <input
+                                type={"number"}
+                                name={"input-vgc-seguimiento"}
+                                value={noSeguimiento}
+                                onChange={(e) => setNoSeguimiento(parseInt(e.target.value))}
+                            />
+                        </label>
+                        <label>
+                            <span>
+                                Semana del:
+                            </span>
+                            <input
+                                type={"week"}
+                                name={"input-vgc-semana-del"}
+                                value={semanaDel}
+                                onChange={(e) => setSemanaDel(e.target.value)}
+                                onKeyDown={(e) => e.preventDefault()}
+                            />
+                        </label>
+                        <Menu
+                            labelTxt="Academia:"
+                            selectId="menu-academia"
+                            selectName="lista-carreras"
+                            selectFn={handleMenuAcademia}
+                            selectValue={Object.keys(academia).length === 0 ? "" : academia['ID_Carrera']}
+                            defaultOptionTxt="--Elija una Academia--"
+                            optionsList={academias}
+                            optKey="ID_Carrera"
+                            optValue="ID_Carrera"
+                            optTxt="Nombre_Carrera"
+                            hidden={false}
+                        />
+                    </form>
+                </div>
             </div>
         );
     }
@@ -756,8 +798,6 @@ export default function ReportesVerificacionGestionCurso() {
                     "class": "vgc reporte__tabla__col_small",
                     "colSpan": 1,
                     "rowSpan": 1,
-                    // TODO: Agregar el tooltip (no va a ser texto, va a ser un
-                    //       <div>)
                     "children": "RCMRRC"
                 },
                 {
@@ -772,8 +812,6 @@ export default function ReportesVerificacionGestionCurso() {
                     "class": "vgc reporte__tabla__col_small",
                     "colSpan": 1,
                     "rowSpan": 1,
-                    // TODO: Agregar el tooltip (no va a ser texto, va a ser un
-                    //       <div>)
                     "children": "CCEEID"
                 },
                 {
@@ -1158,28 +1196,12 @@ export default function ReportesVerificacionGestionCurso() {
     const bloqueRegistros = <BloqueRegistros />
     const buttonsDataBody = [
         {
-            "type": "button",
             "id": "btnAgregar",
             "handler": handleBtnAgregar,
             "btnTxt": "Agregar",
             "disabled": Object.keys(profesores).length === 0
         },
         {
-            "type": "select",
-            "id": "selectAcademia",
-            "labelTxt": "",
-            "selectId": "menu-academia",
-            "selectName": "lista-carreras",
-            "selectFn": handleMenuAcademia,
-            "selectValue": Object.keys(academia).length === 0 ? "" : academia['ID_Carrera'],
-            "defaultOptionTxt": "--Elija una Academia--",
-            "optionsList": academias,
-            "optKey": "ID_Carrera",
-            "optValue": "ID_Carrera",
-            "optTxt": "Nombre_Carrera"
-        },
-        {
-            "type": "button",
             "id": "btnDescargar",
             "handler": downloadExcel,
             "btnTxt": "Descargar",
@@ -1226,7 +1248,6 @@ export default function ReportesVerificacionGestionCurso() {
     return (
         <InterfazRegistros
             guiTitle={guiTitle}
-            bloqueRegistros={bloqueRegistros}
             buttonsDataBody={buttonsDataBody}
             modalAgregarModificar={modalAgregarModificar}
             classForModalContent={"vgc"}
@@ -1235,6 +1256,8 @@ export default function ReportesVerificacionGestionCurso() {
             formulario={formulario}
             modalEliminar={modalEliminar}
             buttonsModalEliminar={buttonsModalEliminar}
-        />
+        >
+            {bloqueRegistros}
+        </InterfazRegistros>
     )
 }
