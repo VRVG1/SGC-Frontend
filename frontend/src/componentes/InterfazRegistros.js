@@ -16,40 +16,17 @@ const Button = ({className, handler, disabled, children}) => {
 const ButtonList = ({buttons}) => {
     return buttons.map(elemData => {
         let element = "";
-        if (elemData.type == "button") {
-            let button = elemData;
-            element = (
-                <Button
-                    key={button.id}
-                    className={button.className === undefined ? "" : button.className}
-                    handler={button.handler}
-                    disabled={button.disabled === undefined ? false : button.disabled}
-                >
-                    {button.btnTxt}
-                </Button>
-            );
-        } else if (elemData.type == "select") {
-            let select = elemData;
-            element = (
-                <form
-                    key={select.id}
-                >
-                    <Menu
-                        labelTxt={select.labelTxt}
-                        selectId={select.selectId}
-                        selectName={select.selectName}
-                        selectFn={select.selectFn}
-                        selectValue={select.selectValue}
-                        defaultOptionTxt={select.defaultOptionTxt}
-                        optionsList={select.optionsList}
-                        optKey={select.optKey}
-                        optValue={select.optValue}
-                        optTxt={select.optTxt}
-                        hidden={false}
-                    />
-                </form>
-            );
-        }
+        let button = elemData;
+        element = (
+            <Button
+                key={button.id}
+                className={button.className === undefined ? "" : button.className}
+                handler={button.handler}
+                disabled={button.disabled === undefined ? false : button.disabled}
+            >
+                {button.btnTxt}
+            </Button>
+        );
         return element;
     });
 }
@@ -80,7 +57,6 @@ const ModalContent = ({
 
 function InterfazRegistros({
     guiTitle,
-    bloqueRegistros,
     buttonsDataBody,
     modalAgregarModificar,
     classForModalContent="",
@@ -88,7 +64,8 @@ function InterfazRegistros({
     buttonsModalAgregarModificar,
     formulario,
     modalEliminar,
-    buttonsModalEliminar
+    buttonsModalEliminar,
+    children
 }) {
     return (
         <>
@@ -97,7 +74,7 @@ function InterfazRegistros({
                     <h1>{guiTitle}</h1>
                 </div>
                 <div className="data__body container">
-                    {bloqueRegistros}
+                    {children}
                     <BloqueBotones
                         buttons={buttonsDataBody}
                     />
