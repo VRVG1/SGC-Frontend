@@ -174,7 +174,12 @@ export default function ReportesVerificacionGestionCurso() {
                 console.log("Registro General:");
                 console.log(rcvData);
                 if (rcvData["Error"] === undefined) {
+                    const newNoSeguimiento = rcvData['noSeguimiento']
+                    const newSemanaDel = rcvData['semanaDel']
                     const newLastReporteID = rcvData["lastReporteID"];
+
+                    setNoSeguimiento(newNoSeguimiento)
+                    setSemanaDel(newSemanaDel)
                     setLastNoReporte(newLastReporteID);
                     setNumeroReporte(newLastReporteID);
                     setRegistroGeneral(rcvData["registro"]);
@@ -503,10 +508,6 @@ export default function ReportesVerificacionGestionCurso() {
 
         // Si todos los campos necesarios contienen información se procede
         // a evaluar
-        // const data2Send = {
-        //     "lastReporteID": lastNoReporte,
-        //     "newReporte": {}
-        // };
         const nextRegistro = {
             "numeroReporte": numeroReporte,
             "nombreProfesor": profesor.Nombre_Usuario,
@@ -522,7 +523,12 @@ export default function ReportesVerificacionGestionCurso() {
         };
         // data2Send["newReporte"] = (nextRegistro);
         if (isAdding) {
-            addReporte(nextRegistro);
+            const data2Send = {
+                "noSeguimiento": noSeguimiento,
+                "semanaDel": semanaDel,
+                "newReporte": {...nextRegistro}
+            };
+            addReporte(data2Send);
         } else if (isUpdating) {
             updateReporte(nextRegistro);
         }
@@ -611,11 +617,15 @@ export default function ReportesVerificacionGestionCurso() {
                                 Semana del:
                             </span>
                             <input
-                                type={"week"}
+                                type={"date"}
                                 name={"input-vgc-semana-del"}
                                 value={semanaDel}
-                                onChange={(e) => setSemanaDel(e.target.value)}
+                                onChange={(e) => {
+                                    console.log(e.target.value);
+                                    setSemanaDel(e.target.value)
+                                }}
                                 onKeyDown={(e) => e.preventDefault()}
+                                min={"2000-01-01"}
                             />
                         </label>
                         <Menu

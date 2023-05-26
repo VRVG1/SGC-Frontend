@@ -1,7 +1,7 @@
 .vgc.data__body__reportes {
     overflow-y: hidden;
 }
-.vgc.reporte__tabla {
+.vgc .reporte__tabla {
     height: 80%;
     overflow-y: auto;
 }
@@ -22,6 +22,7 @@
     display: flex;
     flex-direction: column;
     pointer-events: auto;
+    position: static;
 }
 
 .vgc.data__body__reportes__inputs form div {
