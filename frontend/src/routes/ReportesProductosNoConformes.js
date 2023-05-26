@@ -442,11 +442,11 @@ export default function ReportesProductosNoConformes() {
     useEffect(obtenerReportes, [setReportes]);
     useEffect(obtenerRegistroPNC, [isNeededUpdate, setActualPNCID, setPncId, setRegistroGeneral]);
 
-    function addPNC(registro, newPncID) {
+    function addPNC(registro) {
         filtroPNC(auth.user.token, registro, "agregar").then(res => {
             if (res.ok) {
-                updatingEstadosRegistro({pncID: newPncID});
-                setActualPNCID(actualPNCID + 1)
+                updatingEstadosRegistro();
+                // setActualPNCID(actualPNCID + 1)
             }
             return res.json();
         }).then(registro => {
@@ -462,10 +462,10 @@ export default function ReportesProductosNoConformes() {
         });
     }
 
-    function updatePNC(registro, newPncID) {
+    function updatePNC(registro) {
         filtroPNC(auth.user.token, registro, "modificar").then(res => {
             if (res.ok) {
-                updatingEstadosRegistro({pncID: newPncID});
+                updatingEstadosRegistro();
                 setUpdatingModal(false);
             }
             return res.json();
@@ -738,9 +738,11 @@ export default function ReportesProductosNoConformes() {
                                 if (newFolio.match(rg) !== null) {
                                     newFolio = newFolio;
                                     setIsFolioBadFormat(false);
+                                    setFolioNotifyMsg("");
                                 } else {
                                     newFolio = folio;
                                     setIsFolioBadFormat(true);
+                                    setFolioNotifyMsg("Folio no valido. Debe contener por lo menos 3 letras y 3 números.");
                                 }
                                 // newFolio = newFolio.match(rg) !== null ? newFolio : folio;
                             }
@@ -824,7 +826,9 @@ export default function ReportesProductosNoConformes() {
     );
 
     const BloqueRegistros = () => {
-        let contenido = (
+        let contenido = "";
+        let containsNoString = false;
+        let contenidoEmpty = (
             <div className="data__body__reportes_display">
                 <h3>Todavía no hay ningún PNC registrado.</h3>
             </div>
@@ -841,16 +845,26 @@ export default function ReportesProductosNoConformes() {
                     linkedPNCsIds.forEach(idPNC => {
                         pncs[idPNC] = registroGeneral[idPNC];
                     });
-                    return <Reporte
-                        key={`ReporteTabla__${idx}`}
-                        nombreReporte={reporteAux["Nombre_Reporte"]}
-                        fechaRepoEntrega={reporteAux["Fecha_Entrega"]}
-                        registros={pncs}
-                        callbackBtnModificar={modificarEstadosRegistro}
-                        callbackBtnEliminar={agregarRegistroEliminado}
-                    />
+                    if (Object.keys(pncs).length === 0) {
+                        return "";
+                    } else {
+                        containsNoString = true;
+                        return (
+                            <Reporte
+                                key={`ReporteTabla__${idx}`}
+                                nombreReporte={reporteAux["Nombre_Reporte"]}
+                                fechaRepoEntrega={reporteAux["Fecha_Entrega"]}
+                                registros={pncs}
+                                callbackBtnModificar={modificarEstadosRegistro}
+                                callbackBtnEliminar={agregarRegistroEliminado}
+                            />
+                        );
+                    }
                 }
             });
+        }
+        if (!containsNoString) {
+            contenido = contenidoEmpty;
         }
 
         return (
@@ -885,6 +899,7 @@ export default function ReportesProductosNoConformes() {
         }
 
         let folioRgExp = /(?:^[A-Z]{3}[0-9]{3}$)/;
+        console.log(folioRgExp);
         if (folio.match(folioRgExp) === null) {
             setFolioNotifyMsg("Folio no valido. Debe contener por lo menos 3 letras y 3 números.")
             setIsFolioBadFormat(true);
@@ -892,9 +907,6 @@ export default function ReportesProductosNoConformes() {
         } else {
             setIsFolioBadFormat(false);
         }
-        const idReporte = `reporte_${reporte["ID_Reporte"]}`;
-        let registrosReporte = {};
-        let newPncID = actualPNCID;
         let newPNC = {
             "numeroPNC": noPNC,
             "folio": folio,
@@ -904,148 +916,38 @@ export default function ReportesProductosNoConformes() {
             "isEliminaPNC": isEliminaPNC
         };
 
-        const data2Send = {
-            lastPNCID: actualPNCID,
-            registro: {}
-        }
-        let nextReporteRegistros = {};
+        // Se agrega el ID del reporte al cual se esta agregando/modificando
+        // y el contenido del nuevo PNC
+        let data2Send = {
+            'ID_reporte': reporte["ID_Reporte"],
+            'new_PNC': newPNC
+        };
         if (isAdding) {
             // El usuario esta agregando un PNC
 
-            // Se obtiene el objeto relacionado a idReporte
-            registrosReporte = registroGeneral[idReporte];
-            if (registrosReporte === undefined) {
-                // Si el registro del reporte es undefined quiere
-                // decir que no ha sido creado algun PNC para dicho
-                // reporte en 'registroGeneral'
-                const idsReportes = [
-                    ...registroGeneral["reportesRegistrados"]["idsReportes"],
-                    idReporte
-                ];
-                nextReporteRegistros = {
-                    "reportesRegistrados": {
-                        "idsReportes": [...idsReportes]
-                    },
-                    [idReporte]: {
-                        "linkedPNCs": [pncID]
-                    },
-                    [pncID]: newPNC
-                };
-            } else {
-                // Si el registro del reporte no es undefined
-                // quiere decir que existe algun PNC para dicho
-                // reporte.
-                nextReporteRegistros = {
-                    [idReporte]: {
-                        "linkedPNCs": [
-                            ...registrosReporte["linkedPNCs"],
-                            pncID
-                        ]
-                    },
-                    [pncID]: newPNC
-                };
-            }
-            //setRegistroAgregados(nextReporteRegistros);
-
-            data2Send.lastPNCID = actualPNCID + 1;
-            data2Send.registro = nextReporteRegistros;
-            // setActualPNCID(actualPNCID + 1);
-            newPncID = actualPNCID + 1;
             // Se envían el registro PNC a agregar al
             // servidor.
-            addPNC(data2Send, newPncID);
+            addPNC(data2Send);
         } else if (isUpdating) {
             // El usuario esta modificando un PNC existente
             
-            // Se obtiene el id del reporte espejo
-            const idOldReporte = `reporte_${oldReporte["ID_Reporte"]}`;
-            // Se obtiene el objeto relacionado al
-            // 'idReporte' en registrosModificados
-            registrosReporte = registroGeneral[idReporte];
+            // Se crea un nuevo atributo dentro de data2Send, 'ID_pnc'
+            // almacenará el ID del pnc que fue modificado
+            data2Send['ID_pnc'] = pncID;
 
             // Si el idReporte es distinto al idOldReporte
             // quiere decir que el PNC que se esta modificando
             // fue cambiado a otro reporte
-            if (idReporte !== idOldReporte) {
-                // El PNC en modificación fue cambiado a
-                // otro reporte
-                
-                // Se obtiene el objeto relacionado al 'idOldReporte'
-                // Se sabe que este no puede estar vacío porque
-                // ya existía en el registroGeneral
-
-                // Se obtiene el objeto relacionado al 'idOldReporte'
-                // del 'registrosModificados'
-                let oldReporteRegistro = registroGeneral[idOldReporte];
-                // Se declara un arreglo nuevo para contener la versión
-                // actualizada del linkedPNCs del oldReporte
-                let oldReporteIdPNC = [];
-                // Se asigna a oldReporteIdPNC un nuevo
-                // arreglo con todos los linkedPNCs del oldReporte
-                // cuyos ids no sean iguales a pncID
-                oldReporteIdPNC = oldReporteRegistro["linkedPNCs"].filter(idPNC => {
-                    return idPNC !== pncID;
-                });
-
-                nextReporteRegistros[idOldReporte] = {
-                    "linkedPNCs": [...oldReporteIdPNC]
-                };
+            if (reporte['ID_Reporte'] != oldReporte['ID_Reporte']) {
+                // Por ello, se agrega un nuevo atributo a data2Send, 
+                // 'ID_old_reporte' contendrá el ID puro (numero) del reporte
+                // al que antes pertenecia el PNC.
+                data2Send['ID_old_reporte'] = oldReporte['ID_Reporte'];
             }
-            // Si no, significa que el PNC sigue estando
-            // relacionado con el oldReporte, por lo que no
-            // se hace ningun cambio en el oldReporte.
 
-            // Si registrosReporte es undefined quiere decir
-            // que idReporte no esta definido en registrosModificados
-            if (registrosReporte === undefined) {
-                // Se agrega el idReporte a idsReportes en
-                // reportesRegistrados del proximo
-                // registrosModificados
-                const idReportes = [
-                    ...registroGeneral["reportesRegistrados"]["idsReportes"],
-                    idReporte
-                ];
-                nextReporteRegistros["reportesRegistrados"] = {
-                    "idsReportes": [...idReportes]
-                };
-                // Se agrega dentro del atributo idReporte
-                // un arreglo con el pncID del PNC modificado
-                nextReporteRegistros[idReporte] = {
-                    "linkedPNCs": [pncID]
-                };
-            } else {
-                // Si registrosReporte no es undefined quiere decir
-                // que idReporte esta definido en registrosModificados
-                // Solo faltaría checar si en el atributo linkedPNCs
-                // existe el pncID
-                const hasPncId = registrosReporte["linkedPNCs"].find(idPNC => idPNC === pncID);
-                // Si hasPncId es undefined quiere decir
-                // que no existe pncID dentro de los linkedPNCs
-                // de idReporte
-                if (hasPncId === undefined) {
-                    nextReporteRegistros[idReporte] = {
-                        "linkedPNCs": [
-                            ...registroGeneral[idReporte]["linkedPNCs"],
-                            pncID
-                        ]
-                    }
-                }
-                // Si hasPncId es distinto a undefined
-                // quiere decir que pncID existe dentro de
-                // los linkedPNCs de idReporte
-            }
-            // Por ultimo, se agrega en el atributo pncID
-            // el newPNC
-            nextReporteRegistros[pncID] = newPNC;
-            data2Send.lastPNCID = actualPNCID;
-            data2Send.registro = nextReporteRegistros;
-
-            newPncID = actualPNCID;
-            updatePNC(data2Send, newPncID);
-            // setUpdatingModal(false);
+            // Se envían los datos al servidor
+            updatePNC(data2Send);
         }
-        //newPncID = `pnc_${newPncID}`;
-        //updatingEstadosRegistro({pncID: newPncID});
     }
 
     function handleBtnEliminarModal() {
@@ -1066,10 +968,8 @@ export default function ReportesProductosNoConformes() {
             return idPNC !== pncID;
         });
         const data2Send = {
-            [idReporte]: {
-                "linkedPNCs": [...newLinkedPNCs]
-            },
-            [pncID]: pncID
+            "ID_reporte": reporte["ID_Reporte"],
+            'ID_pnc': pncID
         };
         deletePNC(data2Send);
     }
