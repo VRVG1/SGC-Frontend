@@ -23,9 +23,7 @@ const filtroVerificacionGC = async(token, dato, filtro) => {
     const jsonData = require("../../../variables.json");
     let url = "";
     if (filtro === "getProfesores" ||
-        filtro === "getRegistro" ||
-        filtro === "getAsignaturas" ||
-        filtro === "descargar") {
+        filtro === "getAsignaturas") {
         url = jsonData.host + urls[filtro] + dato;
     } else if (filtro === "getTemas") {
         const atributoIdCarrera = `ID_Carrera=${dato["ID_Carrera"]}`;
@@ -35,11 +33,21 @@ const filtroVerificacionGC = async(token, dato, filtro) => {
         const atributoGrupo = `Grupo=${dato["Grupo"]}`;
         const cuerpoUrlGet = `${atributoIdCarrera}&${atributoNombreMaestro}&${atributoIdMateria}&${atributoGrado}&${atributoGrupo}`;
 
-        url = `${jsonData.host}${urls[filtro]}${cuerpoUrlGet}`
-    } else if (filtro === "agregar" ||
+        url = `${jsonData.host}${urls[filtro]}${cuerpoUrlGet}`;
+    } else if (filtro === "getRegistro" ||
+               filtro === "agregar" ||
                filtro === "modificar" ||
-               filtro === "eliminar") {
-        url = jsonData.host + urls[filtro] + dato["academia"]
+               filtro === "eliminar" ||
+               filtro === "descargar") {
+        const atributoIdCarrera = `ID_Carrera=${dato["academia"]}`;
+        const atributoSeguimiento = `Seguimiento_No=${dato["seguimiento_no"]}`;
+        const atributoSemana = `Semana=${dato["semana"]}`
+        const cuerpoUrlPost = `${atributoIdCarrera}&${atributoSeguimiento}&${atributoSemana}`
+        url = `${jsonData.host}${urls[filtro]}${cuerpoUrlPost}`;
+    }
+    if (filtro === "agregar" ||
+        filtro === "modificar" ||
+        filtro === "eliminar") {
         get.method = "POST";
         get.body = JSON.stringify(dato["dato"]);
     }

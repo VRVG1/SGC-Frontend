@@ -140,7 +140,9 @@ export default function ReportesVerificacionGestionCurso() {
     }, [setAcademias]);
 
     const obtenerProfesores = () => {
-        if (academia instanceof Object && Object.keys(academia).length !== 0) {
+        if (academia instanceof Object && Object.keys(academia).length !== 0 &&
+            (noSeguimiento !== "") &&
+            semanaDel !== "") {
             let nombreAcademia = academia["Nombre_Carrera"];
             filtroVerificacionGC(
                 auth.user.token,
@@ -162,11 +164,17 @@ export default function ReportesVerificacionGestionCurso() {
     }
 
     const obtenerRegistro = () => {
-        if (academia instanceof Object && Object.keys(academia).length !== 0) {
-            const idCarrera = academia["ID_Carrera"];
+        if (academia instanceof Object && Object.keys(academia).length !== 0 &&
+            (noSeguimiento !== "") &&
+            semanaDel !== "") {
+            const data = {
+                "academia": academia["ID_Carrera"],
+                "seguimiento_no": noSeguimiento,
+                "semana": semanaDel,
+            };
             filtroVerificacionGC(
                 auth.user.token,
-                idCarrera,
+                data,
                 "getRegistro"
             ).then(res => {
                 return res.json();
@@ -174,12 +182,8 @@ export default function ReportesVerificacionGestionCurso() {
                 console.log("Registro General:");
                 console.log(rcvData);
                 if (rcvData["Error"] === undefined) {
-                    const newNoSeguimiento = rcvData['noSeguimiento']
-                    const newSemanaDel = rcvData['semanaDel']
                     const newLastReporteID = rcvData["lastReporteID"];
 
-                    setNoSeguimiento(newNoSeguimiento)
-                    setSemanaDel(newSemanaDel)
                     setLastNoReporte(newLastReporteID);
                     setNumeroReporte(newLastReporteID);
                     setRegistroGeneral(rcvData["registro"]);
@@ -208,8 +212,22 @@ export default function ReportesVerificacionGestionCurso() {
     }
 
     useEffect(obtenerAcademias, [setAcademias]);
-    useEffect(obtenerRegistro, [isNeededUpdate, academia, setLastNoReporte, setNumeroReporte, setRegistroGeneral]);
-    useEffect(obtenerProfesores, [academia, setProfesores]);
+    useEffect(
+        obtenerRegistro,
+        [
+            isNeededUpdate,
+            noSeguimiento,
+            semanaDel,
+            academia,
+            setLastNoReporte,
+            setNumeroReporte,
+            setRegistroGeneral
+        ]
+    );
+    useEffect(
+        obtenerProfesores,
+        [noSeguimiento, semanaDel, academia, setProfesores]
+    );
     useEffect(obtenerAsignaturasProfesor, [profesor, setAsignaturas]);
 
     const obtenerTemas = (grado, grupo) => {
@@ -269,6 +287,8 @@ export default function ReportesVerificacionGestionCurso() {
     function addReporte(newReporte) {
         const data = {
             "academia": academia["ID_Carrera"],
+            "seguimiento_no": noSeguimiento,
+            "semana": semanaDel,
             "dato": newReporte
         };
         filtroVerificacionGC(auth.user.token, data, "agregar").then(res => {
@@ -289,12 +309,12 @@ export default function ReportesVerificacionGestionCurso() {
     function updateReporte(modifiedReporte) {
         const data = {
             "academia": academia["ID_Carrera"],
+            "seguimiento_no": noSeguimiento,
+            "semana": semanaDel,
             "dato": modifiedReporte
         }
         filtroVerificacionGC(auth.user.token, data, "modificar").then(res => {
             if (res.ok) {
-                // TODO: Desactivar el modalAgregarModificar junto con la flag
-                //       isUpdating
                 setFlagsModal(false);
             }
             return res.json();
@@ -311,6 +331,8 @@ export default function ReportesVerificacionGestionCurso() {
     function deleteReporte() {
         const data = {
             "academia": academia["ID_Carrera"],
+            "seguimiento_no": noSeguimiento,
+            "semana": semanaDel,
             "dato": numeroReporte
         }
         filtroVerificacionGC(auth.user.token, data, "eliminar").then(res => {
@@ -330,11 +352,14 @@ export default function ReportesVerificacionGestionCurso() {
     }
 
     function downloadExcel() {
-        // TODO: Descargar Excel
         if (academia instanceof Object && Object.keys(academia).length !== 0) {
-            const idCarrera = academia["ID_Carrera"]
+            const data = {
+                "academia": academia["ID_Carrera"],
+                "seguimiento_no": noSeguimiento,
+                "semana": semanaDel,
+            };
             console.log("Download Excel");
-            filtroVerificacionGC(auth.user.token, idCarrera, "descargar").then(res => {
+            filtroVerificacionGC(auth.user.token, data, "descargar").then(res => {
                 console.log("DownloadExcel");
                 console.log(res);
                 console.log(res.headers.get('content-disposition'));
@@ -524,8 +549,6 @@ export default function ReportesVerificacionGestionCurso() {
         // data2Send["newReporte"] = (nextRegistro);
         if (isAdding) {
             const data2Send = {
-                "noSeguimiento": noSeguimiento,
-                "semanaDel": semanaDel,
                 "newReporte": {...nextRegistro}
             };
             addReporte(data2Send);
@@ -547,6 +570,11 @@ export default function ReportesVerificacionGestionCurso() {
         setFlagModalEliminar(false);
     }
 
+    function handleMenuSemana(event) {
+        let semana = event.target.value;
+        setSemanaDel(semana);
+    }
+
     function handleMenuAcademia(event) {
         let value = event.target.value;
         if (value !== "") {
@@ -555,6 +583,10 @@ export default function ReportesVerificacionGestionCurso() {
                 return academiaObj['ID_Carrera'] === idCarrera;
             });
             setAcademia(academiaAux);
+        } else {
+            setAcademia({});
+            setRegistroGeneral([]);
+            setProfesores([]);
         }
     }
 
@@ -598,7 +630,6 @@ export default function ReportesVerificacionGestionCurso() {
         }
         return (
             <div className="vgc data__body__reportes">
-                {contenido} 
                 <div className="vgc data__body__reportes__inputs">
                     <form>
                         <label>
@@ -609,25 +640,35 @@ export default function ReportesVerificacionGestionCurso() {
                                 type={"number"}
                                 name={"input-vgc-seguimiento"}
                                 value={noSeguimiento}
-                                onChange={(e) => setNoSeguimiento(parseInt(e.target.value))}
-                            />
-                        </label>
-                        <label>
-                            <span>
-                                Semana del:
-                            </span>
-                            <input
-                                type={"date"}
-                                name={"input-vgc-semana-del"}
-                                value={semanaDel}
                                 onChange={(e) => {
-                                    console.log(e.target.value);
-                                    setSemanaDel(e.target.value)
+                                    const value = e.target.value;
+                                    console.log(`Value: ${value}`);
+                                    if (value !== "") {
+                                        const rgx = /^(?:[1-9]+[0-9]*)$/
+                                        if (value.match(rgx) !== null) {
+                                            console.log("Matcheo");
+                                            setNoSeguimiento(e.target.value)
+                                        }
+                                    } else {
+                                        console.log("Vacío");
+                                        setNoSeguimiento("");
+                                    }
                                 }}
-                                onKeyDown={(e) => e.preventDefault()}
-                                min={"2000-01-01"}
                             />
                         </label>
+                        <Menu
+                            labelTxt="Semana:"
+                            selectId="menu-semana"
+                            selectName="lista-semana"
+                            selectFn={handleMenuSemana}
+                            selectValue={semanaDel}
+                            defaultOptionTxt="--Elija una Semana--"
+                            optionsList={SEMANAS_MENU}
+                            optKey="id"
+                            optValue="value"
+                            optTxt="txt"
+                            hidden={false}
+                        />
                         <Menu
                             labelTxt="Academia:"
                             selectId="menu-academia"
@@ -643,6 +684,7 @@ export default function ReportesVerificacionGestionCurso() {
                         />
                     </form>
                 </div>
+                {contenido} 
             </div>
         );
     }
@@ -737,6 +779,29 @@ export default function ReportesVerificacionGestionCurso() {
             ];
         });
     }
+
+    const SEMANAS_MENU = [
+        {
+            "id": "semana_4",
+            "value": "4",
+            "txt": "4"
+        },
+        {
+            "id": "semana_8",
+            "value": "8",
+            "txt": "8"
+        },
+        {
+            "id": "semana_12",
+            "value": "12",
+            "txt": "12"
+        },
+        {
+            "id": "semana_16",
+            "value": "16",
+            "txt": "16"
+        },
+    ]
 
     const TABLE_HEADERS = [
         {   // Fila

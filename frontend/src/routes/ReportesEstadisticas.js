@@ -30,6 +30,7 @@ const dataMenuMostrarPor = [
 export default function ReportesEstadisticas() {
     let auth = useContext(AuthContext);
 
+    const [tituloAreaGraficas, setTituloAreaGraficas] = useState("");
     const [carreras, setCarreras] = useState([]);
     const [filterListData, setFilterListData] = useState([]);
     const [graphicDataList, setGraphicDataList] = useState([]);
@@ -58,6 +59,26 @@ export default function ReportesEstadisticas() {
     const [deLaCarrera, setDeLaCarrera] = useState({});
     const [datoFiltrado, setDatoFiltrado] = useState("");
 
+    function updateTituloGrafico() {
+        const valMostrarPor = mostrarPor !== "" ? ` Filtros: ${mostrarPor}` : "";
+        const valFiltrarPor = filtrarPor !== "" ? ` - ${filtrarPor}` : "";
+        const valDeLaCarrera = Object.keys(deLaCarrera).length !== 0 ? ` - ${deLaCarrera['Nombre_Carrera']}` : "";
+        const valDatoFiltrado = datoFiltrado !== "" ? ` - ${datoFiltrado}` : "";
+        const titulo = `${valMostrarPor}${valFiltrarPor}${valDeLaCarrera}${valDatoFiltrado}`
+        setTituloAreaGraficas(titulo);
+    }
+
+    useEffect(
+        updateTituloGrafico,
+        [
+            mostrarPor,
+            filtrarPor,
+            deLaCarrera,
+            datoFiltrado,
+            setTituloAreaGraficas
+        ]
+    );
+
     const value = { carreras, setCarreras,
                     filterListData, setFilterListData,
                     graphicDataList, setGraphicDataList,
@@ -83,14 +104,14 @@ export default function ReportesEstadisticas() {
                     <h1>Estadísticas</h1>
                 </div>
                 <div className="data__filters container">
-                    <h2>Área de Filtros</h2>
+                    <h2>Filtros</h2>
                     <form>
                         <Filtros/>
                     </form>
                 </div>
                 <div className="data__graphics container">
                     <div className="data__graphics__header">
-                        <h2>Área de Gráficos</h2>
+                        <h2>{tituloAreaGraficas}</h2>
                     </div>
                     <div className='data__graphics__info'>
                         <Grafico />
