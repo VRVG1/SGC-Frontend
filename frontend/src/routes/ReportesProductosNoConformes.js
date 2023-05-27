@@ -863,6 +863,7 @@ export default function ReportesProductosNoConformes() {
                 }
             });
         }
+        setIsDownloadable(containsNoString);
         if (!containsNoString) {
             contenido = contenidoEmpty;
         }
@@ -995,7 +996,7 @@ export default function ReportesProductosNoConformes() {
             // Por defecto el registro General contiene
             // "reportesRegistrados" por lo que un registro general
             // vacío contendría unicamente 1 key
-            "disabled": Object.keys(registroGeneral).length === 1
+            "disabled": !isDownloadable
         }
     ];
     const modalAgregarModificar = {
