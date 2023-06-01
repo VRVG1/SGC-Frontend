@@ -105,6 +105,26 @@
             }
         }
 
+        .tabla__container {
+            overflow-y: hidden;
+            height: fit-content;
+
+            .tabla {
+                width: 100%;
+            }
+
+            label {
+                position: static;
+                pointer-events: auto;
+            }
+
+            input.input-nombreNuevoGrupo {
+                border: 1px solid rgb(118, 118, 118);
+                background-color: rgb(255, 255, 255);
+                padding: 0;
+            }
+        }
+
         .inputMaterias-search {
             width: 20vw;
         }
@@ -126,6 +146,93 @@
             position: absolute;
             width: 20vw;
             z-index: 1;
+            overflow-y: auto;
+            height: 25vh;
+
+            li {
+                background-color: #DDD;
+
+                &:hover {
+                    background-color: #84b9d8;
+                }
+            }
+
+            li:nth-child(even) {
+                background-color: #f3f3f3;
+
+                &:hover {
+                    background-color: #84b9d8;
+                }
+            }
+        }
+    }
+    .seleccionGrupos {
+        width: 100%;
+        font-size: 1rem;
+        border: none;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        flex-direction: row;
+        margin-bottom: 2%;
+
+        .tabla {
+            width: 50%;
+            margin: none;
+
+            th {
+                font-size: 1.2rem;
+                font-weight: bolder;
+            }
+
+            th:nth-child(2) {
+                width: 20%;
+            }
+        }
+
+        .tabla__container {
+            overflow-y: hidden;
+            height: fit-content;
+
+            .tabla {
+                width: 100%;
+            }
+
+            label {
+                position: static;
+                pointer-events: auto;
+            }
+
+            input.input-nombreNuevoGrupo {
+                border: 1px solid rgb(118, 118, 118);
+                background-color: rgb(255, 255, 255);
+                padding: 0;
+            }
+        }
+
+        .inputMaterias-search {
+            width: 20vw;
+        }
+
+        .highlight.Materias {
+            width: 20vw;
+        }
+
+        .bottomBar.Materias-main {
+            width: 20vw;
+        }
+
+        .prediction {
+            color: #111111;
+            list-style-type: none;
+            text-align: left;
+            margin: 2px 0 0 0;
+            padding: 0px;
+            position: static;
+            width: 20vw;
+            z-index: 1;
+            overflow-y: auto;
+            height: 25vh;
 
             li {
                 background-color: #DDD;
@@ -174,7 +281,54 @@
         border: none;
         display: flex;
         flex-wrap: wrap;
-        justify-content: center;
+        justify-content: space-around;
+        flex-direction: row;
+        margin-bottom: 2%;
+
+        .tabla {
+            width: 50%;
+        }
+
+        .inputMaterias-search {
+            width: 20vw;
+        }
+
+        .highlight.Materias {
+            width: 20vw;
+        }
+
+        .bottomBar.Materias-main {
+            width: 20vw;
+        }
+
+        .prediction {
+            color: #111111;
+            list-style-type: none;
+            text-align: left;
+            margin: 0px;
+            padding: 0px;
+            position: absolute;
+            width: 20vw;
+            z-index: 1;
+
+            li {
+                background-color: #DDD;
+
+            }
+
+            li:nth-child(even) {
+                background-color: #f3f3f3;
+            }
+        }
+    }
+
+    .seleccionGrupos {
+        width: 100%;
+        font-size: 1rem;
+        border: none;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
         flex-direction: row;
         margin-bottom: 2%;
 
@@ -236,6 +390,15 @@
             -moz-transition: 0.2s ease all;
             -webkit-transition: 0.2s ease all;
         }
+    }
+
+    .Reportes-Admin-mensajes-radios-hidden {
+        padding: 0;
+        left: 0;
+        margin-bottom: 1%;
+        visibility: collapse;
+        width: 0;
+        height: 0;
     }
 }
 

@@ -9,6 +9,7 @@ import postSendReportes from "./helpers/Reportes/postSendReprote.js"
 import sendReportes from "./helpers/Reportes/sendReprote.js"
 import sendMail from "./helpers/Mensajeria/postMSM.js"
 import { AuthContext } from "./helpers/Auth/auth-context.js"
+import filtroAdmin from "./helpers/Reportes/filtroAdmin.js"
 
 const _ = require("lodash")
 
@@ -22,7 +23,10 @@ const ReportesAdmin = (props) => {
   const [contenidoModal, setContenidoModal] = useState("")
   const [showModalAdd, setShowModalAdd] = useState(false)
   const [showModalDetails, setShowModalDetails] = useState(false)
-  const [selector, setSelector] = useState("Modal-Reportes-Admin-Select-hidden")
+  const [selectorIndividual, setSelectorIndividual] = useState("Modal-Reportes-Admin-Select-hidden")
+  const [selectorGrupos, setSelectorGrupos] = useState("Modal-Reportes-Admin-Select-hidden")
+  const [selectorSecondRadioBtn, setSelectorSecondRadioBtn] = useState("Reportes-Admin-mensajes-radios-hidden");
+  const [groupName, setGroupName] = useState("");
   const [dataInput, setdataInput] = useState({
     Repostes_name: "",
     Repostes_descripcion: "",
@@ -30,6 +34,7 @@ const ReportesAdmin = (props) => {
     Repostes_obligatorio: true,
     Repostes_calificacion: false,
     opc: "General",
+    opc_mail_forma: "Individual",
     nombreMasters: "",
     mensajeTXT: "",
   })
@@ -45,6 +50,13 @@ const ReportesAdmin = (props) => {
     Repostes_name: /^[a-zA-Z\s\d~._-]{0,200}$/,
   })
   const [reprotes, setRepotes] = useState([])
+
+  const [mailGroups, setMailGroups] = useState([])
+  const [updateMailGroups, setUpdateMailGroups] = useState(false);
+
+  const [tablaDataMailGroups, setTablaDataMailGroups] = useState([]);
+  const [predictionDataGroups, setPredictionDataGroups] = useState([]);
+  const [predictionDataGroups2, setPredictionDataGroups2] = useState([]);
 
   /**
    * Recibe los datos escritos en un input
@@ -103,6 +115,39 @@ const ReportesAdmin = (props) => {
       setRepotes([])
     }
   }, [actualizacion])
+
+  useEffect(() => {
+      filtroAdmin(auth.user.token, "", "getGroups").then(res => {
+          if (res.ok) {
+              console.log("Actualizando Grupos de email...");
+              return res.json();
+          }
+          return null;
+      }).then(rcvData => {
+          if (rcvData !== null) {
+              console.log(rcvData);
+              setMailGroups(rcvData);
+          }
+      })
+  }, [updateMailGroups, setMailGroups])
+
+  function sendNewGrupo() {
+      if (groupName === "") {
+          console.log("groupName empty");
+          return;
+      }
+
+      const data = {
+          "groupName": groupName,
+          "suscritos": tablaData
+      }
+      filtroAdmin(auth.user.token, data, "newGroup").then(res => {
+          if (res.ok) {
+              console.log("Nuevo grupo agregado al sistema");
+              setUpdateMailGroups(!updateMailGroups);
+          }
+      });
+  }
 
   /**
    * Recibe los datos escritos en un input
@@ -340,23 +385,37 @@ const ReportesAdmin = (props) => {
             setContenidoModal(error)
           })
       } else if (dataInput.opc === "Especifico") {
-        let mensajeResultado = ""
-        tablaData.map((element) => {
-          sendMail(auth.user.token, dataInput.mensajeTXT, element.id)
-            .then((data) => {
-              mensajeResultado = mensajeResultado + data + "\n"
-            })
-            .catch((error) => {
-              mensajeResultado = error
-              setShowModalResultado(true)
-              setShowModalDetails(false)
-              setContenidoModal(error)
-            })
-        })
-        setMensaje(dataInput.mensajeTXT)
-        setShowModalResultado(true)
-        setShowModalDetails(false)
-        setContenidoModal("Correos enviados correctamente")
+        if (dataInput.opc_mail_forma === "Individual") {
+          let mensajeResultado = ""
+          tablaData.map((element) => {
+            sendMail(auth.user.token, dataInput.mensajeTXT, element.id)
+              .then((data) => {
+                mensajeResultado = mensajeResultado + data + "\n"
+              })
+              .catch((error) => {
+                mensajeResultado = error
+                setShowModalResultado(true)
+                setShowModalDetails(false)
+                setContenidoModal(error)
+              })
+          })
+          setMensaje(dataInput.mensajeTXT)
+          setShowModalResultado(true)
+          setShowModalDetails(false)
+          setContenidoModal("Correos enviados correctamente")
+        } else {
+          let mensajeResultado = "";
+          // TODO: Enviar el mensaje y los grupos
+          const data = {
+              "msg": dataInput.mensajeTXT,
+              "grupos": tablaDataMailGroups
+          }
+          filtroAdmin(auth.user.token, data, "mailGroup").then(res => {
+              if (res.ok) {
+                  console.log("correos enviados");
+              }
+          })
+        }
       }
     } else {
       setContenidoModal("Agregue un mensaje")
@@ -408,7 +467,15 @@ const ReportesAdmin = (props) => {
                   value={"Especifico"}
                   onChange={handleInputOnChange}
                   checked={dataInput.opc === "Especifico"}
-                  onClick={() => setSelector("Modal-Reportes-Admin-Select")}
+                  onClick={() => {
+                    if (dataInput.opc_mail_forma === 'Individual') {
+                        setSelectorIndividual("Modal-Reportes-Admin-Select")
+                    } else {
+                        setSelectorIndividual("Modal-Reportes-Admin-Select-hidden")
+                    }
+                    setSelectorSecondRadioBtn("Reportes-Admin-mensajes-radios")
+                    setUpdateMailGroups(!updateMailGroups);
+                  }}
                 ></input>
                 Especifico
               </p>
@@ -419,61 +486,120 @@ const ReportesAdmin = (props) => {
                   value={"General"}
                   onChange={handleInputOnChange}
                   checked={dataInput.opc === "General"}
-                  onClick={() =>
-                    setSelector("Modal-Reportes-Admin-Select-hidden")
-                  }
+                  onClick={() => {
+                    setSelectorIndividual("Modal-Reportes-Admin-Select-hidden")
+                    setSelectorSecondRadioBtn("Reportes-Admin-mensajes-radios-hidden")
+                  }}
                 ></input>
                 General
               </p>
             </div>
+            <div className={selectorSecondRadioBtn}>
+              <label className="Label-ReportesAdmin">Forma de envío:</label>
+              <p className="Modal-Reportes-Admin-p">
+                <input
+                  type="radio"
+                  name="opc_mail_forma"
+                  value={"Individual"}
+                  onChange={handleInputOnChange}
+                  checked={dataInput.opc_mail_forma === "Individual"}
+                  onClick={() => {
+                      // Activa el bloque para seleccionar usuarios
+                      setSelectorIndividual("Modal-Reportes-Admin-Select");
+                      // Desactiva el bloque para seleccionar grupos
+                      setSelectorGrupos("Modal-Reportes-Admin-Select-hidden");
+                  }}
+                ></input>
+                Individual
+              </p>
+              <p>
+                <input
+                  type="radio"
+                  name="opc_mail_forma"
+                  value={"Grupos"}
+                  onChange={handleInputOnChange}
+                  checked={dataInput.opc_mail_forma === "Grupos"}
+                  onClick={() => {
+                      // Activa el bloque para seleccionar grupos
+                      setSelectorGrupos("Modal-Reportes-Admin-Select");
+                      // Desactiva el bloque para seleccionar usuarios
+                      setSelectorIndividual("Modal-Reportes-Admin-Select-hidden");
+                  }}
+                ></input>
+                Grupos
+              </p>
+            </div>
           </form>
-          <div className={selector}>
+          <div className={selectorIndividual}>
             <label className="Label-ReportesAdmin">Usuarios:</label>
             <div className="seleccionMasters">
-              <div className="tabla">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {tablaData.map((data, i) => (
-                      <tr key={data.id}>
-                        <td>{data.nombre}</td>
-                        <td>
-                          <button
-                            name="usuarios"
-                            onClick={() => {
-                              setTablaData(
-                                tablaData.filter((item) => item.id !== data.id)
-                              )
-                              setPredictionData((predictionData) => [
-                                ...predictionData,
-                                {
-                                  PK: data.id,
-                                  Tipo_Usuario: "Docente",
-                                  Nombre_Usuario: data.nombre,
-                                },
-                              ])
-                              setPredictionData2((predictionData2) => [
-                                ...predictionData2,
-                                {
-                                  PK: data.id,
-                                  Tipo_Usuario: "Docente",
-                                  Nombre_Usuario: data.nombre,
-                                },
-                              ])
-                            }}
-                          >
-                            Quitar
-                          </button>
-                        </td>
+              <div className="tabla tabla__container">
+                <div className="tabla">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th></th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {tablaData.map((data, i) => (
+                        <tr key={data.id}>
+                          <td>{data.nombre}</td>
+                          <td>
+                            <button
+                              name="usuarios"
+                              onClick={() => {
+                                setTablaData(
+                                  tablaData.filter((item) => item.id !== data.id)
+                                )
+                                setPredictionData((predictionData) => [
+                                  ...predictionData,
+                                  {
+                                    PK: data.id,
+                                    Tipo_Usuario: "Docente",
+                                    Nombre_Usuario: data.nombre,
+                                  },
+                                ])
+                                setPredictionData2((predictionData2) => [
+                                  ...predictionData2,
+                                  {
+                                    PK: data.id,
+                                    Tipo_Usuario: "Docente",
+                                    Nombre_Usuario: data.nombre,
+                                  },
+                                ])
+                              }}
+                            >
+                              Quitar
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div hidden={tablaData.length === 0}>
+                    <label>
+                        <span>Nombre del Grupo:</span>
+                        <input
+                            type="text"
+                            id="nombreNuevoGrupo"
+                            name="input-nombreNuevoGrupo"
+                            className="input-nombreNuevoGrupo"
+                            onChange={e => {
+                                const value = e.target.value;
+                                setGroupName(value);
+                            }}
+                            value={groupName}
+                        />
+                    </label>
+                    <button
+                    onClick={() => sendNewGrupo()}
+                    >
+                      Crear Grupo
+                    </button>
+                </div>
               </div>
               <div className="Chanchuya1">
                 <div className="form group modal Materia">
@@ -522,6 +648,69 @@ const ReportesAdmin = (props) => {
                   <span className="highlight Materias"></span>
                   <span className="bottomBar Materias-main"></span>
                   <label className="Materias-search">Nombre del Docente</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={selectorGrupos}>
+            <label className="Label-ReportesAdmin">Grupos:</label>
+            <div className="seleccionGrupos">
+              <div className="tabla tabla__container">
+                <div className="tabla">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tablaDataMailGroups.map((data, i) => (
+                        <tr key={data}>
+                          <td>{data}</td>
+                          <td>
+                            <button
+                              name="grupos"
+                              onClick={() => {
+                                setTablaDataMailGroups(
+                                    tablaDataMailGroups.filter(item => {
+                                        return item !== data
+                                    })
+                                )
+                                // TODO: Hacer que elimine el elemento
+                                //       seleccionado de la lista de grupos
+                              }}
+                            >
+                              Quitar
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="Chanchuya1">
+                <div className="form group modal Materia">
+                  <ul className="prediction">
+                    {Object.keys(mailGroups).length !== 0 ? (
+                      mailGroups.map((data, i) => (
+                        <li
+                          key={i}
+                          onClick={() => {
+                            setTablaDataMailGroups([
+                                ...tablaDataMailGroups,
+                                data.groupName
+                            ]);
+                          }}
+                        >
+                          {data.groupName}
+                        </li>
+                      ))
+                    ) : (
+                      <></>
+                    )}
+                  </ul>
                 </div>
               </div>
             </div>
