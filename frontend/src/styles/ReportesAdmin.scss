@@ -762,3 +762,44 @@ button {
     }
 
 }
+
+.width_60vw {
+    width: 60vw;
+}
+
+.modalReportes.width_60vw .Modal-Reportes-Admin-Select {
+    margin-bottom: 0;
+
+    .input_nombre_grupo {
+        padding-bottom: 1rem;
+
+        label {
+            position: static;
+            pointer-events: auto;
+
+            input {
+                border-bottom: 2px solid rgb(0, 0, 0);
+                padding-bottom: 0;
+            }
+        }
+    }
+
+    .seleccionMasters {
+        flex-wrap: nowrap;
+        justify-content: space-between;
+
+        .tabla__container {
+            margin: 0;
+        }
+    }
+
+    .button__crear_grupo {
+        width: 100%;
+        display: flex;
+        justify-content: space-evenly;
+
+        button {
+            margin: 0.5rem 0 0 0;
+        } 
+    }
+}

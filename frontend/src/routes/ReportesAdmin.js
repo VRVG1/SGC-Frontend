@@ -10,6 +10,7 @@ import sendReportes from "./helpers/Reportes/sendReprote.js"
 import sendMail from "./helpers/Mensajeria/postMSM.js"
 import { AuthContext } from "./helpers/Auth/auth-context.js"
 import filtroAdmin from "./helpers/Reportes/filtroAdmin.js"
+import deleteMateria from "./helpers/Reportes/deleteReporte.js"
 
 const _ = require("lodash")
 
@@ -43,6 +44,10 @@ const ReportesAdmin = (props) => {
     modalTitulo: "",
     modalMensaje: "",
   })
+  const [modalGruposContenido, setModalGruposContenido] = useState({
+    modalTitulo: "",
+    botonTitulo: ""
+  });
   const [tablaData, setTablaData] = useState([])
   const [predictionData, setPredictionData] = useState([])
   const [predictionData2, setPredictionData2] = useState([])
@@ -57,6 +62,9 @@ const ReportesAdmin = (props) => {
   const [tablaDataMailGroups, setTablaDataMailGroups] = useState([]);
   const [predictionDataGroups, setPredictionDataGroups] = useState([]);
   const [predictionDataGroups2, setPredictionDataGroups2] = useState([]);
+  const [showModalMailGroup, setShowModalMailGroup] = useState(false);
+  const [isAddingGroup, setIsAddingGroup] = useState(false);
+  const [isUpdatingGroup, setIsUpdatingGroup] = useState(false);
 
   /**
    * Recibe los datos escritos en un input
@@ -125,11 +133,70 @@ const ReportesAdmin = (props) => {
           return null;
       }).then(rcvData => {
           if (rcvData !== null) {
+              let nextMailGroups = [];
+              let nextTablaDataMailGroups = [];
+              nextTablaDataMailGroups = rcvData.filter(rcvMailData => {
+                  const actualGroupName = rcvMailData.groupName;
+                  return tablaDataMailGroups.find(tablaMailGroup => {
+                      return tablaMailGroup.groupName === actualGroupName;
+                  }) !== undefined;
+                  // nextTablaDataMailGroups.append(updatedGroup);
+              });
+
+              nextMailGroups = rcvData.filter(rcvMailGroup => {
+                  const actualGroupName = rcvMailGroup.groupName;
+                  return nextTablaDataMailGroups.find(tablaMailGroup => {
+                      return tablaMailGroup.groupName === actualGroupName;
+                  }) === undefined;
+              })
               console.log(rcvData);
-              setMailGroups(rcvData);
+              console.log(nextTablaDataMailGroups);
+              console.log(nextMailGroups);
+              setTablaDataMailGroups(nextTablaDataMailGroups);
+              setMailGroups(nextMailGroups);
           }
       })
   }, [updateMailGroups, setMailGroups])
+
+  function flagAddGrupo(change) {
+      setModalGruposContenido({
+          modalTitulo: "Nuevo Grupo de correos",
+          botonTitulo: "Crear Grupo"
+      });
+      setIsAddingGroup(change);
+      setShowModalMailGroup(change);
+  }
+  function flagUpdateGrupo(change) {
+      setModalGruposContenido({
+          modalTitulo: "Modificando Grupo de correos",
+          botonTitulo: "Modificar Grupo"
+      });
+      setIsUpdatingGroup(change);
+      setShowModalMailGroup(change);
+  }
+  function flagModalGroup(change) {
+      setShowModalMailGroup(change);
+      if (isAddingGroup) {
+        setIsAddingGroup(change);
+      }
+      if (isUpdatingGroup) {
+        setIsUpdatingGroup(change);
+      }
+
+      if (!change) {
+          setTablaData([]);
+          setGroupName("");
+      }
+  }
+
+  function modalGroupButtonInvoke() {
+      if (isAddingGroup) {
+          sendNewGrupo();
+      }
+      if (isUpdatingGroup) {
+          updateMailGroup();
+      }
+  }
 
   function sendNewGrupo() {
       if (groupName === "") {
@@ -144,10 +211,50 @@ const ReportesAdmin = (props) => {
       filtroAdmin(auth.user.token, data, "newGroup").then(res => {
           if (res.ok) {
               console.log("Nuevo grupo agregado al sistema");
+              setTablaData([]);
+              setGroupName("");
               setUpdateMailGroups(!updateMailGroups);
           }
       });
   }
+
+function updateMailGroup() {
+    if (groupName === "") {
+        console.log("groupName empty");
+        return;
+    }
+
+    const data = {
+        "groupName": groupName,
+        "suscritos": tablaData
+    };
+    filtroAdmin(auth.user.token, data, "updateGroup").then(res => {
+        if (res.ok) {
+            console.log(`Grupo: ${data.groupName} actualizado.`);
+            setShowModalMailGroup(false);
+            setUpdateMailGroups(!updateMailGroups);
+        }
+    });
+}
+
+function deleteMailGroup() {
+    if (groupName === "") {
+        console.log("groupName empty");
+        return;
+    }
+
+    const data = {
+        "groupName": groupName,
+        "suscritos": tablaData
+    };
+    filtroAdmin(auth.user.token, data, "deleteGroup").then(res => {
+        if (res.ok) {
+            console.log(`Grupo: ${data.groupName} eliminado.`);
+            setShowModalMailGroup(false);
+            setUpdateMailGroups(!updateMailGroups);
+        }
+    });
+}
 
   /**
    * Recibe los datos escritos en un input
@@ -579,27 +686,6 @@ const ReportesAdmin = (props) => {
                     </tbody>
                   </table>
                 </div>
-                <div hidden={tablaData.length === 0}>
-                    <label>
-                        <span>Nombre del Grupo:</span>
-                        <input
-                            type="text"
-                            id="nombreNuevoGrupo"
-                            name="input-nombreNuevoGrupo"
-                            className="input-nombreNuevoGrupo"
-                            onChange={e => {
-                                const value = e.target.value;
-                                setGroupName(value);
-                            }}
-                            value={groupName}
-                        />
-                    </label>
-                    <button
-                    onClick={() => sendNewGrupo()}
-                    >
-                      Crear Grupo
-                    </button>
-                </div>
               </div>
               <div className="Chanchuya1">
                 <div className="form group modal Materia">
@@ -666,19 +752,29 @@ const ReportesAdmin = (props) => {
                     </thead>
                     <tbody>
                       {tablaDataMailGroups.map((data, i) => (
-                        <tr key={data}>
-                          <td>{data}</td>
+                        <tr key={`grupos_agregados_${data.groupName}_${i}`}>
+                          <td
+                            onClick={() => {
+                                setGroupName(data.groupName);
+                                setTablaData(data.suscritos);
+                                flagUpdateGrupo(true);
+                            }}
+                          >
+                            {data.groupName}
+                          </td>
                           <td>
                             <button
                               name="grupos"
                               onClick={() => {
                                 setTablaDataMailGroups(
                                     tablaDataMailGroups.filter(item => {
-                                        return item !== data
+                                        return item.groupName !== data.groupName;
                                     })
-                                )
-                                // TODO: Hacer que elimine el elemento
-                                //       seleccionado de la lista de grupos
+                                );
+                                setMailGroups([
+                                    ...mailGroups,
+                                    data
+                                ]);
                               }}
                             >
                               Quitar
@@ -694,23 +790,43 @@ const ReportesAdmin = (props) => {
                 <div className="form group modal Materia">
                   <ul className="prediction">
                     {Object.keys(mailGroups).length !== 0 ? (
-                      mailGroups.map((data, i) => (
-                        <li
-                          key={i}
-                          onClick={() => {
-                            setTablaDataMailGroups([
-                                ...tablaDataMailGroups,
-                                data.groupName
-                            ]);
-                          }}
-                        >
-                          {data.groupName}
-                        </li>
-                      ))
+                      mailGroups.map((data, i) => {
+                        if (tablaDataMailGroups.find(elem => {
+                            return elem.groupName === data.groupName
+                        }) !== undefined) {
+                            return "";
+                        }
+                        return (
+                            <li
+                              key={`chanchuya_${data.groupName}_${i}`}
+                              onClick={() => {
+                                setTablaDataMailGroups([
+                                    ...tablaDataMailGroups,
+                                    data
+                                ]);
+
+                                setMailGroups(mailGroups.filter(element => {
+                                    return element.groupName !== data.groupName;
+                                }));
+                              }}
+                            >
+                              {data.groupName}
+                            </li>
+                        );
+                      })
                     ) : (
                       <></>
                     )}
                   </ul>
+                </div>
+                <div>
+                    <button
+                        onClick={() => {
+                            flagAddGrupo(true);
+                        }}
+                    >
+                        Crear Nuevo Grupo
+                    </button>
                 </div>
               </div>
             </div>
@@ -918,6 +1034,146 @@ const ReportesAdmin = (props) => {
             </button>
             <button onClick={() => setShowModalERROR(false)}>Cancelar</button>
           </div>
+        </div>
+      </Modal>
+      <Modal
+        show={showModalMailGroup}
+        setShow={flagModalGroup}
+        title={modalGruposContenido.modalTitulo}
+      >
+        <div className="modalReportes width_60vw">
+            <div className="Modal-Reportes-Admin-Select">
+                <div className="input_nombre_grupo">
+                    <label>
+                        <span>Nombre del Grupo:</span>
+                        <input
+                            type="text"
+                            id="nombreNuevoGrupo"
+                            name="input-nombreNuevoGrupo"
+                            className="input-nombreNuevoGrupo"
+                            onChange={e => {
+                                const value = e.target.value;
+                                setGroupName(value);
+                            }}
+                            value={groupName}
+                            disabled={isUpdatingGroup}
+                        />
+                    </label>
+                </div>
+                <label className="Label-ReportesAdmin">Usuarios:</label>
+                <div className="seleccionMasters">
+                  <div className="tabla tabla__container">
+                    <div className="tabla">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Nombre</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {tablaData.map((data, i) => (
+                            <tr key={data.id}>
+                              <td>{data.nombre}</td>
+                              <td>
+                                <button
+                                  name="usuarios"
+                                  onClick={() => {
+                                    setTablaData(
+                                      tablaData.filter((item) => item.id !== data.id)
+                                    )
+                                    setPredictionData((predictionData) => [
+                                      ...predictionData,
+                                      {
+                                        PK: data.id,
+                                        Tipo_Usuario: "Docente",
+                                        Nombre_Usuario: data.nombre,
+                                      },
+                                    ])
+                                    setPredictionData2((predictionData2) => [
+                                      ...predictionData2,
+                                      {
+                                        PK: data.id,
+                                        Tipo_Usuario: "Docente",
+                                        Nombre_Usuario: data.nombre,
+                                      },
+                                    ])
+                                  }}
+                                >
+                                  Quitar
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div className="Chanchuya1">
+                    <div className="form group modal Materia">
+                      <input
+                        type="text"
+                        id="nombreMasters"
+                        name="nombreMasters"
+                        className="inputMaterias-search"
+                        onChange={buscador}
+                        //value={dataInput.nombreMasters}
+                        required
+                      />
+                      <ul className="prediction">
+                        {Object.keys(predictionData).length !== 0 ? (
+                          predictionData.map((data, i) => (
+                            <li
+                              key={i}
+                              onClick={() => {
+                                setTablaData((tablaData) => [
+                                  ...tablaData,
+                                  { id: data.PK, nombre: data.Nombre_Usuario },
+                                ])
+                                setdataInput({
+                                  ...dataInput,
+                                  Repostes_name: "",
+                                })
+                                setPredictionData(
+                                  predictionData.filter(
+                                    (item) => item.PK !== data.PK
+                                  )
+                                )
+                                setPredictionData2(
+                                  predictionData2.filter(
+                                    (item) => item.PK !== data.PK
+                                  )
+                                )
+                              }}
+                            >
+                              {data.Nombre_Usuario}
+                            </li>
+                          ))
+                        ) : (
+                          <></>
+                        )}
+                      </ul>
+                      <span className="highlight Materias"></span>
+                      <span className="bottomBar Materias-main"></span>
+                      <label className="Materias-search">Nombre del Docente</label>
+                    </div>
+                  </div>
+                </div>
+                <div className="button__crear_grupo">
+                    <button
+                        onClick={modalGroupButtonInvoke}
+                    >
+                      {modalGruposContenido.botonTitulo}
+                    </button>
+                    <button 
+                        className="button__eliminar"
+                        onClick={deleteMailGroup}
+                        hidden={!isUpdatingGroup}
+                    >
+                        Eliminar
+                    </button>
+                </div>
+            </div>
         </div>
       </Modal>
     </>

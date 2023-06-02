@@ -3,6 +3,8 @@ import AuthPostBasis from "../Auth/AuthPostBasis.js"
 const urls = {
     getGroups: "reporte/getMailGroups",
     newGroup: "reporte/addMailGroup",
+    updateGroup: "reporte/updateMailGroup",
+    deleteGroup: "reporte/deleteMailGroup",
     mailGroup: "reporte/sendMailToGroup"
 }
 
@@ -21,7 +23,9 @@ const filtroAdmin = async (token, dato, filtro) => {
         // No se hace nada, ya que es un get, se mantiene el cuerpo de
         // requestBody
     } else if (filtro === "newGroup" ||
-               filtro === "mailGroup") {
+               filtro === "mailGroup" ||
+               filtro === "updateGroup" ||
+               filtro === "deleteGroup") {
         requestBody.method = "POST";
         requestBody.body = JSON.stringify(dato);
     }
