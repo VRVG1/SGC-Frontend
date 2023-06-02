@@ -9,7 +9,7 @@ const postAsigna = async (dataPost, token) => {
       Nombre_Reporte: dataPost.Repostes_name,
       Fecha_Entrega: dataPost.Repostes_fecha,
       Descripcion: dataPost.Repostes_descripcion,
-      Opcional: dataPost.Repostes_obligatorio,
+      Opcional: !dataPost.Repostes_obligatorio,
       Calificaciones: dataPost.Repostes_calificacion,
     }),
   }
