@@ -60,11 +60,11 @@ const ReportesAdmin = (props) => {
   const [updateMailGroups, setUpdateMailGroups] = useState(false);
 
   const [tablaDataMailGroups, setTablaDataMailGroups] = useState([]);
-  const [predictionDataGroups, setPredictionDataGroups] = useState([]);
-  const [predictionDataGroups2, setPredictionDataGroups2] = useState([]);
   const [showModalMailGroup, setShowModalMailGroup] = useState(false);
   const [isAddingGroup, setIsAddingGroup] = useState(false);
   const [isUpdatingGroup, setIsUpdatingGroup] = useState(false);
+  const [showModalMailGroupResponse, setShowModalMailGroupResponse] = useState(false);
+  const [modalMailGroupResponseMessage, setModalMailGroupResponseMessage] = useState("");
 
   /**
    * Recibe los datos escritos en un input
@@ -187,6 +187,19 @@ const ReportesAdmin = (props) => {
           setTablaData([]);
           setGroupName("");
       }
+  }
+
+  function flagModalMailGroupRespose(change) {
+    setShowModalMailGroupResponse(change);
+
+    if (!change) {
+      setTablaDataMailGroups([]);
+      setUpdateMailGroups(!updateMailGroups);
+      setdataInput({
+        ...dataInput,
+        mensajeTXT: ""
+      });
+    }
   }
 
   function modalGroupButtonInvoke() {
@@ -520,6 +533,8 @@ function deleteMailGroup() {
           filtroAdmin(auth.user.token, data, "mailGroup").then(res => {
               if (res.ok) {
                   console.log("correos enviados");
+                  setModalMailGroupResponseMessage('Correo envíado con exito');
+                  setShowModalMailGroupResponse(true);
               }
           })
         }
@@ -576,14 +591,20 @@ function deleteMailGroup() {
                   checked={dataInput.opc === "Especifico"}
                   onClick={() => {
                     if (dataInput.opc_mail_forma === 'Individual') {
-                        setSelectorIndividual("Modal-Reportes-Admin-Select")
+                      // Activa el bloque para seleccionar usuarios
+                      setSelectorIndividual("Modal-Reportes-Admin-Select");
+                      // Desactiva el bloque para seleccionar grupos
+                      setSelectorGrupos("Modal-Reportes-Admin-Select-hidden");
                     } else {
-                        setSelectorIndividual("Modal-Reportes-Admin-Select-hidden")
+                      // Activa el bloque para seleccionar grupos
+                      setSelectorGrupos("Modal-Reportes-Admin-Select");
+                      // Desactiva el bloque para seleccionar usuarios
+                      setSelectorIndividual("Modal-Reportes-Admin-Select-hidden");
                     }
                     setSelectorSecondRadioBtn("Reportes-Admin-mensajes-radios")
                     setUpdateMailGroups(!updateMailGroups);
                   }}
-                ></input>
+                />
                 Especifico
               </p>
               <p>
@@ -594,10 +615,11 @@ function deleteMailGroup() {
                   onChange={handleInputOnChange}
                   checked={dataInput.opc === "General"}
                   onClick={() => {
+                    setSelectorGrupos("Modal-Reportes-Admin-Select-hidden")
                     setSelectorIndividual("Modal-Reportes-Admin-Select-hidden")
                     setSelectorSecondRadioBtn("Reportes-Admin-mensajes-radios-hidden")
                   }}
-                ></input>
+                />
                 General
               </p>
             </div>
@@ -632,7 +654,7 @@ function deleteMailGroup() {
                       // Desactiva el bloque para seleccionar usuarios
                       setSelectorIndividual("Modal-Reportes-Admin-Select-hidden");
                   }}
-                ></input>
+                />
                 Grupos
               </p>
             </div>
@@ -1175,6 +1197,26 @@ function deleteMailGroup() {
                 </div>
             </div>
         </div>
+      </Modal>
+      <Modal
+        show={showModalMailGroupResponse}
+        setShow={flagModalMailGroupRespose}
+        title={""}
+      >
+      <div className="ModalReportes">
+        <div className="respuesta-correo">
+          <h3>
+            {modalMailGroupResponseMessage}
+          </h3>
+          <button
+            onClick={() => {
+              flagModalMailGroupRespose(false);
+            }}
+          >
+            OK
+          </button>
+        </div>
+      </div>
       </Modal>
     </>
   )

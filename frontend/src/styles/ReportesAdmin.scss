@@ -20,6 +20,12 @@
     justify-content: center;
     align-content: center;
     width: 35em;
+
+    .respuesta-correo {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
 }
 
 .tabla.Usuarios-rep {
