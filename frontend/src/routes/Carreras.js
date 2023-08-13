@@ -278,13 +278,13 @@ const Materias = (props) => {
           <div>
             <input
               type="submit"
-              className="button Materias"
+              className="button Usuarios"
               value="Agregar"
               onClick={add}
             ></input>
             <input
               type="button"
-              className="button Materias"
+              className="button Usuarios"
               value={"PDF"}
               onClick={pdfDownload}
             ></input>

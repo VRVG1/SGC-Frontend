@@ -455,30 +455,53 @@ const Materias = (props) => {
     for (let i = 7; i < 21; i++) {
       if (i === 9) {
         lista.push(
-          <option value={"0" + i + ":00 - " + (i + 1) + ":00"}></option>
+          <option
+            value={"0" + i + ":00 - " + (i + 1) + ":00"}
+            key={Math.random() + i}
+          ></option>
         )
       } else if (i < 10) {
         lista.push(
-          <option value={"0" + i + ":00 - 0" + (i + 1) + ":00"}></option>
+          <option
+            value={"0" + i + ":00 - 0" + (i + 1) + ":00"}
+            key={Math.random() + i}
+          ></option>
         )
       } else {
-        lista.push(<option value={i + ":00 - " + (i + 1) + ":00"}></option>)
+        lista.push(
+          <option
+            value={i + ":00 - " + (i + 1) + ":00"}
+            key={Math.random() + i}
+          ></option>
+        )
       }
     }
     for (let i = 7; i < 21; i++) {
       if (i === 9) {
         lista.push(
-          <option value={"0" + i + ":00 - " + (i + 2) + ":00"}></option>
+          <option
+            value={"0" + i + ":00 - " + (i + 2) + ":00"}
+            key={Math.random() + i}
+          ></option>
         )
       } else if (i < 10) {
         lista.push(
-          <option value={"0" + i + ":00 - 0" + (i + 2) + ":00"}></option>
+          <option
+            value={"0" + i + ":00 - 0" + (i + 2) + ":00"}
+            key={Math.random() + i}
+          ></option>
         )
       } else {
-        lista.push(<option value={i + ":00 - " + (i + 2) + ":00"}></option>)
+        lista.push(
+          <option
+            value={i + ":00 - " + (i + 2) + ":00"}
+            key={Math.random() + i}
+          ></option>
+        )
       }
       i += 1
     }
+    console.log(lista)
     return lista
   }
   return (

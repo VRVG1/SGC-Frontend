@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react"
 
-import { AuthContext } from "./helpers/Auth/auth-context.js";
-import getAllUsuarios from "./helpers/Usuarios/getAllUsuarios.js";
-import getAllUnidadesDocente from "./helpers/Unidades/getAllUnidadesDocente.js";
-import getInfoUser from "./helpers/Usuarios/getInfoUser";
-import Modal from "./modal/Modal.js";
-import putReportesUnidad from "./helpers/Reportes/putReportesUnidad.js";
-import getRUnidadesAdmin from "./helpers/Reportes/getRUnidadesAdmin.js";
+import { AuthContext } from "./helpers/Auth/auth-context.js"
+import getAllUsuarios from "./helpers/Usuarios/getAllUsuarios.js"
+import getAllUnidadesDocente from "./helpers/Unidades/getAllUnidadesDocente.js"
+import getInfoUser from "./helpers/Usuarios/getInfoUser"
+import Modal from "./modal/Modal.js"
+import putReportesUnidad from "./helpers/Reportes/putReportesUnidad.js"
+import getRUnidadesAdmin from "./helpers/Reportes/getRUnidadesAdmin.js"
 
 const ReportesMaterias = () => {
   // Inicializacion de variables
-  let auth = useContext(AuthContext);
-  const [docente, setDocente] = useState([]);
-  const [filtrados, setFiltrados] = useState([]);
-  const [nameDocente, setNameDocente] = useState("");
+  let auth = useContext(AuthContext)
+  const [docente, setDocente] = useState([])
+  const [filtrados, setFiltrados] = useState([])
+  const [nameDocente, setNameDocente] = useState("")
   const [dataSelected, setDataSelected] = useState({
     ID_Generacion: 0,
     Unidad: 0,
@@ -21,14 +21,14 @@ const ReportesMaterias = () => {
     Nombre_Materia: "Tamam Shud",
     Fecha_Entrega: "2023-02-14",
     Reprobados: -1,
-  });
-  const [showModal, setshowModal] = useState(false);
-  const [showModalInfo, setShowModalInfo] = useState(false);
+  })
+  const [showModal, setshowModal] = useState(false)
+  const [showModalInfo, setShowModalInfo] = useState(false)
   const [modalInfo, setModalInfo] = useState({
     title: "Informacion",
     cuerpo:
       "La vida le pregunto a la muerte Porque todos me odian y a ti te aman. Porque yo soy la verdad que no quieren creer, y tu una ilusoria y agradable mentira.",
-  });
+  })
 
   //Stilos en linea
   const estiloTexto = {
@@ -36,7 +36,7 @@ const ReportesMaterias = () => {
     flexWrap: "wrap",
     alignItems: "center",
     flexDirection: "column",
-  };
+  }
 
   //Funciones para obtener datos de la API
   //useEffect principal, aqui se hace llamado a todas la funciones que
@@ -47,39 +47,39 @@ const ReportesMaterias = () => {
       await getRUnidadesAdmin(auth.user.token)
         .then((data) => {
           if (data.length !== 0) {
-            let profesor = data[0].Nombre_Usuario;
-            let auxArray = [];
-            let finalArray = [];
+            let profesor = data[0].Nombre_Usuario
+            let auxArray = []
+            let finalArray = []
             data.map((dato) => {
               if (profesor === dato.Nombre_Usuario) {
-                auxArray.push(dato);
+                auxArray.push(dato)
               } else {
-                profesor = dato.Nombre_Usuario;
-                finalArray.push(auxArray);
-                auxArray = [];
-                auxArray.push(dato);
+                profesor = dato.Nombre_Usuario
+                finalArray.push(auxArray)
+                auxArray = []
+                auxArray.push(dato)
               }
-            });
-            finalArray.push(auxArray);
-            setDocente([...docente, finalArray]);
-            setFiltrados([...filtrados, finalArray]);
+            })
+            finalArray.push(auxArray)
+            setDocente([...docente, finalArray])
+            setFiltrados([...filtrados, finalArray])
           }
         })
         .catch((err) => {
-          console.log(err);
-        });
-    };
+          console.log(err)
+        })
+    }
 
-    getReportesUnidades();
-    return () => {};
-  }, []);
+    getReportesUnidades()
+    return () => {}
+  }, [])
 
   /**
    * Obtiene el valor del input buscar, para mostrar solo las coincidencias que se encuentren
    * @param {*} event
    */
   const handleOnChange = (event) => {
-    var filtrados = [];
+    var filtrados = []
     docente.map((user) => {
       filtrados.push(
         user.map((item) => {
@@ -88,19 +88,19 @@ const ReportesMaterias = () => {
               event.target.value.toLowerCase()
             )
           ) {
-            return item;
+            return item
           }
         })
-      );
-    });
+      )
+    })
     filtrados.filter((elemento) => {
       filtrados = elemento.filter((item) => {
-        return item !== undefined;
-      });
+        return item !== undefined
+      })
       //return elemento !== undefined;
-    });
-    setFiltrados([filtrados]);
-  };
+    })
+    setFiltrados([filtrados])
+  }
 
   /**
    * Realiza la accion de realizar una peticion post a la base de datos para subir el reporte unidad que el profe selecciono
@@ -112,24 +112,24 @@ const ReportesMaterias = () => {
           setModalInfo({
             title: "Permiso autorizado",
             cuerpo: "Ahora el docente puede volver a subir el reporte",
-          });
+          })
         } else {
           setModalInfo({
             title: "Error",
             cuerpo: "No se logro dar permiso, intente mas tarde",
-          });
+          })
         }
         //window.location.href = window.location.href;
       })
       .catch((err) => {
-        console.log(err);
-      });
-    setshowModal(false);
-    setShowModalInfo(true);
+        console.log(err)
+      })
+    setshowModal(false)
+    setShowModalInfo(true)
     setTimeout(() => {
-      window.location.href = window.location.href;
-    }, 3000);
-  };
+      window.location.href = window.location.href
+    }, 3000)
+  }
 
   return (
     <>
@@ -150,7 +150,7 @@ const ReportesMaterias = () => {
                   />
                   <span className="highlight Materias"></span>
                   <span className="bottomBar Materias"></span>
-                  <label className="Materias">Reticula de la Materia</label>
+                  <label className="Materias">Nombre del Docente</label>
                 </div>
               </form>
             </div>
@@ -186,8 +186,8 @@ const ReportesMaterias = () => {
                                       <div className="card-body">
                                         <div className="fecha">
                                           <p>
-                                            {item.Reprobados === -1
-                                              ? "Aun no registrado"
+                                            {uni.Reprobados === -1
+                                              ? "Aun no entregado"
                                               : uni.Fecha_Entrega}
                                           </p>
                                         </div>
@@ -218,8 +218,8 @@ const ReportesMaterias = () => {
                                                     item.Nombre_Usuario,
                                                   Nombre_Materia:
                                                     item.Nombre_Materia,
-                                                });
-                                                setshowModal(true);
+                                                })
+                                                setshowModal(true)
                                               }}
                                             >
                                               Dar permiso
@@ -229,14 +229,14 @@ const ReportesMaterias = () => {
                                       )}
                                     </div>
                                   </div>
-                                );
+                                )
                               })}
                             </div>
                           </div>
-                        );
+                        )
                       })}
                     </div>
-                  );
+                  )
                 })}
               </>
             ) : (
@@ -273,7 +273,7 @@ const ReportesMaterias = () => {
                   <button onClick={subirReporte}>Aceptar</button>
                   <button
                     onClick={() => {
-                      setshowModal(false);
+                      setshowModal(false)
                     }}
                   >
                     Cancelar
@@ -304,7 +304,7 @@ const ReportesMaterias = () => {
         <></>
       )}
     </>
-  );
-};
+  )
+}
 
-export default ReportesMaterias;
+export default ReportesMaterias

@@ -11,6 +11,7 @@ import getMaterias from "./helpers/Materias/getAllMaterias.js"
 import Loader from "./Loader.js"
 import getAsignanC from "./helpers/Asignan/getAsignanC.js"
 import kanaBuscar from "../img/kana-buscar.png"
+import getReportes from "./helpers/Usuarios/getReportes.js"
 //filtros
 import filtroU from "./helpers/Usuarios/filtroU.js"
 //PDF Downloader
@@ -55,6 +56,8 @@ const Usuarios = (props) => {
     Tipo_Usuario: /.*/,
     CorreoE: /.*/,
   })
+  //useState para los reportes que se tienen registrados
+  const [reportesRegistrados, setReportesRegistrados] = useState([])
   //^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$
   //Regex para validar correos
   const [username, setUsername] = useState("")
@@ -148,6 +151,16 @@ const Usuarios = (props) => {
       setCarrera(data)
     })
   }, [])
+
+  const obtenerReportes = useCallback(async () => {
+    await getReportes(auth.user.token).then((data) => {
+      setReportesRegistrados(
+        data.map((report) => {
+          return report.Nombre_Reporte
+        })
+      )
+    })
+  }, [])
   /**
    * useEffect para actualizar los datos generales
    */
@@ -155,6 +168,7 @@ const Usuarios = (props) => {
     getAllMaterias()
     getAllCarreras()
     obtenerUsuarios()
+    obtenerReportes()
 
     return () => {
       setUserData([])
@@ -292,7 +306,7 @@ const Usuarios = (props) => {
     setFiltroInput(event.target.value)
     let id = event.target.id.replace(/\s+/g, "_")
     let filtradosl
-    if (id === "Nombre de Usuario") {
+    if (id === "Nombre_de_Usuario") {
       filtradosl = userData.map((user) => {
         if (
           user.Nombre_Usuario.toLowerCase().includes(
@@ -320,13 +334,23 @@ const Usuarios = (props) => {
         return elemento !== undefined
       })
     } else {
-      await filtroU(auth.user.token, event.target.value.toLowerCase(), id)
-        .then((data) => {
-          filtradosl = data
-        })
-        .catch((err) => {
-          filtradosl = userData
-        })
+      if (id === "Puntual" || id === "Inpuntual") {
+        await filtroU(auth.user.token, event.target.value, id)
+          .then((data) => {
+            filtradosl = data
+          })
+          .catch((err) => {
+            filtradosl = userData
+          })
+      } else {
+        await filtroU(auth.user.token, event.target.value.toLowerCase(), id)
+          .then((data) => {
+            filtradosl = data
+          })
+          .catch((err) => {
+            filtradosl = userData
+          })
+      }
     }
     setFiltrados(filtradosl)
   }
@@ -397,29 +421,54 @@ const Usuarios = (props) => {
             <div className="punto"></div>
             <span>Calificaciones</span>
           </label>
+          <input
+            type={"radio"}
+            id="Filtro-4"
+            key-name={"Puntual"}
+            name="selected-F"
+            onChange={handleRadioOption}
+            checked={"Puntual" === placeholder}
+          ></input>
+          <label className="label-radio label-4" htmlFor="Filtro-4">
+            <div className="punto"></div>
+            <span>Puntual</span>
+          </label>
         </div>
         <div className="derecha">
           <input
             type={"radio"}
             id="Filtro-5"
+            key-name={"Inpuntual"}
+            name="selected-F"
+            onChange={handleRadioOption}
+            checked={"Inpuntual" === placeholder}
+          ></input>
+          <label className="label-radio label-5" htmlFor="Filtro-5">
+            <div className="punto"></div>
+            <span>Inpuntual</span>
+          </label>
+          <input
+            type={"radio"}
+            id="Filtro-6"
             key-name={"Mayor_Indice"}
             name="selected-F"
             onChange={handleRadioOption}
             checked={"Mayor Indice" === placeholder}
           ></input>
-          <label className="label-radio label-5" htmlFor="Filtro-5">
+          <label className="label-radio label-6" htmlFor="Filtro-6">
             <div className="punto"></div>
             <span>Mayor Indice</span>
           </label>
+
           <input
             type={"radio"}
-            id="Filtro-6"
+            id="Filtro-7"
             key-name={"Menor_Indice"}
             name="selected-F"
             onChange={handleRadioOption}
             checked={"Menor Indice" === placeholder}
           ></input>
-          <label className="label-radio label-6" htmlFor="Filtro-6">
+          <label className="label-radio label-7" htmlFor="Filtro-7">
             <div className="punto"></div>
             <span>Menor Indice</span>
           </label>
@@ -432,31 +481,64 @@ const Usuarios = (props) => {
     for (let i = 7; i < 21; i++) {
       if (i === 9) {
         lista.push(
-          <option value={"0" + i + ":00 - " + (i + 1) + ":00"}></option>
+          <option
+            value={"0" + i + ":00 - " + (i + 1) + ":00"}
+            key={Math.random() + i}
+          ></option>
         )
       } else if (i < 10) {
         lista.push(
-          <option value={"0" + i + ":00 - 0" + (i + 1) + ":00"}></option>
+          <option
+            value={"0" + i + ":00 - 0" + (i + 1) + ":00"}
+            key={Math.random() + i}
+          ></option>
         )
       } else {
-        lista.push(<option value={i + ":00 - " + (i + 1) + ":00"}></option>)
+        lista.push(
+          <option
+            value={i + ":00 - " + (i + 1) + ":00"}
+            key={Math.random() + i}
+          ></option>
+        )
       }
     }
     for (let i = 7; i < 21; i++) {
       if (i === 9) {
         lista.push(
-          <option value={"0" + i + ":00 - " + (i + 2) + ":00"}></option>
+          <option
+            value={"0" + i + ":00 - " + (i + 2) + ":00"}
+            key={Math.random() + i}
+          ></option>
         )
       } else if (i < 10) {
         lista.push(
-          <option value={"0" + i + ":00 - 0" + (i + 2) + ":00"}></option>
+          <option
+            value={"0" + i + ":00 - 0" + (i + 2) + ":00"}
+            key={Math.random() + i}
+          ></option>
         )
       } else {
-        lista.push(<option value={i + ":00 - " + (i + 2) + ":00"}></option>)
+        lista.push(
+          <option
+            value={i + ":00 - " + (i + 2) + ":00"}
+            key={Math.random() + i}
+          ></option>
+        )
       }
       i += 1
     }
     return lista
+  }
+  /**
+   * Componente que devuelve una lista de los reportes registrados.
+   */
+  const Reportes = () => {
+    let listaReportes = []
+    // Recibir los reportes y almacenarlo en listaReportes para crear un datalist
+    reportesRegistrados.map((report, index) => {
+      listaReportes.push(<option value={report} key={index}></option>)
+    })
+    return listaReportes
   }
   const Prueba = () => {
     let sexo = filtrados.map((user) => {
@@ -502,15 +584,55 @@ const Usuarios = (props) => {
                 </>
               ) : (
                 <>
-                  <input
-                    type="text"
-                    id={placeholder}
-                    name="usuario-name"
-                    className="inputUsuarios-search"
-                    required
-                    onChange={buscador}
-                    value={filtroInput}
-                  />
+                  {placeholder === "Puntual" ? (
+                    <>
+                      <input
+                        type="text"
+                        list="Hora-list"
+                        id={placeholder}
+                        name="usuario-name"
+                        className="inputUsuarios-search"
+                        required
+                        onChange={buscador}
+                        value={filtroInput}
+                      />
+                      <datalist id="Hora-list">
+                        <Reportes />
+                      </datalist>
+                    </>
+                  ) : (
+                    <>
+                      {placeholder === "Inpuntual" ? (
+                        <>
+                          <input
+                            type="text"
+                            list="Hora-list"
+                            id={placeholder}
+                            name="usuario-name"
+                            className="inputUsuarios-search"
+                            required
+                            onChange={buscador}
+                            value={filtroInput}
+                          />
+                          <datalist id="Hora-list">
+                            <Reportes />
+                          </datalist>
+                        </>
+                      ) : (
+                        <>
+                          <input
+                            type="text"
+                            id={placeholder}
+                            name="usuario-name"
+                            className="inputUsuarios-search"
+                            required
+                            onChange={buscador}
+                            value={filtroInput}
+                          />
+                        </>
+                      )}
+                    </>
+                  )}
                 </>
               )}
 
@@ -560,12 +682,6 @@ const Usuarios = (props) => {
                 <input
                   type="submit"
                   className="button Usuarios"
-                  value="Descargar"
-                  onClick={pdfDownload}
-                ></input>
-                <input
-                  type="submit"
-                  className="button Usuarios"
                   value="Cancelar"
                   onClick={() => {
                     setBotones(false)
@@ -574,16 +690,30 @@ const Usuarios = (props) => {
                     setFiltrados(userData)
                   }}
                 ></input>
+                <input
+                  type="submit"
+                  className="button Usuarios"
+                  value="PDF"
+                  onClick={pdfDownload}
+                ></input>
               </div>
             </>
           ) : (
             <>
-              <input
-                type="submit"
-                className="button Usuarios"
-                value="Agregar"
-                onClick={abrirAgregar}
-              ></input>
+              <div>
+                <input
+                  type="submit"
+                  className="button Usuarios"
+                  value="Agregar"
+                  onClick={abrirAgregar}
+                ></input>
+                <input
+                  type="submit"
+                  className="button Usuarios"
+                  value="PDF"
+                  onClick={pdfDownload}
+                ></input>
+              </div>
             </>
           )}
 

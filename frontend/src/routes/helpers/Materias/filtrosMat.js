@@ -17,6 +17,7 @@ const urls = {
  * @returns
  */
 const filtroMat = async (token, txt, filtro) => {
+  txt = txt.replace(/\s+/g, "%20")
   let get = {
     method: "GET",
     headers: {
@@ -27,6 +28,7 @@ const filtroMat = async (token, txt, filtro) => {
   get = AuthPostBasics(token, get)
   const jsonData = require("../../../variables.json")
   const url = jsonData.host + urls[filtro] + txt
+  console.log(url)
   const res = await fetch(url, get)
   const data = res.json()
   return data
