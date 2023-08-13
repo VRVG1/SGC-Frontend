@@ -11,7 +11,7 @@ import getMaterias from "./helpers/Materias/getAllMaterias.js"
 import Loader from "./Loader.js"
 import getAsignanC from "./helpers/Asignan/getAsignanC.js"
 import kanaBuscar from "../img/kana-buscar.png"
-import getReportes from "./helpers/Usuarios/getReportes.js"
+import getReportes from "./helpers/usuarioReporte/getReportesU.js"
 //filtros
 import filtroU from "./helpers/Usuarios/filtroU.js"
 //PDF Downloader
