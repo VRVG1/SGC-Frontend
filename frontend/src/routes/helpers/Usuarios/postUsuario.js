@@ -5,7 +5,6 @@ import AuthPostBasics from '../Auth/AuthPostBasis.js';
  * @returns resultado de la operacion
  */
 const postUsuario = async (dataPost, token) => {
-    console.log("datos", dataPost);
     let post = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -21,7 +20,6 @@ const postUsuario = async (dataPost, token) => {
         })
     };
     post = AuthPostBasics(token, post);
-    //console.log(post.body)
     const jsonData = require('../../../variables.json'); 
     const url = jsonData.host + "usuario/create_user"
     const res = await fetch(url, post);

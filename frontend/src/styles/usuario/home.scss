@@ -1,163 +1,168 @@
-$blanco: #F3F3F3;
+$blanco: #f3f3f3;
 $color-text: #111111;
 $select-color: #a7a7a7;
 
 .usuario-container {
-    background-color: $blanco;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    width: 100%;
-    margin-top: 2%;
-    margin-bottom: 2%;
-    border-radius: 15px 15px 15px 15px;
-    -webkit-box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
-    box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
-    position: relative;
-    padding: 1%;
+  background-color: $blanco;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  border-radius: 15px 15px 15px 15px;
+  -webkit-box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+  box-shadow: 12px 12px 11px 3px rgba(0, 0, 0, 0.61);
+  position: relative;
+  margin-top: 5rem;
+  max-width: 100%;
+  min-width: 100%;
 }
 
 .usuario-container-parent {
-    background-color: rgb(255, 255, 255);
-    text-align: center;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    width: 80%;
-    margin-left: 10%;
-    margin-top: 2%;
-    position: relative;
-
+  background-color: $blanco;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  width: 80%;
+  position: relative;
+  left: 10%;
 }
 
 .usuario-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 5em;
-    grid-auto-rows: minmax(100px, auto);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5em;
+  grid-auto-rows: minmax(100px, auto);
 }
 
 .usuario-grid__1 {
-    grid-column: 1;
+  grid-column: 1;
 }
 
 .usuario-grid__2 {
-    grid-column: 2;
-    padding: 2%;
+  grid-column: 2;
+  padding: 2%;
 
-    .form.group.modal.Usuario.usr {
-
-        .highlight.Usuarios-usr {
-            position: absolute;
-            height: 100%;
-            width: 100px;
-            top: 25%;
-            left: 0;
-            pointer-events: none;
-            opacity: 0.5;
-        }
-
-        .bottomBar.Usuarios-usr {
-            background: #111111;
-            position: absolute;
-            display: block;
-            height: 2px;
-            width: 100%;
-            left: -4%;
-        }
+  .form.group.modal.Usuario.usr {
+    input[type="text"] {
+      position: relative;
     }
+    .usuarios-grid-Opcion {
+      // left: -29%;
+      width: 100%;
+    }
+
+    .highlight.Usuarios-usr {
+      position: absolute;
+      height: 100%;
+      width: 100px;
+      top: 25%;
+      left: 0;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    .bottomBar.Usuarios-usr {
+      background: #111111;
+      position: absolute;
+      display: block;
+      height: 2px;
+      width: 100%;
+      left: -4%;
+    }
+  }
 }
 
 label.Usuarios-usr {
-    color: #111111;
-    font-size: 1rem;
-    font-weight: normal;
-    position: absolute;
-    pointer-events: none;
-    left: -4%;
-    top: 45%;
-    transition: 0.2s ease all;
-    -moz-transition: 0.2s ease all;
-    -webkit-transition: 0.2s ease all;
+  color: #111111;
+  font-size: 1rem;
+  font-weight: normal;
+  position: absolute;
+  pointer-events: none;
+  left: -4%;
+  top: 45%;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
 }
 
 select {
-    cursor: pointer;
-    display: inline-block;
-    font-size: 1rem;
-    padding: 10px 10px 10px 5px;
-    width: 27vw;
-    border: none;
-    border-bottom: 1px solid $blanco;
-    text-decoration: none;
-    color: $color-text;
-    background-color: $blanco;
-    transition: 0.2s ease all;
-    position: relative;
-    left: -5%;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1rem;
+  padding: 10px 10px 10px 5px;
+  width: 27vw;
+  border: none;
+  border-bottom: 1px solid $blanco;
+  text-decoration: none;
+  color: $color-text;
+  background-color: $blanco;
+  transition: 0.2s ease all;
+  position: relative;
+  left: -5%;
 
-    &:focus {
-        outline: none;
-    }
+  &:focus {
+    outline: none;
+  }
 
-    &:focus~.bar:before,
-    &:focus~.bar:after {
-        width: 50%;
-    }
+  &:focus ~ .bar:before,
+  &:focus ~ .bar:after {
+    width: 50%;
+  }
 
-    &:focus~label.Usuarios-usr,
-    &:valid~label.Usuarios-usr {
-        top: -25%;
-        font-size: 0.85rem;
-        color: #111111;
-    }
+  &:focus ~ label.Usuarios-usr,
+  &:valid ~ label.Usuarios-usr {
+    top: -25%;
+    font-size: 0.85rem;
+    color: #111111;
+  }
 }
 
 .tabla-usr {
+  width: 100%;
+  overflow-y: auto;
+  height: 60vh;
+  margin-bottom: 3%;
+  margin: auto;
+
+  table {
+    border-spacing: 0;
     width: 100%;
-    overflow-y: auto;
-    height: 32.6vh;
-    margin-bottom: 3%;
-    margin: auto;
 
-    table {
-        border-spacing: 0;
-        width: 100%;
-
-        tr:nth-child(even) {
-            background-color: #DDD;
-        }
-
-        th {
-            background-color: #005B8E;
-        }
-
-        th,
-        td {
-            padding: 5px;
-            text-align: center;
-            transition: .5s ease all;
-            cursor: default;
-        }
-
-        td:hover {
-            background-color: rgba(167, 167, 167, 0);
-        }
+    tr:nth-child(even) {
+      background-color: #ddd;
     }
+
+    th {
+      background-color: #005b8e;
+    }
+
+    th,
+    td {
+      padding: 5px;
+      text-align: center;
+      transition: 0.5s ease all;
+      cursor: default;
+    }
+
+    td:hover {
+      background-color: rgba(167, 167, 167, 0);
+    }
+  }
 }
 
 .modal-borra {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
 }
 
 .alertMSM {
-    font-size: 1.5rem;
-    text-align: center;
+  font-size: 1.5rem;
+  text-align: center;
 }
