@@ -1,0 +1,284 @@
+.content.modal {
+  margin-top: 4rem;
+}
+
+.pnc__modal .content.modal {
+    margin-top: 40vh;
+}
+
+.data__body {
+    width: 97%;
+    height: 90%;
+    margin-left: 1rem;
+}
+
+.data__body__reportes {
+  width: 100%;
+  height: 80%;
+  overflow-y: auto;
+}
+
+.data__body__reportes_display {
+    width: 100%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.reporte__tabla {
+  width: 100%;
+}
+
+.reporte__tabla table {
+  border-spacing: 2px;
+  width: 100%;
+}
+
+.reporte__tabla__col_small {
+    width: 3%;
+}
+
+.reporte__tabla__col_relevant {
+    width: 27%;
+}
+
+.reporte__tabla__col_folio {
+    width: 5%;
+}
+
+.reporte__tabla__col_fecha_registro {
+    width: 12%;
+}
+
+.reporte__tabla__col_elimina_pnc {
+    width: 6%;
+}
+
+.reporte__tabla__empty_header {
+  background-color: #F3F3F3;
+  width: 20%;
+}
+
+.reporte__tabla__info {
+    max-height: 30vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.reporte__tabla__info_to_left {
+    text-align: left;
+}
+
+.reporte__tabla__info button {
+    padding: 1rem 0.5rem;
+    transform: none;
+    width: 100%;
+}
+
+button.button__eliminar {
+    background-color: rgb(168, 0, 0);
+}
+
+button.button__eliminar:hover {
+    background-color: rgb(240, 0, 0);
+}
+
+.reporte__tabla__info_td_hover{
+    width: 10%;
+}
+
+.reporte__tabla__info_td_hover:hover {
+    background-color: transparent;
+}
+
+.data__body__buttons {
+  width: 100%;
+  height: 20%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.data__body__buttons button:disabled {
+    transition: none;
+    transform: none;
+    background-color: rgba(170, 170, 170, 1);
+}
+
+.modal__content {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    height: 80vh;
+}
+
+.modal__content form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 90%;
+    padding-bottom: 0.5rem;
+}
+
+.modal__content__buttons {
+  width: 100%;
+  height: 10%;
+  display: flex;
+  justify-content: center;
+}
+
+.modal__content__buttons button {
+  width: 50%;
+  padding: 0.5rem;
+  margin: 0;
+}
+
+.modal__content form label {
+    display: flex;
+    flex-direction: column;
+    pointer-events: auto;
+    position: static;
+}
+
+.modal__content form label input[type="text"] {
+    background-color: rgb(255, 255, 255);
+    width: auto;
+    padding: 0px;
+    border: 1px solid rgb(118, 118, 118);
+}
+
+.modal__content form label input[type="date"] {
+    border: 1px solid rgb(118, 118, 118);
+    padding: 0;
+}
+
+.form__menu_reportes {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 13%;
+}
+
+.form__menu_reportes div {
+  padding: 0 5px;
+}
+
+.form__menu_reportes select {
+  width: 100%;
+  border: 1px solid rgb(118, 118, 118);
+  background-color: rgb(255, 255, 255);
+  left: 0;
+  padding: 0;
+}
+
+.form__short_inputs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    height: 13%;
+}
+
+.form__short_inputs label {
+    width: 33%;
+    padding: 0px 5px;
+}
+
+.form__short_inputs input {
+    font-size: 1rem;
+}
+
+.form__large_inputs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 60%;
+}
+
+.form__large_inputs__textarea {
+    width: 49%;
+    width: -webkit-fill-available;
+    width: -moz-available;
+    padding: 0 0.3rem;
+}
+
+.form__large_inputs__textarea label {
+    height: 100%;
+}
+
+.form__large_inputs__textarea span {
+    height: 10%;
+}
+.form__large_inputs__textarea textarea {
+    font-size: 1rem;
+    height: 90%;
+    resize: none;
+    white-space: pre-wrap;
+}
+
+.modal__content fieldset {
+    display: flex;
+    justify-content: space-around;
+    padding: 0.5rem;
+    border: none;
+}
+
+.modal__content fieldset legend {
+    padding: 5px 0 0 0;
+}
+
+.modal__content fieldset div {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.form__field_error {
+    display: flex;
+    flex-direction: column;
+}
+
+.form__field_error select {
+    border: 1px solid rgb(255, 0, 0);
+}
+
+.modal__content form label.form__field_error input[type="text"] {
+    border: 1px solid rgb(255, 0, 0);
+}
+
+.modal__content form label.form__field_warn input[type="text"] {
+    border: 1px solid rgb(240, 182, 0);
+}
+
+.form__error_message, .form__warn_message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form__error_message  h5 {
+    font-size: 0.5rem;
+    color: rgb(255, 0, 0);
+    align-content: center;
+}
+
+.form__warn_message h5 {
+    font-size: 0.5rem;
+    color: rgb(240, 182, 0);
+    align-content: center;
+}
+
+.pnc__modal .modal__content {
+    height: auto;
+}
+
+.pnc__modal .modal__content__buttons {
+    justify-content: space-around;
+}
+.pnc__modal .modal__content__buttons button {
+    width: 40%;
+}
+

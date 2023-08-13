@@ -6,8 +6,9 @@
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
-    "node-sass": "^7.0.1",
+    "chart.js": "^4.3.0",
     "react": "^17.0.2",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^17.0.2",
     "react-hooks": "^1.0.1",
     "react-router-dom": "^6.2.2",
@@ -21,12 +22,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
+  "eslintConfig": {},
   "browserslist": {
     "production": [
       ">0.2%",
@@ -40,6 +36,8 @@
     ]
   },
   "devDependencies": {
+    "lodash": "^4.17.21",
+    "node-sass": "^8.0.0",
     "sass-loader": "^13.0.0"
   }
 }

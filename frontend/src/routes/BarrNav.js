@@ -71,10 +71,10 @@ export default class Nav extends Component {
                                         <i className='bx bx-user-circle' ></i>
                                         <span className="link_name">Usuarios</span>
                                     </span>
-                                    <i
+                                    {/* <i
                                         className='bx bxs-chevron-down arrow'
                                         onClick={e => this.showingMenu(e)} >
-                                    </i>
+                                    </i> */}
                                 </div>
                             </Link>
                             <ul className="sub-menu">
@@ -95,9 +95,29 @@ export default class Nav extends Component {
                                 </i>
                             </div>
                             <ul className="sub-menu">
-                                <li><span className='a'><span className="link_name">Reportes</span></span></li>
-                                <Link className='link' to="/admin/reportes/admin"><li className='li'>Admin</li></Link>
-                                <Link className='link' to="/admin/reportes/check"><li className='li'>Check</li></Link>
+                                <li>
+                                    <span className='a'>
+                                        <span className="link_name">Reportes</span>
+                                    </span>
+                                </li>
+                                <Link className='link' to="/admin/reportes/admin">
+                                    <li className='li'>Admin</li>
+                                </Link>
+                                <Link className='link' to="/admin/reportes/check">
+                                    <li className='li'>Check</li>
+                                </Link>
+                                <Link className='link' to="/admin/reportes/materias">
+                                    <li className='li'>Materias</li>
+                                </Link>
+                                <Link className='link' to="/admin/reportes/estadisticas">
+                                    <li className='li'>Estadísticas</li>
+                                </Link>
+                                <Link className='link' to="/admin/reportes/pnc">
+                                    <li className='li'>PNC</li>
+                                </Link>
+                                <Link className='link' to="/admin/reportes/verificacion_gestion_curso">
+                                    <li className='li'>Verificación</li>
+                                </Link>
                             </ul>
                         </li>
 
@@ -108,10 +128,10 @@ export default class Nav extends Component {
                                         <i className='bx bx-book' ></i>
                                         <span className="link_name">Materias</span>
                                     </span>
-                                    <i
+                                    {/* <i
                                         className='bx bxs-chevron-down arrow'
                                         onClick={e => this.showingMenu(e)} >
-                                    </i>
+                                    </i> */}
                                 </div>
                             </Link>
                             <ul className="sub-menu">
@@ -127,10 +147,10 @@ export default class Nav extends Component {
                                         <i className='bx bxs-file-blank'></i>
                                         <span className="link_name">Carreras</span>
                                     </span>
-                                    <i
+                                    {/* <i
                                         className='bx bxs-chevron-down arrow'
                                         onClick={e => this.showingMenu(e)} >
-                                    </i>
+                                    </i> */}
                                 </div>
                             </Link>
                             <ul className="sub-menu">
@@ -146,10 +166,10 @@ export default class Nav extends Component {
                                         <i className='bx bxs-file-export' ></i>
                                         <span className="link_name">Exporta Datos</span>
                                     </span>
-                                    <i
+                                    {/* <i
                                         className='bx bxs-chevron-down arrow'
                                         onClick={e => this.showingMenu(e)} >
-                                    </i>
+                                    </i> */}
                                 </div>
                             </Link>
                             <ul className="sub-menu">
@@ -165,10 +185,10 @@ export default class Nav extends Component {
                                         <i className='bx bx-save' ></i>
                                         <span className="link_name">Respaldos y Restauraciones</span>
                                     </span>
-                                    <i
+                                    {/* <i
                                         className='bx bxs-chevron-down arrow'
                                         onClick={e => this.showingMenu(e)} >
-                                    </i>
+                                    </i> */}
                                 </div>
                             </Link>
                             <ul className="sub-menu">
@@ -185,10 +205,10 @@ export default class Nav extends Component {
                                         <i className='bx bx-cog' ></i>
                                         <span className="link_name">Ajustes del Sistema</span>
                                     </span>
-                                    <i
+                                    {/* <i
                                         className='bx bxs-chevron-down arrow'
                                         onClick={e => this.showingMenu(e)} >
-                                    </i>
+                                    </i> */}
                                 </div>
                             </Link>
                             <ul className="sub-menu">

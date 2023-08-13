@@ -37,6 +37,11 @@ import OlvideContra from './routes/OlivdeContra';
 import { Reportes } from './routes/usuario/Reportes';
 import UserSettings from './routes/usuario/UserSetting';
 import BarNavS from "./routes/Supervisor/BarNavS.js";
+import UMaterias from "./routes/usuario/Materias";
+import ReportesMaterias from './routes/RepostesMaterias';
+import ReportesEstadisticas from './routes/ReportesEstadisticas';
+import ReportesProductosNoConformes from './routes/ReportesProductosNoConformes';
+import ReportesVerificacionGestionCurso from './routes/ReportesVerificacionGestionCurso';
 
 import "./styles/style.css";
 import "./styles/BarrNav.css"
@@ -52,6 +57,11 @@ import "./styles/Home.scss"
 import "./styles/usuario/reportesU.scss"
 import "./styles/usuario/UserSetting.scss"
 import "./styles/sysSettings.scss"
+import "./styles/usuario/Materias.scss"
+import "./styles/ReportesMaterias.scss"
+import "./styles/ReportesEstadisticas.css"
+import "./styles/ReportesPNC.css"
+import "./styles/ReportesVGC.css"
 
 /**
   * Funcion que facilita el acceso al contexto 'AuthContext'.
@@ -219,6 +229,10 @@ function Application() {
             <Route path="carreras" element={<Carreras />} />
             <Route path="reportes/admin" element={<ReportesAdmin />} />
             <Route path="reportes/check" element={<ReportesCheck />} />
+            <Route path="reportes/materias" element={<ReportesMaterias />} />
+            <Route path="reportes/estadisticas" element={<ReportesEstadisticas />} />
+            <Route path="reportes/pnc" element={<ReportesProductosNoConformes />} />
+            <Route path="reportes/verificacion_gestion_curso" element={<ReportesVerificacionGestionCurso />} />
             <Route path="exportardatos" element={<ExportData />} />
             <Route path="Respaldoyrestauraciones" element={<BackUpRestore />} />
             <Route path='ajustes' element={<SysSettings />} />
@@ -236,6 +250,7 @@ function Application() {
             <Route path='home' element={<Home2 />} />
             <Route path='reportes' element={<Reportes />} />
             <Route path='ajustes' element={<UserSettings />} />
+            <Route path='materias' element={<UMaterias />} />
           </Route>
           <Route
             path="/supervisor"
@@ -251,29 +266,6 @@ function Application() {
             <Route path="exportardatos" element={<ExportData />} />
             {/** Poner aquí las rutas para el usuario de tipo espectador **/}
           </Route>
-          {/**
-
-        Pasar las nuevas rutas al arbol de arriba
-
-        <Route path='/' element={<Navigate to={'login'} />} >
-        </Route>
-        <Route path='login' element={<Login />} />
-        <Route path="recuperar" element={<OlvideContra />} />
-        <Route path="admin" element={<BarrNav />}>
-          <Route path="home" element={<Home />} />
-          <Route path="usuarios" element={<Usuarios />} />
-          <Route path="materias" element={<Materias />} />
-          <Route path="carreras" element={<Carreras />} />
-          <Route path="reportes/admin" element={<ReportesAdmin />} />
-          <Route path="reportes/check" element={<ReportesCheck />} />
-          <Route path="exportardatos" element={<ExportData />} />
-          <Route path="Respadoyrestauraciones" element={<BackUpRestore />} />
-          <Route path='ajustes' element={<SysSettings />} />
-        </Route>
-        <Route path='usuario' element={<BarNav />}>
-          <Route path=':usuario/home' element={<Home2 />}/>
-          <Route path=':usuario/reportes' element={<Reportes />}/> 
-        **/}
         </Route>
         <Route path="*" element={<NotMatch />} />
       </Routes>

@@ -1,0 +1,121 @@
+.vgc.data__body__reportes {
+    overflow-y: hidden;
+}
+.vgc .reporte__tabla {
+    height: 80%;
+    overflow-y: auto;
+}
+.vgc.data__body__reportes__inputs {
+    width: 100%;
+    height: 20%;
+}
+
+.vgc.data__body__reportes__inputs form {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.vgc.data__body__reportes__inputs form label {
+    display: flex;
+    flex-direction: column;
+    pointer-events: auto;
+    position: static;
+}
+
+.vgc.data__body__reportes__inputs form div {
+    display: flex;
+    flex-direction: column;
+}
+
+.vgc.data__body__reportes__inputs form div select {
+    border: 1px solid rgb(118, 118, 118);
+    background-color: rgb(255, 255, 255);
+    left: 0;
+    padding: 0;
+}
+
+.vgc.form__short_inputs label {
+    width: 50%;
+}
+
+.vgc.form__large_input label {
+    width: 100%;
+}
+
+.modal__content form label input[type="text"]:disabled {
+    background-color: rgba(239, 239, 239, 0.3);
+    color: rgb(84, 84, 84);
+    border-color: rgba(118, 118, 118, 0.3);
+}
+
+.modal__content form .vgc.form__short_inputs label input[type="week"] {
+    padding: 0;
+    border: 1px solid rgb(118, 118, 118);
+}
+
+.vgc.modal__content {
+    height: 100vh;
+}
+
+.vgc.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.vgc.tooltip .tooltiptext {
+    visibility: hidden;
+    background: rgb(251, 248, 160);
+    /**
+    border: 1px solid black;
+    **/
+    text-align: center;
+    padding: 0.2rem 0.5rem;
+    bottom: 108%;
+    width: max-content;
+    box-shadow: 0.3rem 0.4rem 0.3rem 0.001rem gray;
+    border-radius: 5px;
+    /**
+    margin-left: -16.5rem;
+    **/
+    transform: translateX(-44.5%);
+
+    position: absolute;
+    z-index: 1;
+}
+
+.vgc.tooltip .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 0.5rem;
+    border-style: solid;
+    border-color: rgb(251, 248, 160) transparent transparent transparent;
+}
+
+.vgc.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.vgc.tooltiptext span, .vgc.tooltiptext strong {
+    font-size: 1rem;
+}
+
+.vgc.reporte__tabla__col_small {
+    width: 3%;
+}
+
+.vgc.reporte__tabla__col_medium {
+    width: 8%;
+}
+
+.vgc.reporte__tabla__col_tema {
+    width: 6%;
+}
+.vgc.reporte__tabla__col_relevant {
+    width: 24%
+}
