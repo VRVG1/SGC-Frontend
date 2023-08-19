@@ -197,12 +197,12 @@ const ReportesCheck = (props) => {
 
   const Archivos = () => {
     let content = [];
-
+    const jsonData = require('../../variables.json'); 
     for (let key in pdfNames) {
       content.push(
         <a
           className="links"
-          href={`http://localhost:8000/media/Generados/` + pdfNames[key]}
+          href={jsonData.host+`/media/Generados/` + pdfNames[key]}
           target="_blank"
         >
           <div className="archivo">
